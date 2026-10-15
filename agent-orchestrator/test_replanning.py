@@ -68,7 +68,13 @@ def test_successful_replanning_uses_failure_context_and_versions_plan():
     assert "VALIDATION_FAILED" in events
     assert "REPLAN_GENERATED" in events
 
-    approved = {**state, **replanned, "replan_approval": "approve"}
+    approved = {
+        **state,
+        **replanned,
+        "replan_approval": "approve",
+        "task_plan_valid": True,
+        "active_task_ids": ["implementation"],
+    }
     assert replan_approval_router(approved) == "approved"
 
 

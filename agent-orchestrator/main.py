@@ -13,6 +13,14 @@ from governance.rollback_manager import (
     file_hash,
 )
 from governance.repair_executor import apply_approved_repair
+from governance.task_orchestrator import (
+    TaskPlanError,
+    finish_tasks,
+    schedule_tasks,
+    start_tasks,
+    tasks_from_plan,
+    validate_task_plan,
+)
 
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
@@ -24,6 +32,10 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from agents.codebase_agent import analyze_codebase
 
 load_dotenv()
+
+IMPLEMENTATION_RELATIVE_PATH = (
+    "url-shortener/src/main/java/url_shortener/ShortUrl.java"
+)
 
 model = ChatOllama(
     model="qwen2.5-coder:latest",
@@ -63,6 +75,11 @@ class EngineeringState(TypedDict):
     replan_approval: str
     replan_meaningful_change: bool
     replan_attempted: bool
+    revised_tasks: list
+    tasks: list
+    active_task_ids: list
+    task_plan_valid: bool
+    task_parallel_batches: list
 
 
 # Agent 1: Analyze requirements
@@ -133,12 +150,18 @@ def planning_agent(state: EngineeringState):
         """
     )
 
+    plan = response.text
+    tasks = tasks_from_plan(
+        plan,
+        IMPLEMENTATION_RELATIVE_PATH,
+    )
     return {
-        "plan": response.text,
+        "plan": plan,
         "plan_version": 1,
         "replan_history": [
-            {"version": 1, "plan": response.text, "source": "initial"}
+            {"version": 1, "plan": plan, "source": "initial"}
         ],
+        "tasks": tasks,
         "status": "PLAN_CREATED"
     }
 
@@ -215,6 +238,10 @@ Context:
     meaningful = " ".join(revised_plan.split()) != " ".join(
         state["plan"].split()
     )
+    revised_tasks = tasks_from_plan(
+        revised_plan,
+        IMPLEMENTATION_RELATIVE_PATH,
+    )
     version = state.get("plan_version", 0) + 1
     history_entry = {
         "version": version,
@@ -238,6 +265,7 @@ Context:
         "plan_version": version,
         "replan_context": context,
         "replan_history": retry_history + [history_entry],
+        "revised_tasks": revised_tasks,
         "replan_meaningful_change": meaningful,
         "replan_attempted": True,
         "replan_approval": "",
@@ -264,12 +292,31 @@ def replan_review_node(state: EngineeringState):
         event="REPLAN_APPROVED" if approved else "REPLAN_REJECTED",
         details={"plan_version": state["plan_version"]},
     )
-    updates = {
+    updates: dict[str, object] = {
         "replan_approval": "approve" if approved else "reject",
         "status": "REPLAN_APPROVED" if approved else "REPLAN_REJECTED",
     }
     if approved:
+        try:
+            scheduled, ready, parallel_batches = schedule_tasks(
+                state["revised_tasks"]
+            )
+        except TaskPlanError as error:
+            log_event(
+                workflow_id=state["workflow_id"],
+                agent="task_scheduler",
+                event="TASK_SCHEDULING_FAILED",
+                details={"error_type": type(error).__name__},
+            )
+            return {
+                "replan_approval": "reject",
+                "status": "STOPPED_INVALID_TASK_PLAN",
+            }
         updates["plan"] = state["revised_plan"]
+        updates["tasks"] = scheduled
+        updates["active_task_ids"] = ready[:1]
+        updates["task_parallel_batches"] = parallel_batches
+        updates["task_plan_valid"] = bool(ready)
     return updates
 
 
@@ -277,6 +324,8 @@ def replan_approval_router(state: EngineeringState):
     if (
         state.get("replan_approval") == "approve"
         and state.get("replan_meaningful_change")
+        and state.get("task_plan_valid", True)
+        and state.get("active_task_ids")
     ):
         return "approved"
     return "rejected"
@@ -336,14 +385,90 @@ def approved_node(state: EngineeringState):
     }
 
 
+def task_scheduler_node(state: EngineeringState):
+    print("\n[TASK SCHEDULER]")
+    if state.get("approval") != "approve":
+        return {"task_plan_valid": False, "status": "STOPPED"}
+
+    try:
+        scheduled, ready, parallel_batches = schedule_tasks(state["tasks"])
+    except TaskPlanError as error:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="task_scheduler",
+            event="TASK_SCHEDULING_FAILED",
+            details={"error_type": type(error).__name__},
+        )
+        return {
+            "task_plan_valid": False,
+            "status": "STOPPED_INVALID_TASK_PLAN",
+        }
+
+    if not ready:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="task_scheduler",
+            event="TASK_SCHEDULING_FAILED",
+            details={"error_type": "NoEligibleTasks"},
+        )
+        return {
+            "task_plan_valid": False,
+            "status": "STOPPED_NO_ELIGIBLE_TASKS",
+        }
+
+    active = [ready[0]]
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="task_scheduler",
+        event="TASKS_SCHEDULED",
+        details={
+            "ready_task_ids": ready,
+            "active_task_ids": active,
+            "parallel_batches": parallel_batches,
+        },
+    )
+    return {
+        "tasks": scheduled,
+        "active_task_ids": active,
+        "task_parallel_batches": parallel_batches,
+        "task_plan_valid": True,
+        "status": "TASKS_READY",
+    }
+
+
+def task_scheduler_router(state: EngineeringState):
+    return "implementation" if state.get("task_plan_valid") else "failure"
+
+
 def implementation_node(state: EngineeringState):
     print("\n[IMPLEMENTATION AGENT]")
 
-    if state["approval"] != "approve":
+    if (
+        state["approval"] != "approve"
+        or not state.get("task_plan_valid")
+        or not state.get("active_task_ids")
+    ):
         return {"status": "STOPPED"}
 
+    try:
+        running_tasks = start_tasks(state["tasks"], state["active_task_ids"])
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="task_scheduler",
+            event="TASKS_STARTED",
+            details={"task_ids": state["active_task_ids"]},
+        )
+    except TaskPlanError as error:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="task_scheduler",
+            event="TASK_EXECUTION_FAILED",
+            details={"error_type": type(error).__name__},
+        )
+        return {"task_plan_valid": False, "status": "STOPPED_TASK_NOT_READY"}
+
     relative_path = (
-        "url-shortener/src/main/java/url_shortener/ShortUrl.java"
+        IMPLEMENTATION_RELATIVE_PATH
     )
     checkpoint = create_checkpoint(relative_path)
     modified_file = implement_expiration(approved=True)
@@ -364,6 +489,7 @@ def implementation_node(state: EngineeringState):
         "rollback_checkpoint": checkpoint,
         "implementation_changed": changed,
         "expected_current_hash": current_hash,
+        "tasks": running_tasks,
         "status": "IMPLEMENTATION_COMPLETED",
     }
 
@@ -384,12 +510,34 @@ def validation_node(state: EngineeringState):
         },
     )
 
-    updates = {
+    updates: dict[str, object] = {
         "validation_result": result,
         "status": "VALIDATION_PASSED"
         if result["passed"]
         else "VALIDATION_FAILED"
     }
+
+    if state.get("active_task_ids") and state.get("tasks"):
+        try:
+            updates["tasks"] = finish_tasks(
+                state["tasks"],
+                state["active_task_ids"],
+                result["passed"],
+            )
+            log_event(
+                workflow_id=state["workflow_id"],
+                agent="task_scheduler",
+                event="TASKS_COMPLETED" if result["passed"] else "TASKS_FAILED",
+                details={"task_ids": state["active_task_ids"]},
+            )
+        except TaskPlanError as error:
+            log_event(
+                workflow_id=state["workflow_id"],
+                agent="task_scheduler",
+                event="TASK_EXECUTION_FAILED",
+                details={"error_type": type(error).__name__},
+            )
+            updates["task_plan_valid"] = False
 
     if (
         not result["passed"]
@@ -494,6 +642,11 @@ def repair_executor_node(state: EngineeringState):
 
     change = state.get("repair_change") or {}
     try:
+        running_tasks = None
+        if state.get("tasks"):
+            running_tasks = start_tasks(
+                state["tasks"], state.get("active_task_ids", [])
+            )
         result = apply_approved_repair(change)
     except Exception as error:
         log_event(
@@ -510,7 +663,7 @@ def repair_executor_node(state: EngineeringState):
         event="REPAIR_EXECUTED",
         details={"path": result["path"], "file_changed": result["changed"]},
     )
-    return {
+    updates: dict[str, object] = {
         "repair_checkpoint": result["checkpoint"],
         "repair_expected_current_hash": result["expected_current_hash"],
         "repair_applied": True,
@@ -518,6 +671,9 @@ def repair_executor_node(state: EngineeringState):
         "repair_rollback_blocked": False,
         "status": "REPAIR_APPLIED",
     }
+    if running_tasks is not None:
+        updates["tasks"] = running_tasks
+    return updates
 
 
 def repair_execution_router(state: EngineeringState):
@@ -531,6 +687,11 @@ def repair_stopped_node(state: EngineeringState):
 
 def quality_gate(state: EngineeringState):
     if state["validation_result"]["passed"]:
+        if any(
+            task["status"] in {"PENDING", "READY", "RUNNING"}
+            for task in state.get("tasks", [])
+        ):
+            return "tasks"
         return "passed"
 
     retry_count = state.get("retry_count", 0)
@@ -626,6 +787,7 @@ workflow = StateGraph(EngineeringState)
 workflow.add_node("requirements", requirements_agent)
 workflow.add_node("codebase", codebase_agent)
 workflow.add_node("planning", planning_agent)
+workflow.add_node("task_scheduler", task_scheduler_node)
 workflow.add_node("replanning", replanning_node)
 workflow.add_node("replan_review", replan_review_node)
 workflow.add_node("replan_stopped", replan_stopped_node)
@@ -655,7 +817,12 @@ workflow.add_conditional_edges(
     }
 )
 
-workflow.add_edge("approved", "implementation")
+workflow.add_edge("approved", "task_scheduler")
+workflow.add_conditional_edges(
+    "task_scheduler",
+    task_scheduler_router,
+    {"implementation": "implementation", "failure": "failure"},
+)
 workflow.add_edge("rejected", END)
 workflow.add_edge("implementation", "validation")
 
@@ -664,6 +831,7 @@ workflow.add_conditional_edges(
     quality_gate,
     {
         "passed": "success",
+        "tasks": "task_scheduler",
         "replan": "replanning",
         "failed": "failure",
     },
@@ -744,6 +912,11 @@ def main():
             "replan_approval": "",
             "replan_meaningful_change": True,
             "replan_attempted": False,
+            "revised_tasks": [],
+            "tasks": [],
+            "active_task_ids": [],
+            "task_plan_valid": False,
+            "task_parallel_batches": [],
         }
 
         result = app.invoke(initial_state, config=config)
