@@ -1,8 +1,14 @@
 import uuid
+from pathlib import Path
 from typing import TypedDict
 
 from agents.implementation_agent import implement_expiration
 from agents.validation_agent import validate_implementation
+from governance.rollback_manager import (
+    create_checkpoint,
+    rollback,
+    file_hash,
+)
 
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
@@ -33,6 +39,9 @@ class EngineeringState(TypedDict):
     implementation_file: str
     validation_result: dict
     retry_count: int
+    rollback_checkpoint: dict
+    implementation_changed: bool
+    expected_current_hash: str
 
 
 # Agent 1: Analyze requirements
@@ -150,13 +159,23 @@ def implementation_node(state: EngineeringState):
     if state["approval"] != "approve":
         return {"status": "STOPPED"}
 
-    modified_file = implement_expiration(
-        approved=True
+    relative_path = (
+        "url-shortener/src/main/java/url_shortener/ShortUrl.java"
     )
+    checkpoint = create_checkpoint(relative_path)
+    modified_file = implement_expiration(approved=True)
+    current_hash = file_hash(
+        Path(modified_file).read_bytes()
+    )
+    changed = current_hash != checkpoint["original_hash"]
+    print(f"[IMPLEMENTATION] File changed: {changed}")
 
     return {
         "implementation_file": str(modified_file),
-        "status": "IMPLEMENTATION_COMPLETED"
+        "rollback_checkpoint": checkpoint,
+        "implementation_changed": changed,
+        "expected_current_hash": current_hash,
+        "status": "IMPLEMENTATION_COMPLETED",
     }
 
 
@@ -210,9 +229,25 @@ def success_node(state: EngineeringState):
 def failure_node(state: EngineeringState):
     print("\n[QUALITY GATE] Validation failed")
 
-    return {
-        "status": "STOPPED_VALIDATION_FAILED"
-    }
+    if not state.get("implementation_changed", False):
+        print("[ROLLBACK] No new AI changes. Nothing to restore.")
+        return {
+            "status": "STOPPED_VALIDATION_FAILED"
+        }
+
+    checkpoint = state["rollback_checkpoint"]
+    expected_hash = state["expected_current_hash"]
+    try:
+        rollback(checkpoint, expected_hash)
+        print("[ROLLBACK] AI-generated changes restored.")
+        return {
+            "status": "STOPPED_ROLLED_BACK"
+        }
+    except Exception as error:
+        print(f"[ROLLBACK] Failed safely: {error}")
+        return {
+            "status": "STOPPED_ROLLBACK_REQUIRES_REVIEW"
+        }
 
 
 def rejected_node(state: EngineeringState):
@@ -300,7 +335,10 @@ def main():
             "status": "STARTED",
             "implementation_file": "",
             "validation_result": {},
-            "retry_count": 0
+            "retry_count": 0,
+            "rollback_checkpoint": {},
+            "implementation_changed": False,
+            "expected_current_hash": "",
         }
 
         result = app.invoke(initial_state, config=config)
