@@ -36,4 +36,4 @@ workflow.db-*
 .agent-workspaces/
 
 # Agent execution artifacts
-agent-orchestrator/artifacts/
+agent-orchestrator/artifacts/url-shortener/.jdk-25/
