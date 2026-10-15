@@ -1,48 +1,56 @@
-import os
+import uuid
 from typing import TypedDict
 
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
+
 from langgraph.graph import StateGraph, START, END
+from langgraph.types import interrupt, Command
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+from agents.codebase_agent import analyze_codebase
 
 load_dotenv()
 
-model = ChatGoogleGenerativeAI(
-    model="gemini-3.8-flash",
+model = ChatOllama(
+    model="qwen2.5-coder:latest",
     temperature=0
 )
 
 
+
+# Information shared between agents
 class EngineeringState(TypedDict):
     requirement: str
     analysis: str
-    tasks: list[str]
+    codebase_analysis: str
+    plan: str
+    approval: str
     status: str
 
 
+# Agent 1: Analyze requirements
 def requirements_agent(state: EngineeringState):
-    print("\n[REQUIREMENTS AGENT] Analyzing requirement using Gemini...")
+    print("\n[1] REQUIREMENTS AGENT")
 
-    prompt = f"""
-    You are a senior software requirements engineer.
+    response = model.invoke(
+        f"""
+        You are a senior requirements engineer.
 
-    Analyze the following requirement for an existing
-    Java Spring Boot URL shortener.
+        Analyze this requirement for a Java URL shortener:
 
-    Requirement:
-    {state["requirement"]}
+        {state["requirement"]}
 
-    Provide:
-    1. Functional requirements
-    2. Non-functional requirements
-    3. Ambiguities
-    4. Acceptance criteria
-    5. Risks and assumptions
+        Identify:
+        - Functional requirements
+        - Nonfunctional requirements
+        - Ambiguities
+        - Acceptance criteria
+        - Risks and assumptions
 
-    Be specific and concise.
-    """
-
-    response = model.invoke(prompt)
+        Do not invent missing requirements.
+        """
+    )
 
     return {
         "analysis": response.text,
@@ -50,77 +58,179 @@ def requirements_agent(state: EngineeringState):
     }
 
 
-def planning_agent(state: EngineeringState):
-    print("\n[PLANNING AGENT] Generating engineering plan using Gemini...")
+# Agent 2: Analyze actual Java code
+def codebase_agent(state: EngineeringState):
+    print("\n[2] CODEBASE ANALYSIS AGENT")
 
-    prompt = f"""
-    You are a senior software architect.
-
-    Based on the requirement analysis below, create
-    an actionable implementation plan for a Java
-    Spring Boot URL shortener.
-
-    Analysis:
-    {state["analysis"]}
-
-    Produce exactly six numbered development tasks.
-    Include relevant Java components, testing,
-    and validation activities.
-
-    Return only the numbered tasks.
-    """
-
-    response = model.invoke(prompt)
-
-    tasks = [
-        line.strip()
-        for line in response.text.splitlines()
-        if line.strip()
-    ]
+    result = analyze_codebase(state["requirement"])
 
     return {
-        "tasks": tasks,
+        "codebase_analysis": result,
+        "status": "CODEBASE_ANALYZED"
+    }
+
+
+# Agent 3: Generate an implementation plan
+def planning_agent(state: EngineeringState):
+    print("\n[3] PLANNING AGENT")
+
+    response = model.invoke(
+        f"""
+        You are a senior Java software architect.
+
+        Requirement analysis:
+        {state["analysis"]}
+
+        Existing codebase analysis:
+        {state["codebase_analysis"]}
+
+        Create an implementation plan.
+
+        Include:
+        1. Files to modify
+        2. New files required
+        3. Task dependencies
+        4. Testing approach
+        5. Risks and approval requirements
+
+        Do not invent existing Java components.
+        """
+    )
+
+    return {
+        "plan": response.text,
         "status": "PLAN_CREATED"
     }
 
 
+# Human approval checkpoint
+def human_approval(state: EngineeringState):
+    print("\n[4] HUMAN APPROVAL REQUIRED")
+
+    decision = interrupt({
+        "message": "Review the engineering plan",
+        "requirement": state["requirement"],
+        "plan": state["plan"],
+        "allowed_decisions": ["approve", "reject"]
+    })
+
+    approved = decision == "approve"
+
+    return {
+        "approval": decision,
+        "status": "APPROVED" if approved else "REJECTED"
+    }
+
+
+# Decide which path to follow
+def approval_router(state: EngineeringState):
+    if state["approval"] == "approve":
+        return "approved"
+
+    return "rejected"
+
+
+def approved_node(state: EngineeringState):
+    print("\n[5] PLAN APPROVED")
+
+    return {
+        "status": "READY_FOR_IMPLEMENTATION"
+    }
+
+
+def rejected_node(state: EngineeringState):
+    print("\n[5] PLAN REJECTED — SAFE STOP")
+
+    return {
+        "status": "STOPPED"
+    }
+
+
+# Build LangGraph workflow
 workflow = StateGraph(EngineeringState)
 
 workflow.add_node("requirements", requirements_agent)
+workflow.add_node("codebase", codebase_agent)
 workflow.add_node("planning", planning_agent)
+workflow.add_node("approval", human_approval)
+workflow.add_node("approved", approved_node)
+workflow.add_node("rejected", rejected_node)
 
 workflow.add_edge(START, "requirements")
-workflow.add_edge("requirements", "planning")
-workflow.add_edge("planning", END)
+workflow.add_edge("requirements", "codebase")
+workflow.add_edge("codebase", "planning")
+workflow.add_edge("planning", "approval")
 
-app = workflow.compile()
+workflow.add_conditional_edges(
+    "approval",
+    approval_router,
+    {
+        "approved": "approved",
+        "rejected": "rejected"
+    }
+)
+
+workflow.add_edge("approved", END)
+workflow.add_edge("rejected", END)
+
+
+def main():
+    print("\nSCHWAB AGENTIC SDLC SYSTEM")
+    print("==========================")
+
+    requirement = input("\nEnter requirement: ").strip()
+
+    if not requirement:
+        print("Requirement cannot be empty.")
+        return
+
+    workflow_id = str(uuid.uuid4())
+
+    config = {
+        "configurable": {
+            "thread_id": workflow_id
+        }
+    }
+
+    # Persist checkpoints in SQLite
+    with SqliteSaver.from_conn_string("workflow.db") as checkpointer:
+
+        app = workflow.compile(checkpointer=checkpointer)
+
+        initial_state = {
+            "requirement": requirement,
+            "analysis": "",
+            "codebase_analysis": "",
+            "plan": "",
+            "approval": "",
+            "status": "STARTED"
+        }
+
+        result = app.invoke(initial_state, config=config)
+
+        if "__interrupt__" in result:
+            print("\n========== ENGINEERING PLAN ==========")
+            print(result["plan"])
+
+            print("\nHuman approval required.")
+            print("1. Approve")
+            print("2. Reject")
+
+            choice = input("\nEnter decision (1/2): ").strip()
+
+            decision = "approve" if choice == "1" else "reject"
+
+            result = app.invoke(
+                Command(resume=decision),
+                config=config
+            )
+
+        print("\n========== FINAL RESULT ==========")
+        print("Workflow ID:", workflow_id)
+        print("Requirement:", result["requirement"])
+        print("Approval:", result["approval"])
+        print("Status:", result["status"])
 
 
 if __name__ == "__main__":
-    print("\nSCHWAB AGENTIC SOFTWARE ENGINEERING SYSTEM")
-    print("-----------------------------------------")
-
-    requirement = input("\nEnter engineering requirement: ")
-
-    initial_state = {
-        "requirement": requirement,
-        "analysis": "",
-        "tasks": [],
-        "status": "STARTED"
-    }
-
-    result = app.invoke(initial_state)
-
-    print("\n========== ENGINEERING OUTPUT ==========")
-
-    print("\nRequirement:")
-    print(result["requirement"])
-
-    print("\nRequirements Analysis:")
-    print(result["analysis"])
-
-    print("\nDevelopment Plan:")
-    for task in result["tasks"]:
-        print(task)
-
-    print("\nWorkflow Status:", result["status"])
+    main()

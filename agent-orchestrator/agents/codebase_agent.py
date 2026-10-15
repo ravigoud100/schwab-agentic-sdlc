@@ -1,5 +1,5 @@
 from pathlib import Path
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 JAVA_SOURCE = PROJECT_ROOT / "url-shortener/src/main/java"
@@ -36,8 +36,8 @@ def analyze_codebase(requirement: str) -> str:
 
         """
 
-    model = ChatGoogleGenerativeAI(
-        model="gemini-3.8-flash",
+    model = ChatOllama(
+        model="qwen2.5-coder:latest",
         temperature=0
     )
 
