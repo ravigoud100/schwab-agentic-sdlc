@@ -2,6 +2,7 @@ import uuid
 from pathlib import Path
 from typing import TypedDict
 
+from governance.audit_logger import log_event
 from agents.implementation_agent import implement_expiration
 from agents.validation_agent import validate_implementation
 from governance.rollback_manager import (
@@ -42,6 +43,7 @@ class EngineeringState(TypedDict):
     rollback_checkpoint: dict
     implementation_changed: bool
     expected_current_hash: str
+    workflow_id: str
 
 
 # Agent 1: Analyze requirements
@@ -147,6 +149,12 @@ def approval_router(state: EngineeringState):
 
 def approved_node(state: EngineeringState):
     print("\n[5] PLAN APPROVED")
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="human_approval",
+        event="PLAN_APPROVED",
+        details={"decision": "approve"},
+    )
 
     return {
         "status": "READY_FOR_IMPLEMENTATION"
@@ -169,6 +177,12 @@ def implementation_node(state: EngineeringState):
     )
     changed = current_hash != checkpoint["original_hash"]
     print(f"[IMPLEMENTATION] File changed: {changed}")
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="implementation_agent",
+        event="IMPLEMENTATION_COMPLETED",
+        details={"file_changed": changed},
+    )
 
     return {
         "implementation_file": str(modified_file),
@@ -183,6 +197,16 @@ def validation_node(state: EngineeringState):
     print("\n[VALIDATION AGENT]")
 
     result = validate_implementation()
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="validation_agent",
+        event="VALIDATION_PASSED" if result["passed"] else "VALIDATION_FAILED",
+        details={
+            "exit_code": result["exit_code"],
+            "duration_seconds": result["duration_seconds"],
+            "retry_count": state.get("retry_count", 0),
+        },
+    )
 
     return {
         "validation_result": result,
@@ -198,6 +222,12 @@ MAX_RETRIES = 2
 
 def retry_node(state: EngineeringState):
     retry_count = state.get("retry_count", 0) + 1
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="retry_controller",
+        event="RETRY_STARTED",
+        details={"retry_count": retry_count},
+    )
 
     print(f"\n[RETRY] Validation attempt {retry_count}/{MAX_RETRIES}")
 
@@ -220,6 +250,12 @@ def quality_gate(state: EngineeringState):
 
 def success_node(state: EngineeringState):
     print("\n[QUALITY GATE] Validation passed")
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="quality_gate",
+        event="AWAITING_FINAL_HUMAN_REVIEW",
+        details={},
+    )
 
     return {
         "status": "AWAITING_FINAL_HUMAN_REVIEW"
@@ -231,6 +267,12 @@ def failure_node(state: EngineeringState):
 
     if not state.get("implementation_changed", False):
         print("[ROLLBACK] No new AI changes. Nothing to restore.")
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="rollback_manager",
+            event="VALIDATION_STOPPED",
+            details={"rollback_needed": False},
+        )
         return {
             "status": "STOPPED_VALIDATION_FAILED"
         }
@@ -240,11 +282,23 @@ def failure_node(state: EngineeringState):
     try:
         rollback(checkpoint, expected_hash)
         print("[ROLLBACK] AI-generated changes restored.")
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="rollback_manager",
+            event="ROLLBACK_COMPLETED",
+            details={"rollback_needed": True},
+        )
         return {
             "status": "STOPPED_ROLLED_BACK"
         }
     except Exception as error:
         print(f"[ROLLBACK] Failed safely: {error}")
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="rollback_manager",
+            event="ROLLBACK_BLOCKED",
+            details={"error_type": type(error).__name__},
+        )
         return {
             "status": "STOPPED_ROLLBACK_REQUIRES_REVIEW"
         }
@@ -252,6 +306,12 @@ def failure_node(state: EngineeringState):
 
 def rejected_node(state: EngineeringState):
     print("\n[5] PLAN REJECTED — SAFE STOP")
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="human_approval",
+        event="PLAN_REJECTED",
+        details={"decision": "reject"},
+    )
 
     return {
         "status": "STOPPED"
@@ -327,6 +387,7 @@ def main():
         app = workflow.compile(checkpointer=checkpointer)
 
         initial_state = {
+            "workflow_id": workflow_id,
             "requirement": requirement,
             "analysis": "",
             "codebase_analysis": "",
