@@ -41,6 +41,7 @@ class EngineeringState(TypedDict):
     implementation_file: str
     validation_result: dict
     repair_proposal: str
+    repair_approval: str
     retry_count: int
     rollback_checkpoint: dict
     implementation_changed: bool
@@ -247,6 +248,34 @@ def retry_node(state: EngineeringState):
     }
 
 
+def repair_review_node(state: EngineeringState):
+    from langgraph.types import interrupt
+
+    print("\n[REPAIR REVIEW] Human approval required")
+    print("Proposed repair:\n", state["repair_proposal"])
+    decision = interrupt({
+        "type": "REPAIR_APPROVAL",
+        "proposal": state["repair_proposal"],
+        "retry_count": state["retry_count"],
+        "message": "Approve or reject the proposed repair.",
+    })
+    approved = str(decision).strip().lower() == "approve"
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="human_repair_review",
+        event="REPAIR_APPROVED" if approved else "REPAIR_REJECTED",
+        details={"retry_count": state["retry_count"]},
+    )
+    return {
+        "repair_approval": "approve" if approved else "reject"
+    }
+
+
+def repair_stopped_node(state: EngineeringState):
+    print("\n[REPAIR] Awaiting separate implementation authorization.")
+    return {"status": "STOPPED_REPAIR_NOT_APPLIED"}
+
+
 def quality_gate(state: EngineeringState):
     if state["validation_result"]["passed"]:
         return "passed"
@@ -339,6 +368,9 @@ workflow.add_node("approved", approved_node)
 workflow.add_node("rejected", rejected_node)
 workflow.add_node("implementation", implementation_node)
 workflow.add_node("validation", validation_node)
+workflow.add_node("retry", retry_node)
+workflow.add_node("repair_review", repair_review_node)
+workflow.add_node("repair_stopped", repair_stopped_node)
 workflow.add_node("success", success_node)
 workflow.add_node("failure", failure_node)
 
@@ -365,12 +397,16 @@ workflow.add_conditional_edges(
     quality_gate,
     {
         "passed": "success",
+        "retry": "retry",
         "failed": "failure",
     },
 )
 
 workflow.add_edge("success", END)
 workflow.add_edge("failure", END)
+workflow.add_edge("retry", "repair_review")
+workflow.add_edge("repair_review", "repair_stopped")
+workflow.add_edge("repair_stopped", END)
 
 
 def main():
@@ -407,6 +443,7 @@ def main():
             "implementation_file": "",
             "validation_result": {},
             "repair_proposal": "",
+            "repair_approval": "",
             "retry_count": 0,
             "rollback_checkpoint": {},
             "implementation_changed": False,
@@ -415,21 +452,34 @@ def main():
 
         result = app.invoke(initial_state, config=config)
 
-        if "__interrupt__" in result:
-            print("\n========== ENGINEERING PLAN ==========")
-            print(result["plan"])
+        # Handle both plan approval and repair approval interrupts.
+        while "__interrupt__" in result:
+            interrupts = result["__interrupt__"]
 
-            print("\nHuman approval required.")
-            print("1. Approve")
-            print("2. Reject")
+            if not interrupts:
+                break
+
+            payload = interrupts[0].value
+
+            if isinstance(payload, dict) and payload.get("type") == "REPAIR_APPROVAL":
+                print("\n========== REPAIR APPROVAL ==========")
+                print("Proposal:", payload.get("proposal", ""))
+                print("Retry:", payload.get("retry_count", 0))
+                print("\n1. Approve proposal")
+                print("2. Reject proposal")
+            else:
+                print("\n========== PLAN APPROVAL ==========")
+                print("\n1. Approve")
+                print("2. Reject")
 
             choice = input("\nEnter decision (1/2): ").strip()
 
+            # Reject unexpected input rather than treating it as approval.
             decision = "approve" if choice == "1" else "reject"
 
             result = app.invoke(
                 Command(resume=decision),
-                config=config
+                config=config,
             )
 
         print("\n========== FINAL RESULT ==========")
