@@ -1,3 +1,4 @@
+import json
 import uuid
 from pathlib import Path
 from typing import TypedDict
@@ -54,6 +55,14 @@ class EngineeringState(TypedDict):
     repair_applied: bool
     repair_rolled_back: bool
     repair_rollback_blocked: bool
+    plan_version: int
+    revised_plan: str
+    plan_change_summary: str
+    replan_context: dict
+    replan_history: list
+    replan_approval: str
+    replan_meaningful_change: bool
+    replan_attempted: bool
 
 
 # Agent 1: Analyze requirements
@@ -126,8 +135,164 @@ def planning_agent(state: EngineeringState):
 
     return {
         "plan": response.text,
+        "plan_version": 1,
+        "replan_history": [
+            {"version": 1, "plan": response.text, "source": "initial"}
+        ],
         "status": "PLAN_CREATED"
     }
+
+
+def _response_text(response) -> str:
+    content = getattr(response, "content", None)
+    if content is None:
+        content = getattr(response, "text", response)
+    return content if isinstance(content, str) else str(content)
+
+
+def _parse_replan_response(response) -> tuple[str, str]:
+    content = _response_text(response).strip()
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError as error:
+        raise ValueError("Replanning response must be valid JSON") from error
+
+    if not isinstance(payload, dict):
+        raise ValueError("Replanning response must be a JSON object")
+    if set(payload) != {"revised_plan", "change_summary"}:
+        raise ValueError(
+            "Replanning response requires revised_plan and change_summary"
+        )
+    revised_plan = payload["revised_plan"]
+    change_summary = payload["change_summary"]
+    if not isinstance(revised_plan, str) or not revised_plan.strip():
+        raise ValueError("Revised plan must be non-empty text")
+    if not isinstance(change_summary, str) or not change_summary.strip():
+        raise ValueError("Plan change summary must be non-empty text")
+    return revised_plan.strip(), change_summary.strip()
+
+
+def replanning_node(state: EngineeringState):
+    print("\n[REPLANNING AGENT]")
+    failure = state.get("validation_result", {})
+    retry_history = state.get("replan_history", [])
+    context = {
+        "original_requirement": state["requirement"],
+        "current_plan": state["plan"],
+        "failure_details": {
+            "passed": failure.get("passed", False),
+            "exit_code": failure.get("exit_code"),
+            "duration_seconds": failure.get("duration_seconds"),
+            "output": failure.get("output", ""),
+        },
+        "retry_history": retry_history,
+    }
+    prompt = f"""
+You are revising a Java 21 Spring Boot 4 engineering plan after validation failed.
+Do not execute commands, change files, change Java versions, or weaken validation.
+Return only valid JSON with exactly these string fields:
+{{"revised_plan": "...", "change_summary": "..."}}
+
+Context:
+{json.dumps(context, indent=2)}
+"""
+
+    try:
+        revised_plan, change_summary = _parse_replan_response(model.invoke(prompt))
+    except Exception as error:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="replanning_agent",
+            event="REPLAN_BLOCKED",
+            details={"error_type": type(error).__name__},
+        )
+        return {
+            "replan_attempted": True,
+            "replan_meaningful_change": False,
+            "status": "REPLAN_BLOCKED",
+        }
+
+    meaningful = " ".join(revised_plan.split()) != " ".join(
+        state["plan"].split()
+    )
+    version = state.get("plan_version", 0) + 1
+    history_entry = {
+        "version": version,
+        "plan": revised_plan,
+        "change_summary": change_summary,
+        "source": "replan",
+    }
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="replanning_agent",
+        event="REPLAN_GENERATED" if meaningful else "REPLAN_UNCHANGED",
+        details={
+            "plan_version": version,
+            "meaningful_change": meaningful,
+            "retry_count": state.get("retry_count", 0),
+        },
+    )
+    return {
+        "revised_plan": revised_plan,
+        "plan_change_summary": change_summary,
+        "plan_version": version,
+        "replan_context": context,
+        "replan_history": retry_history + [history_entry],
+        "replan_meaningful_change": meaningful,
+        "replan_attempted": True,
+        "replan_approval": "",
+        "status": "REPLAN_REVIEW_REQUIRED" if meaningful else "REPLAN_UNCHANGED",
+    }
+
+
+def replan_review_node(state: EngineeringState):
+    if not state.get("replan_meaningful_change"):
+        return {"replan_approval": "reject", "status": "REPLAN_UNCHANGED"}
+
+    print("\n[REPLAN REVIEW] Human approval required")
+    decision = interrupt({
+        "type": "REPLAN_APPROVAL",
+        "plan_version": state["plan_version"],
+        "revised_plan": state["revised_plan"],
+        "change_summary": state["plan_change_summary"],
+        "message": "Approve or reject the revised engineering plan.",
+    })
+    approved = str(decision).strip().lower() == "approve"
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="human_replan_review",
+        event="REPLAN_APPROVED" if approved else "REPLAN_REJECTED",
+        details={"plan_version": state["plan_version"]},
+    )
+    updates = {
+        "replan_approval": "approve" if approved else "reject",
+        "status": "REPLAN_APPROVED" if approved else "REPLAN_REJECTED",
+    }
+    if approved:
+        updates["plan"] = state["revised_plan"]
+    return updates
+
+
+def replan_approval_router(state: EngineeringState):
+    if (
+        state.get("replan_approval") == "approve"
+        and state.get("replan_meaningful_change")
+    ):
+        return "approved"
+    return "rejected"
+
+
+def replan_stopped_node(state: EngineeringState):
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="replanning_agent",
+        event="REPLAN_STOPPED",
+        details={
+            "plan_version": state.get("plan_version", 0),
+            "meaningful_change": state.get("replan_meaningful_change", False),
+        },
+    )
+    return {"status": "STOPPED_REPLAN_NOT_APPLIED"}
 
 
 # Human approval checkpoint
@@ -371,8 +536,10 @@ def quality_gate(state: EngineeringState):
     retry_count = state.get("retry_count", 0)
     if state.get("repair_rollback_blocked"):
         return "failed"
+    if state.get("replan_attempted") and not state.get("replan_meaningful_change"):
+        return "failed"
     if retry_count < MAX_RETRIES:
-        return "retry"
+        return "replan"
 
     return "failed"
 
@@ -459,6 +626,9 @@ workflow = StateGraph(EngineeringState)
 workflow.add_node("requirements", requirements_agent)
 workflow.add_node("codebase", codebase_agent)
 workflow.add_node("planning", planning_agent)
+workflow.add_node("replanning", replanning_node)
+workflow.add_node("replan_review", replan_review_node)
+workflow.add_node("replan_stopped", replan_stopped_node)
 workflow.add_node("approval", human_approval)
 workflow.add_node("approved", approved_node)
 workflow.add_node("rejected", rejected_node)
@@ -494,13 +664,19 @@ workflow.add_conditional_edges(
     quality_gate,
     {
         "passed": "success",
-        "retry": "retry",
+        "replan": "replanning",
         "failed": "failure",
     },
 )
 
 workflow.add_edge("success", END)
 workflow.add_edge("failure", END)
+workflow.add_edge("replanning", "replan_review")
+workflow.add_conditional_edges(
+    "replan_review",
+    replan_approval_router,
+    {"approved": "retry", "rejected": "replan_stopped"},
+)
 workflow.add_edge("retry", "repair_review")
 workflow.add_conditional_edges(
     "repair_review",
@@ -560,6 +736,14 @@ def main():
             "repair_applied": False,
             "repair_rolled_back": False,
             "repair_rollback_blocked": False,
+            "plan_version": 0,
+            "revised_plan": "",
+            "plan_change_summary": "",
+            "replan_context": {},
+            "replan_history": [],
+            "replan_approval": "",
+            "replan_meaningful_change": True,
+            "replan_attempted": False,
         }
 
         result = app.invoke(initial_state, config=config)
@@ -573,7 +757,14 @@ def main():
 
             payload = interrupts[0].value
 
-            if isinstance(payload, dict) and payload.get("type") == "REPAIR_APPROVAL":
+            if isinstance(payload, dict) and payload.get("type") == "REPLAN_APPROVAL":
+                print("\n========== REPLAN APPROVAL ==========")
+                print("Plan version:", payload.get("plan_version", 0))
+                print("Changes:", payload.get("change_summary", ""))
+                print("Revised plan:", payload.get("revised_plan", ""))
+                print("\n1. Approve revised plan")
+                print("2. Reject revised plan")
+            elif isinstance(payload, dict) and payload.get("type") == "REPAIR_APPROVAL":
                 print("\n========== REPAIR APPROVAL ==========")
                 print("Proposal:", payload.get("proposal", ""))
                 print("Retry:", payload.get("retry_count", 0))
