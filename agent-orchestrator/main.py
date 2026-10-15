@@ -173,9 +173,28 @@ def validation_node(state: EngineeringState):
     }
 
 
+MAX_RETRIES = 2
+
+
+
+def retry_node(state: EngineeringState):
+    retry_count = state.get("retry_count", 0) + 1
+
+    print(f"\n[RETRY] Validation attempt {retry_count}/{MAX_RETRIES}")
+
+    return {
+        "retry_count": retry_count,
+        "status": "RETRY_REQUESTED"
+    }
+
+
 def quality_gate(state: EngineeringState):
     if state["validation_result"]["passed"]:
         return "passed"
+
+    retry_count = state.get("retry_count", 0)
+    if retry_count < MAX_RETRIES:
+        return "retry"
 
     return "failed"
 
