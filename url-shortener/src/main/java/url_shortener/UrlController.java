@@ -25,7 +25,8 @@ public class UrlController {
             @NotBlank
             @Size(max = 2048)
             @URL(protocol = "https")
-            String originalUrl
+            String originalUrl,
+            java.time.Instant expiresAt
     ) {}
 
     @PostMapping
@@ -34,7 +35,8 @@ public class UrlController {
             @Valid @RequestBody CreateUrlRequest request) {
 
         ShortUrl shortUrl = urlService.createShortUrl(
-                request.originalUrl()
+                request.originalUrl(),
+                request.expiresAt()
         );
 
         return Map.of(

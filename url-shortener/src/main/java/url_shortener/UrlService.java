@@ -2,6 +2,7 @@ package url_shortener;
 
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
+import java.time.Instant;
 
 @Service
 public class UrlService {
@@ -17,7 +18,10 @@ public class UrlService {
         this.repository = repository;
     }
 
-    public ShortUrl createShortUrl(String originalUrl) {
+    public ShortUrl createShortUrl(
+            String originalUrl,
+            java.time.Instant expiresAt
+    ) {
 
         String shortCode;
         int attempts = 0;
@@ -34,6 +38,16 @@ public class UrlService {
         } while (repository.existsByShortCode(shortCode));
 
         ShortUrl shortUrl = new ShortUrl(originalUrl, shortCode);
+
+        if (expiresAt != null &&
+                !expiresAt.isAfter(java.time.Instant.now())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Expiration must be in the future"
+            );
+        }
+
+        shortUrl.setExpiresAt(expiresAt);
 
         return repository.save(shortUrl);
     }
@@ -60,6 +74,13 @@ public ShortUrl getOriginalUrl(String shortCode) {
                             "Short URL not found"
                     )
             );
+
+    if (shortUrl.isExpired(Instant.now())) {
+        throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.GONE,
+                "Short URL has expired"
+        );
+    }
 
     shortUrl.incrementClickCount();
 
