@@ -20,9 +20,10 @@ def create_checkpoint(relative_path: str) -> dict:
     if relative_path not in ALLOWED_FILES:
         raise PermissionError("File is not authorized for rollback")
 
-    target = (WORKSPACE / relative_path).resolve()
+    workspace_root = WORKSPACE.resolve()
+    target = (workspace_root / relative_path).resolve()
 
-    if not target.is_relative_to(WORKSPACE):
+    if not target.is_relative_to(workspace_root):
         raise PermissionError("Path escapes isolated workspace")
 
     if not target.is_file():
@@ -43,9 +44,10 @@ def rollback(checkpoint: dict, expected_current_hash: str) -> bool:
     if relative_path not in ALLOWED_FILES:
         raise PermissionError("Unauthorized rollback target")
 
-    target = (WORKSPACE / relative_path).resolve()
+    workspace_root = WORKSPACE.resolve()
+    target = (workspace_root / relative_path).resolve()
 
-    if not target.is_relative_to(WORKSPACE):
+    if not target.is_relative_to(workspace_root):
         raise PermissionError("Path escapes isolated workspace")
 
     if file_hash(checkpoint["original_content"]) != checkpoint["original_hash"]:

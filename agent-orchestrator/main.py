@@ -4,13 +4,14 @@ from typing import TypedDict
 
 from governance.audit_logger import log_event
 from agents.implementation_agent import implement_expiration
-from agents.repair_agent import propose_repair
+from agents.repair_agent import parse_repair_proposal, propose_repair
 from agents.validation_agent import validate_implementation
 from governance.rollback_manager import (
     create_checkpoint,
     rollback,
     file_hash,
 )
+from governance.repair_executor import apply_approved_repair
 
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
@@ -47,6 +48,12 @@ class EngineeringState(TypedDict):
     implementation_changed: bool
     expected_current_hash: str
     workflow_id: str
+    repair_change: dict
+    repair_checkpoint: dict
+    repair_expected_current_hash: str
+    repair_applied: bool
+    repair_rolled_back: bool
+    repair_rollback_blocked: bool
 
 
 # Agent 1: Analyze requirements
@@ -208,15 +215,50 @@ def validation_node(state: EngineeringState):
             "exit_code": result["exit_code"],
             "duration_seconds": result["duration_seconds"],
             "retry_count": state.get("retry_count", 0),
+            "repair_applied": state.get("repair_applied", False),
         },
     )
 
-    return {
+    updates = {
         "validation_result": result,
         "status": "VALIDATION_PASSED"
         if result["passed"]
         else "VALIDATION_FAILED"
     }
+
+    if (
+        not result["passed"]
+        and state.get("repair_applied")
+        and not state.get("repair_rolled_back")
+    ):
+        try:
+            rollback(
+                state["repair_checkpoint"],
+                state["repair_expected_current_hash"],
+            )
+            log_event(
+                workflow_id=state["workflow_id"],
+                agent="rollback_manager",
+                event="REPAIR_ROLLBACK_COMPLETED",
+                details={"path": state["repair_checkpoint"]["path"]},
+            )
+            updates.update(
+                {
+                    "repair_applied": False,
+                    "repair_rolled_back": True,
+                    "repair_rollback_blocked": False,
+                }
+            )
+        except Exception as error:
+            log_event(
+                workflow_id=state["workflow_id"],
+                agent="rollback_manager",
+                event="REPAIR_ROLLBACK_BLOCKED",
+                details={"error_type": type(error).__name__},
+            )
+            updates["repair_rollback_blocked"] = True
+
+    return updates
 
 
 MAX_RETRIES = 2
@@ -231,6 +273,7 @@ def retry_node(state: EngineeringState):
         proposal = propose_repair(error_log)
     else:
         proposal = "Insufficient validation evidence. No repair proposed."
+    repair_change = parse_repair_proposal(proposal)
     log_event(
         workflow_id=state["workflow_id"],
         agent="repair_agent",
@@ -238,12 +281,14 @@ def retry_node(state: EngineeringState):
         details={
             "retry_count": retry_count,
             "proposal_available": bool(proposal.strip()),
+            "repair_change_available": repair_change is not None,
         },
     )
 
     return {
         "retry_count": retry_count,
         "repair_proposal": proposal,
+        "repair_change": repair_change or {},
         "status": "REPAIR_REVIEW_REQUIRED",
     }
 
@@ -271,6 +316,49 @@ def repair_review_node(state: EngineeringState):
     }
 
 
+def repair_approval_router(state: EngineeringState):
+    if state.get("repair_approval") == "approve" and state.get("repair_change"):
+        return "approved"
+    return "rejected"
+
+
+def repair_executor_node(state: EngineeringState):
+    print("\n[REPAIR EXECUTOR]")
+    if state.get("repair_approval") != "approve":
+        return {"status": "STOPPED_REPAIR_NOT_APPLIED"}
+
+    change = state.get("repair_change") or {}
+    try:
+        result = apply_approved_repair(change)
+    except Exception as error:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="repair_executor",
+            event="REPAIR_EXECUTION_BLOCKED",
+            details={"error_type": type(error).__name__},
+        )
+        return {"status": "STOPPED_REPAIR_NOT_APPLIED"}
+
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="repair_executor",
+        event="REPAIR_EXECUTED",
+        details={"path": result["path"], "file_changed": result["changed"]},
+    )
+    return {
+        "repair_checkpoint": result["checkpoint"],
+        "repair_expected_current_hash": result["expected_current_hash"],
+        "repair_applied": True,
+        "repair_rolled_back": False,
+        "repair_rollback_blocked": False,
+        "status": "REPAIR_APPLIED",
+    }
+
+
+def repair_execution_router(state: EngineeringState):
+    return "validation" if state.get("repair_applied") else "stopped"
+
+
 def repair_stopped_node(state: EngineeringState):
     print("\n[REPAIR] Awaiting separate implementation authorization.")
     return {"status": "STOPPED_REPAIR_NOT_APPLIED"}
@@ -281,6 +369,8 @@ def quality_gate(state: EngineeringState):
         return "passed"
 
     retry_count = state.get("retry_count", 0)
+    if state.get("repair_rollback_blocked"):
+        return "failed"
     if retry_count < MAX_RETRIES:
         return "retry"
 
@@ -303,6 +393,12 @@ def success_node(state: EngineeringState):
 
 def failure_node(state: EngineeringState):
     print("\n[QUALITY GATE] Validation failed")
+
+    if state.get("repair_rollback_blocked"):
+        print("[ROLLBACK] Repair rollback requires review.")
+        return {
+            "status": "STOPPED_ROLLBACK_REQUIRES_REVIEW"
+        }
 
     if not state.get("implementation_changed", False):
         print("[ROLLBACK] No new AI changes. Nothing to restore.")
@@ -370,6 +466,7 @@ workflow.add_node("implementation", implementation_node)
 workflow.add_node("validation", validation_node)
 workflow.add_node("retry", retry_node)
 workflow.add_node("repair_review", repair_review_node)
+workflow.add_node("repair_executor", repair_executor_node)
 workflow.add_node("repair_stopped", repair_stopped_node)
 workflow.add_node("success", success_node)
 workflow.add_node("failure", failure_node)
@@ -405,7 +502,16 @@ workflow.add_conditional_edges(
 workflow.add_edge("success", END)
 workflow.add_edge("failure", END)
 workflow.add_edge("retry", "repair_review")
-workflow.add_edge("repair_review", "repair_stopped")
+workflow.add_conditional_edges(
+    "repair_review",
+    repair_approval_router,
+    {"approved": "repair_executor", "rejected": "repair_stopped"},
+)
+workflow.add_conditional_edges(
+    "repair_executor",
+    repair_execution_router,
+    {"validation": "validation", "stopped": "repair_stopped"},
+)
 workflow.add_edge("repair_stopped", END)
 
 
@@ -448,6 +554,12 @@ def main():
             "rollback_checkpoint": {},
             "implementation_changed": False,
             "expected_current_hash": "",
+            "repair_change": {},
+            "repair_checkpoint": {},
+            "repair_expected_current_hash": "",
+            "repair_applied": False,
+            "repair_rolled_back": False,
+            "repair_rollback_blocked": False,
         }
 
         result = app.invoke(initial_state, config=config)
