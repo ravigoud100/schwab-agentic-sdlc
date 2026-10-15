@@ -42,6 +42,18 @@ def implement_expiration(approved: bool):
     if not target_file.is_relative_to(workspace_root):
         raise PermissionError("Unauthorized file path")
 
+    # Avoid overwriting an existing expiration implementation.
+    existing_code = target_file.read_text(encoding="utf-8")
+    required_elements = (
+        "expiresAt",
+        "getExpiresAt",
+        "isExpired",
+    )
+    if all(element in existing_code for element in required_elements):
+        print("[IMPLEMENTATION AGENT] Existing expiration code detected.")
+        print("[IMPLEMENTATION AGENT] Skipping code generation.")
+        return target_file
+
     original_code = target_file.read_text(encoding="utf-8")
 
     prompt = f"""

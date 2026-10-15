@@ -1,6 +1,9 @@
 import uuid
 from typing import TypedDict
 
+from agents.implementation_agent import implement_expiration
+from agents.validation_agent import validate_implementation
+
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
 
@@ -27,6 +30,9 @@ class EngineeringState(TypedDict):
     plan: str
     approval: str
     status: str
+    implementation_file: str
+    validation_result: dict
+    retry_count: int
 
 
 # Agent 1: Analyze requirements
@@ -138,6 +144,58 @@ def approved_node(state: EngineeringState):
     }
 
 
+def implementation_node(state: EngineeringState):
+    print("\n[IMPLEMENTATION AGENT]")
+
+    if state["approval"] != "approve":
+        return {"status": "STOPPED"}
+
+    modified_file = implement_expiration(
+        approved=True
+    )
+
+    return {
+        "implementation_file": str(modified_file),
+        "status": "IMPLEMENTATION_COMPLETED"
+    }
+
+
+def validation_node(state: EngineeringState):
+    print("\n[VALIDATION AGENT]")
+
+    result = validate_implementation()
+
+    return {
+        "validation_result": result,
+        "status": "VALIDATION_PASSED"
+        if result["passed"]
+        else "VALIDATION_FAILED"
+    }
+
+
+def quality_gate(state: EngineeringState):
+    if state["validation_result"]["passed"]:
+        return "passed"
+
+    return "failed"
+
+
+def success_node(state: EngineeringState):
+    print("\n[QUALITY GATE] Validation passed")
+
+    return {
+        "status": "AWAITING_FINAL_HUMAN_REVIEW"
+    }
+
+
+def failure_node(state: EngineeringState):
+    print("\n[QUALITY GATE] Validation failed")
+
+    return {
+        "status": "STOPPED_VALIDATION_FAILED"
+    }
+
+
 def rejected_node(state: EngineeringState):
     print("\n[5] PLAN REJECTED — SAFE STOP")
 
@@ -155,6 +213,10 @@ workflow.add_node("planning", planning_agent)
 workflow.add_node("approval", human_approval)
 workflow.add_node("approved", approved_node)
 workflow.add_node("rejected", rejected_node)
+workflow.add_node("implementation", implementation_node)
+workflow.add_node("validation", validation_node)
+workflow.add_node("success", success_node)
+workflow.add_node("failure", failure_node)
 
 workflow.add_edge(START, "requirements")
 workflow.add_edge("requirements", "codebase")
@@ -170,8 +232,21 @@ workflow.add_conditional_edges(
     }
 )
 
-workflow.add_edge("approved", END)
+workflow.add_edge("approved", "implementation")
 workflow.add_edge("rejected", END)
+workflow.add_edge("implementation", "validation")
+
+workflow.add_conditional_edges(
+    "validation",
+    quality_gate,
+    {
+        "passed": "success",
+        "failed": "failure",
+    },
+)
+
+workflow.add_edge("success", END)
+workflow.add_edge("failure", END)
 
 
 def main():
@@ -203,7 +278,10 @@ def main():
             "codebase_analysis": "",
             "plan": "",
             "approval": "",
-            "status": "STARTED"
+            "status": "STARTED",
+            "implementation_file": "",
+            "validation_result": {},
+            "retry_count": 0
         }
 
         result = app.invoke(initial_state, config=config)
