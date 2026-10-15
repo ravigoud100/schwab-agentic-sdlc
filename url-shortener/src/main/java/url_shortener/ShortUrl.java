@@ -1,6 +1,7 @@
 package url_shortener;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,6 +21,9 @@ public class ShortUrl {
     private Long clickCount = 0L;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column
+    private Instant expiresAt;
 
     public ShortUrl() {
     }
@@ -49,7 +53,19 @@ public class ShortUrl {
         return createdAt;
     }
 
+    public Instant getExpiresAt() {
+        return expiresAt;
+    }
+
+    public boolean isExpired(Instant now) {
+        return expiresAt != null && now.isAfter(expiresAt);
+    }
+
     public void incrementClickCount() {
         this.clickCount++;
+    }
+
+    public void setExpiresAt(Instant expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
