@@ -4,6 +4,7 @@ from typing import TypedDict
 
 from governance.audit_logger import log_event
 from agents.implementation_agent import implement_expiration
+from agents.repair_agent import propose_repair
 from agents.validation_agent import validate_implementation
 from governance.rollback_manager import (
     create_checkpoint,
@@ -39,6 +40,7 @@ class EngineeringState(TypedDict):
     status: str
     implementation_file: str
     validation_result: dict
+    repair_proposal: str
     retry_count: int
     rollback_checkpoint: dict
     implementation_changed: bool
@@ -222,18 +224,26 @@ MAX_RETRIES = 2
 
 def retry_node(state: EngineeringState):
     retry_count = state.get("retry_count", 0) + 1
+    print(f"\n[RETRY] Attempt {retry_count}/{MAX_RETRIES}")
+    error_log = state["validation_result"].get("output", "")
+    if error_log.strip():
+        proposal = propose_repair(error_log)
+    else:
+        proposal = "Insufficient validation evidence. No repair proposed."
     log_event(
         workflow_id=state["workflow_id"],
-        agent="retry_controller",
-        event="RETRY_STARTED",
-        details={"retry_count": retry_count},
+        agent="repair_agent",
+        event="REPAIR_PROPOSED",
+        details={
+            "retry_count": retry_count,
+            "proposal_available": bool(proposal.strip()),
+        },
     )
-
-    print(f"\n[RETRY] Validation attempt {retry_count}/{MAX_RETRIES}")
 
     return {
         "retry_count": retry_count,
-        "status": "RETRY_REQUESTED"
+        "repair_proposal": proposal,
+        "status": "REPAIR_REVIEW_REQUIRED",
     }
 
 
@@ -396,6 +406,7 @@ def main():
             "status": "STARTED",
             "implementation_file": "",
             "validation_result": {},
+            "repair_proposal": "",
             "retry_count": 0,
             "rollback_checkpoint": {},
             "implementation_changed": False,
