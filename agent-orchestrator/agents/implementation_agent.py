@@ -1,15 +1,12 @@
 from pathlib import Path
-from langchain_ollama import ChatOllama
+from llm.provider import get_model
 
 ALLOWED_FILE = (
     "url-shortener/src/main/java/"
     "url_shortener/ShortUrl.java"
 )
 
-model = ChatOllama(
-    model="qwen2.5-coder:latest",
-    temperature=0
-)
+model = get_model()
 
 
 def implement_expiration(approved: bool, workspace: Path):
@@ -71,9 +68,9 @@ def implement_expiration(approved: bool, workspace: Path):
 
     print("[IMPLEMENTATION AGENT] Generating Java code...")
 
-    response = model.invoke(prompt)
+    response = model.invoke(prompt, stage="implementation")
 
-    generated_code = response.content.strip()
+    generated_code = response.text.strip()
 
     # Handle Markdown fences if the model includes them
     if generated_code.startswith("```"):

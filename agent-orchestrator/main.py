@@ -24,7 +24,7 @@ from governance.task_orchestrator import (
 )
 
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from llm.provider import get_model
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import interrupt, Command
@@ -38,10 +38,7 @@ IMPLEMENTATION_RELATIVE_PATH = (
     "url-shortener/src/main/java/url_shortener/ShortUrl.java"
 )
 
-model = ChatOllama(
-    model="qwen2.5-coder:latest",
-    temperature=0
-)
+model = get_model()
 
 
 
@@ -51,6 +48,7 @@ class EngineeringState(TypedDict):
     analysis: str
     codebase_analysis: str
     plan: str
+    approved_task_hash: str
     approval: str
     status: str
     implementation_file: str
@@ -59,6 +57,9 @@ class EngineeringState(TypedDict):
     repair_approval: str
     retry_count: int
     rollback_checkpoint: dict
+    source_files_changed: int
+    verification_source_hashes: dict
+    validation_only: bool
     implementation_changed: bool
     expected_current_hash: str
     workflow_id: str
@@ -104,7 +105,8 @@ def requirements_agent(state: EngineeringState):
         - Risks and assumptions
 
         Do not invent missing requirements.
-        """
+        """,
+        stage="requirements",
     )
 
     return {
@@ -149,7 +151,8 @@ def planning_agent(state: EngineeringState):
         5. Risks and approval requirements
 
         Do not invent existing Java components.
-        """
+        """,
+        stage="planning",
     )
 
     plan = response.text
@@ -223,7 +226,7 @@ Context:
 """
 
     try:
-        revised_plan, change_summary = _parse_replan_response(model.invoke(prompt))
+        revised_plan, change_summary = _parse_replan_response(model.invoke(prompt, stage="planning"))
     except Exception as error:
         log_event(
             workflow_id=state["workflow_id"],
@@ -314,6 +317,9 @@ def replan_review_node(state: EngineeringState):
                 "replan_approval": "reject",
                 "status": "STOPPED_INVALID_TASK_PLAN",
             }
+        updates["approved_task_hash"] = _task_definition_hash(
+            tasks_from_plan(state["revised_plan"], IMPLEMENTATION_RELATIVE_PATH)
+        )
         updates["plan"] = state["revised_plan"]
         updates["tasks"] = scheduled
         updates["active_task_ids"] = ready[:1]
@@ -346,6 +352,25 @@ def replan_stopped_node(state: EngineeringState):
     return {"status": "STOPPED_REPLAN_NOT_APPLIED"}
 
 
+def _task_definition_hash(tasks: list[dict]) -> str:
+    validate_task_plan(tasks)
+    definitions = [
+        {**{key: value for key, value in task.items() if key != "status"},
+         "execution_type": task.get("execution_type", "implementation")}
+        for task in tasks
+    ]
+    return file_hash(json.dumps(definitions, sort_keys=True).encode())
+
+
+def _require_approved_validation_plan(state: EngineeringState):
+    if (
+        state.get("approval") != "approve"
+        or not state.get("approved_task_hash")
+        or state["approved_task_hash"] != _task_definition_hash(state["tasks"])
+    ):
+        raise PermissionError("Validation-only execution requires the approved task plan")
+
+
 # Human approval checkpoint
 def human_approval(state: EngineeringState):
     print("\n[4] HUMAN APPROVAL REQUIRED")
@@ -360,6 +385,9 @@ def human_approval(state: EngineeringState):
     approved = decision == "approve"
 
     return {
+        "approved_task_hash": _task_definition_hash(
+            tasks_from_plan(state["plan"], IMPLEMENTATION_RELATIVE_PATH)
+        ) if approved else "",
         "approval": decision,
         "status": "APPROVED" if approved else "REJECTED"
     }
@@ -439,7 +467,66 @@ def task_scheduler_node(state: EngineeringState):
 
 
 def task_scheduler_router(state: EngineeringState):
-    return "implementation" if state.get("task_plan_valid") else "failure"
+    if not state.get("task_plan_valid"):
+        return "failure"
+    validate_task_plan(state["tasks"])
+    active = [task for task in state["tasks"]
+              if task["task_id"] in state.get("active_task_ids", [])]
+    if any(task.get("execution_type", "implementation") == "validate_only" for task in active):
+        _require_approved_validation_plan(state)
+        if len(active) != 1:
+            raise TaskPlanError("Validation-only tasks must execute separately")
+        return "verification"
+    return "implementation"
+
+
+def _java_source_hashes(workspace: Path) -> dict[str, str]:
+    root = workspace.resolve(strict=True)
+    source = (root / "url-shortener/src").resolve(strict=True)
+    if not source.is_relative_to(root):
+        raise PermissionError("Java source escapes isolated workspace")
+    hashes = {}
+    for path in sorted(source.rglob("*.java")):
+        if not path.resolve(strict=True).is_relative_to(root):
+            raise PermissionError("Java source file escapes isolated workspace")
+        hashes[path.relative_to(root).as_posix()] = file_hash(path.read_bytes())
+    return hashes
+
+
+def verification_node(state: EngineeringState):
+    """Start the supported read-only task; validation determines its outcome."""
+    if state.get("approval") != "approve" or not state.get("task_plan_valid"):
+        raise PermissionError("Verification requires an approved, scheduled task")
+    _require_approved_validation_plan(state)
+    selected = [
+        task for task in state["tasks"]
+        if task["task_id"] in state.get("active_task_ids", [])
+    ]
+    if (
+        state.get("active_task_ids") != ["verify-expiration"]
+        or len(selected) != 1
+        or selected[0].get("execution_type") != "validate_only"
+        or selected[0]["allowed_files"] != [IMPLEMENTATION_RELATIVE_PATH]
+    ):
+        raise TaskPlanError("Unsupported verification task")
+    hashes = _java_source_hashes(Path(state["workspace"]))
+    if IMPLEMENTATION_RELATIVE_PATH not in hashes:
+        raise FileNotFoundError("Verification target ShortUrl.java is missing")
+    running_tasks = start_tasks(state["tasks"], state["active_task_ids"])
+    print("[VERIFICATION] Existing Java source found; source files changed: 0")
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="task_scheduler",
+        event="VERIFICATION_STARTED",
+        details={"task_ids": state["active_task_ids"], "source_changes": False, "source_files_changed": 0},
+    )
+    return {
+        "tasks": running_tasks,
+        "validation_only": True,
+        "verification_source_hashes": hashes,
+        "source_files_changed": 0,
+        "status": "READY_FOR_VALIDATION",
+    }
 
 
 def implementation_node(state: EngineeringState):
@@ -451,6 +538,12 @@ def implementation_node(state: EngineeringState):
         or not state.get("active_task_ids")
     ):
         return {"status": "STOPPED"}
+
+    if any(
+        task.get("execution_type", "implementation") == "validate_only"
+        for task in state["tasks"] if task["task_id"] in state["active_task_ids"]
+    ):
+        raise PermissionError("Validation-only tasks cannot invoke implementation")
 
     try:
         running_tasks = start_tasks(state["tasks"], state["active_task_ids"])
@@ -500,6 +593,16 @@ def validation_node(state: EngineeringState):
     print("\n[VALIDATION AGENT]")
 
     result = validate_implementation(Path(state["workspace"]))
+    source_updates = {}
+    if state.get("validation_only"):
+        before = state["verification_source_hashes"]
+        after = _java_source_hashes(Path(state["workspace"]))
+        changed = sum(before.get(path) != after.get(path) for path in before.keys() | after.keys())
+        source_updates["source_files_changed"] = changed
+        print(f"[VALIDATION] Source files changed: {changed}")
+        if changed:
+            result = {**result, "passed": False,
+                      "output": result.get("output", "") + "\nJava source changed during validation."}
     log_event(
         workflow_id=state["workflow_id"],
         agent="validation_agent",
@@ -513,6 +616,7 @@ def validation_node(state: EngineeringState):
     )
 
     updates: dict[str, object] = {
+        **source_updates,
         "validation_result": result,
         "status": "VALIDATION_PASSED"
         if result["passed"]
@@ -697,6 +801,9 @@ def quality_gate(state: EngineeringState):
             return "tasks"
         return "passed"
 
+    if state.get("validation_only"):
+        return "failed"
+
     retry_count = state.get("retry_count", 0)
     if state.get("repair_rollback_blocked"):
         return "failed"
@@ -714,7 +821,8 @@ def success_node(state: EngineeringState):
         workflow_id=state["workflow_id"],
         agent="quality_gate",
         event="AWAITING_FINAL_HUMAN_REVIEW",
-        details={},
+        details={"source_files_changed": state["source_files_changed"]}
+        if state.get("validation_only") else {},
     )
 
     return {
@@ -798,6 +906,7 @@ workflow.add_node("approval", human_approval)
 workflow.add_node("approved", approved_node)
 workflow.add_node("rejected", rejected_node)
 workflow.add_node("implementation", implementation_node)
+workflow.add_node("verification", verification_node)
 workflow.add_node("validation", validation_node)
 workflow.add_node("retry", retry_node)
 workflow.add_node("repair_review", repair_review_node)
@@ -824,10 +933,11 @@ workflow.add_edge("approved", "task_scheduler")
 workflow.add_conditional_edges(
     "task_scheduler",
     task_scheduler_router,
-    {"implementation": "implementation", "failure": "failure"},
+    {"implementation": "implementation", "verification": "verification", "failure": "failure"},
 )
 workflow.add_edge("rejected", END)
 workflow.add_edge("implementation", "validation")
+workflow.add_edge("verification", "validation")
 
 workflow.add_conditional_edges(
     "validation",
@@ -875,6 +985,10 @@ def main():
     workflow_id = str(uuid.uuid4())
 
     workspace = initialize_workspace(workflow_id)
+    log_event(
+        workflow_id=workflow_id, agent="cli", event="WORKFLOW_STARTED",
+        details={"workspace": str(workspace)},
+    )
 
     config = {
         "configurable": {
@@ -895,6 +1009,9 @@ def main():
             "codebase_analysis": "",
             "plan": "",
             "approval": "",
+            "approved_task_hash": "",
+            "source_files_changed": 0,
+            "verification_source_hashes": {},
             "status": "STARTED",
             "implementation_file": "",
             "validation_result": {},
@@ -902,6 +1019,7 @@ def main():
             "repair_approval": "",
             "retry_count": 0,
             "rollback_checkpoint": {},
+            "validation_only": False,
             "implementation_changed": False,
             "expected_current_hash": "",
             "repair_change": {},
@@ -951,6 +1069,8 @@ def main():
                 print("2. Reject proposal")
             else:
                 print("\n========== PLAN APPROVAL ==========")
+                print("Requirement:", payload.get("requirement", ""))
+                print("Plan:\n", payload.get("plan", ""))
                 print("\n1. Approve")
                 print("2. Reject")
 
@@ -964,11 +1084,24 @@ def main():
                 config=config,
             )
 
+        log_event(
+            workflow_id=workflow_id, agent="cli", event="WORKFLOW_FINISHED",
+            details={"status": result["status"],
+                     "validation_passed": result.get("validation_result", {}).get("passed"),
+                     "source_files_changed": result.get("source_files_changed")
+                     if result.get("validation_only") else None},
+        )
         print("\n========== FINAL RESULT ==========")
         print("Workflow ID:", workflow_id)
         print("Requirement:", result["requirement"])
         print("Approval:", result["approval"])
         print("Status:", result["status"])
+        if result.get("validation_only"):
+            print("Source files changed:", result["source_files_changed"])
+        if result.get("validation_result"):
+            print("Maven exit code:", result["validation_result"]["exit_code"])
+            print("Validation passed:", result["validation_result"]["passed"])
+        return result
 
 
 if __name__ == "__main__":

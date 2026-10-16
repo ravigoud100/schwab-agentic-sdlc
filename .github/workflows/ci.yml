@@ -1,0 +1,68 @@
+name: Agentic SDLC CI
+
+on:
+  push:
+    branches: [main, feature/assessment-improvements]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-tests:
+    name: Python 3.12 Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: agent-orchestrator/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r agent-orchestrator/requirements.txt
+
+      - name: Run offline Python tests
+        working-directory: agent-orchestrator
+        env:
+          LLM_PROVIDER: mock
+          MOCK_SCENARIO: url-expiration
+        run: |
+          python -m pytest \
+            test_llm_provider.py \
+            test_rollback.py \
+            test_workspace_isolation.py \
+            test_task_orchestration.py \
+            test_replanning.py \
+            test_repair_approval.py \
+            test_repair_execution.py \
+            test_workflow_scenarios.py \
+            -q
+
+  java-tests:
+    name: Java 21 Maven Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: url-shortener/pom.xml
+
+      - name: Make Maven wrapper executable
+        run: chmod +x url-shortener/mvnw
+
+      - name: Run Maven tests
+        working-directory: url-shortener
+        run: ./mvnw --batch-mode clean test

@@ -1,6 +1,9 @@
 from copy import deepcopy
 
 
+EXECUTION_TYPES = {"implementation", "validate_only"}
+
+
 TASK_STATES = {
     "PENDING",
     "READY",
@@ -21,7 +24,7 @@ REQUIRED_TASK_FIELDS = {
 
 
 def _validate_task_shape(task: dict, task_ids: set[str]) -> None:
-    if not isinstance(task, dict) or set(task) != REQUIRED_TASK_FIELDS:
+    if not isinstance(task, dict) or not REQUIRED_TASK_FIELDS.issubset(task) or set(task) - (REQUIRED_TASK_FIELDS | {"execution_type"}):
         raise TaskPlanError("Each task must have exactly the required fields")
     task_id = task["task_id"]
     if not isinstance(task_id, str) or not task_id.strip():
@@ -78,6 +81,9 @@ def validate_task_plan(tasks: list[dict]) -> None:
     task_ids = set()
     for task in tasks:
         _validate_task_shape(task, task_ids)
+        execution_type = task.get("execution_type", "implementation")
+        if not isinstance(execution_type, str) or execution_type not in EXECUTION_TYPES:
+            raise TaskPlanError(f"Unsupported execution type: {execution_type}")
     _assert_dependencies_exist(tasks, task_ids)
     _assert_acyclic(tasks)
 
@@ -183,6 +189,7 @@ def tasks_from_plan(plan: str, allowed_file: str) -> list[dict]:
             for task in candidate:
                 tasks.append(
                     {
+                        "execution_type": task.get("execution_type", "implementation"),
                         "task_id": task["task_id"],
                         "description": task["description"],
                         "dependencies": task["dependencies"],
@@ -192,11 +199,12 @@ def tasks_from_plan(plan: str, allowed_file: str) -> list[dict]:
                 )
             validate_task_plan(tasks)
             return tasks
-    except (KeyError, TypeError, json.JSONDecodeError, TaskPlanError):
+    except (KeyError, TypeError, json.JSONDecodeError):
         pass
 
     return [
         {
+            "execution_type": "implementation",
             "task_id": "implementation",
             "description": plan.strip() or "Execute the approved implementation plan",
             "dependencies": [],

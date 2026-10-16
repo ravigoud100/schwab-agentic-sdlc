@@ -1,14 +1,10 @@
 import json
 from pathlib import Path
 
-from langchain_ollama import ChatOllama
+from llm.provider import get_model
 
 
-model = ChatOllama(
-    model="qwen2.5-coder:latest",
-    temperature=0,
-    keep_alive=0,
-)
+model = get_model()
 
 
 ALLOWED_REPAIR_PATH = "url-shortener/src/main/java/url_shortener/ShortUrl.java"
@@ -83,6 +79,5 @@ ACTUAL JAVA SOURCE:
 
 Propose a minimal repair. Do not modify files or execute commands."""
 
-    response = model.invoke(prompt)
-    content = getattr(response, "content", response)
-    return content if isinstance(content, str) else str(content)
+    response = model.invoke(prompt, stage="repair")
+    return response.text

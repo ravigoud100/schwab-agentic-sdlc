@@ -1,5 +1,5 @@
 from pathlib import Path
-from langchain_ollama import ChatOllama
+from llm.provider import get_model
 
 def analyze_codebase(requirement: str, workspace: Path) -> str:
 
@@ -40,10 +40,7 @@ def analyze_codebase(requirement: str, workspace: Path) -> str:
 
         """
 
-    model = ChatOllama(
-        model="qwen2.5-coder:latest",
-        temperature=0
-    )
+    model = get_model()
 
     prompt = f"""
     You are a senior Java software architect.
@@ -73,6 +70,6 @@ def analyze_codebase(requirement: str, workspace: Path) -> str:
     - Do not modify any code.
     """
 
-    response = model.invoke(prompt)
+    response = model.invoke(prompt, stage="codebase")
 
     return response.text
