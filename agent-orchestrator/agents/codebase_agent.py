@@ -1,20 +1,21 @@
 from pathlib import Path
 from langchain_ollama import ChatOllama
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-JAVA_SOURCE = PROJECT_ROOT / "url-shortener/src/main/java"
-
-
-def analyze_codebase(requirement: str) -> str:
+def analyze_codebase(requirement: str, workspace: Path) -> str:
 
     print("\n[CODEBASE AGENT] Inspecting Java application...")
 
-    if not JAVA_SOURCE.is_dir():
+    workspace_root = workspace.resolve(strict=True)
+    java_source = (workspace_root / "url-shortener/src/main/java").resolve(strict=True)
+    if not java_source.is_relative_to(workspace_root):
+        raise PermissionError("Source path escapes isolated workspace")
+
+    if not java_source.is_dir():
         raise FileNotFoundError(
-            f"Java source directory not found: {JAVA_SOURCE}"
+            f"Java source directory not found: {java_source}"
         )
 
-    source_files = sorted(JAVA_SOURCE.rglob("*.java"))
+    source_files = sorted(java_source.rglob("*.java"))
 
     if not source_files:
         raise RuntimeError("No Java source files found")
@@ -24,7 +25,10 @@ def analyze_codebase(requirement: str) -> str:
     for file in source_files:
 
         # Only read files inside our intended Java directory.
-        relative_path = file.relative_to(JAVA_SOURCE)
+        relative_path = file.relative_to(java_source)
+
+        if not file.resolve().is_relative_to(workspace_root):
+            raise PermissionError("Source file escapes isolated workspace")
 
         content = file.read_text(encoding="utf-8")
 

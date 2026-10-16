@@ -1,12 +1,6 @@
 from pathlib import Path
 import hashlib
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-WORKSPACE = (
-    PROJECT_ROOT / ".agent-workspaces" / "url-expiration"
-).resolve()
-
 ALLOWED_FILES = {
     "url-shortener/src/main/java/url_shortener/ShortUrl.java"
 }
@@ -16,11 +10,11 @@ def file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def create_checkpoint(relative_path: str) -> dict:
+def create_checkpoint(relative_path: str, workspace: Path) -> dict:
     if relative_path not in ALLOWED_FILES:
         raise PermissionError("File is not authorized for rollback")
 
-    workspace_root = WORKSPACE.resolve()
+    workspace_root = workspace.resolve(strict=True)
     target = (workspace_root / relative_path).resolve()
 
     if not target.is_relative_to(workspace_root):
@@ -38,13 +32,13 @@ def create_checkpoint(relative_path: str) -> dict:
     }
 
 
-def rollback(checkpoint: dict, expected_current_hash: str) -> bool:
+def rollback(checkpoint: dict, expected_current_hash: str, workspace: Path) -> bool:
     relative_path = checkpoint["path"]
 
     if relative_path not in ALLOWED_FILES:
         raise PermissionError("Unauthorized rollback target")
 
-    workspace_root = WORKSPACE.resolve()
+    workspace_root = workspace.resolve(strict=True)
     target = (workspace_root / relative_path).resolve()
 
     if not target.is_relative_to(workspace_root):

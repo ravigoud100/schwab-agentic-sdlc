@@ -3,6 +3,7 @@ import uuid
 from pathlib import Path
 from typing import TypedDict
 
+from governance.workspace_manager import initialize_workspace
 from governance.audit_logger import log_event
 from agents.implementation_agent import implement_expiration
 from agents.repair_agent import parse_repair_proposal, propose_repair
@@ -61,6 +62,7 @@ class EngineeringState(TypedDict):
     implementation_changed: bool
     expected_current_hash: str
     workflow_id: str
+    workspace: str
     repair_change: dict
     repair_checkpoint: dict
     repair_expected_current_hash: str
@@ -115,7 +117,7 @@ def requirements_agent(state: EngineeringState):
 def codebase_agent(state: EngineeringState):
     print("\n[2] CODEBASE ANALYSIS AGENT")
 
-    result = analyze_codebase(state["requirement"])
+    result = analyze_codebase(state["requirement"], Path(state["workspace"]))
 
     return {
         "codebase_analysis": result,
@@ -470,8 +472,8 @@ def implementation_node(state: EngineeringState):
     relative_path = (
         IMPLEMENTATION_RELATIVE_PATH
     )
-    checkpoint = create_checkpoint(relative_path)
-    modified_file = implement_expiration(approved=True)
+    checkpoint = create_checkpoint(relative_path, Path(state["workspace"]))
+    modified_file = implement_expiration(approved=True, workspace=Path(state["workspace"]))
     current_hash = file_hash(
         Path(modified_file).read_bytes()
     )
@@ -497,7 +499,7 @@ def implementation_node(state: EngineeringState):
 def validation_node(state: EngineeringState):
     print("\n[VALIDATION AGENT]")
 
-    result = validate_implementation()
+    result = validate_implementation(Path(state["workspace"]))
     log_event(
         workflow_id=state["workflow_id"],
         agent="validation_agent",
@@ -548,6 +550,7 @@ def validation_node(state: EngineeringState):
             rollback(
                 state["repair_checkpoint"],
                 state["repair_expected_current_hash"],
+                Path(state["workspace"]),
             )
             log_event(
                 workflow_id=state["workflow_id"],
@@ -583,7 +586,7 @@ def retry_node(state: EngineeringState):
     print(f"\n[RETRY] Attempt {retry_count}/{MAX_RETRIES}")
     error_log = state["validation_result"].get("output", "")
     if error_log.strip():
-        proposal = propose_repair(error_log)
+        proposal = propose_repair(error_log, Path(state["workspace"]))
     else:
         proposal = "Insufficient validation evidence. No repair proposed."
     repair_change = parse_repair_proposal(proposal)
@@ -647,7 +650,7 @@ def repair_executor_node(state: EngineeringState):
             running_tasks = start_tasks(
                 state["tasks"], state.get("active_task_ids", [])
             )
-        result = apply_approved_repair(change)
+        result = apply_approved_repair(change, Path(state["workspace"]))
     except Exception as error:
         log_event(
             workflow_id=state["workflow_id"],
@@ -743,7 +746,7 @@ def failure_node(state: EngineeringState):
     checkpoint = state["rollback_checkpoint"]
     expected_hash = state["expected_current_hash"]
     try:
-        rollback(checkpoint, expected_hash)
+        rollback(checkpoint, expected_hash, Path(state["workspace"]))
         print("[ROLLBACK] AI-generated changes restored.")
         log_event(
             workflow_id=state["workflow_id"],
@@ -871,6 +874,8 @@ def main():
 
     workflow_id = str(uuid.uuid4())
 
+    workspace = initialize_workspace(workflow_id)
+
     config = {
         "configurable": {
             "thread_id": workflow_id
@@ -884,6 +889,7 @@ def main():
 
         initial_state = {
             "workflow_id": workflow_id,
+            "workspace": str(workspace),
             "requirement": requirement,
             "analysis": "",
             "codebase_analysis": "",

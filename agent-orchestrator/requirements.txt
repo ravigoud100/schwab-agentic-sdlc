@@ -1,0 +1,6 @@
+langchain-core==1.6.10
+langchain-ollama==1.1.0
+langgraph==1.2.15
+langgraph-checkpoint-sqlite==3.1.2
+python-dotenv==1.2.4
+pytest==9.1.1

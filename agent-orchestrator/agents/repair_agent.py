@@ -11,19 +11,6 @@ model = ChatOllama(
 )
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-JAVA_FILE = (
-    PROJECT_ROOT
-    / ".agent-workspaces"
-    / "url-expiration"
-    / "url-shortener"
-    / "src"
-    / "main"
-    / "java"
-    / "url_shortener"
-    / "ShortUrl.java"
-)
-
 ALLOWED_REPAIR_PATH = "url-shortener/src/main/java/url_shortener/ShortUrl.java"
 
 
@@ -57,16 +44,21 @@ def parse_repair_proposal(proposal: str) -> dict | None:
     }
 
 
-def propose_repair(error_log: str) -> str:
+def propose_repair(error_log: str, workspace: Path) -> str:
     print("\n[REPAIR AGENT] Analyzing validation failure...")
 
     if not error_log.strip():
         raise ValueError("Validation error log cannot be empty")
 
-    if not JAVA_FILE.is_file():
-        raise FileNotFoundError(JAVA_FILE)
+    workspace_root = workspace.resolve(strict=True)
+    java_file = (workspace_root / ALLOWED_REPAIR_PATH).resolve()
+    if not java_file.is_relative_to(workspace_root):
+        raise PermissionError("Repair source escapes isolated workspace")
 
-    actual_code = JAVA_FILE.read_text(encoding="utf-8")
+    if not java_file.is_file():
+        raise FileNotFoundError(java_file)
+
+    actual_code = java_file.read_text(encoding="utf-8")
     prompt = f"""You are a senior Java 21 Spring Boot engineer.
 
 Analyze the Maven error against the actual Java source code.

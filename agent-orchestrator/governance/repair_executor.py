@@ -3,14 +3,12 @@ from pathlib import Path
 from governance.rollback_manager import create_checkpoint, file_hash
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-WORKSPACE = (PROJECT_ROOT / ".agent-workspaces" / "url-expiration").resolve()
 ALLOWED_REPAIR_FILES = frozenset(
     {"url-shortener/src/main/java/url_shortener/ShortUrl.java"}
 )
 
 
-def _authorized_target(relative_path: str) -> Path:
+def _authorized_target(relative_path: str, workspace: Path) -> Path:
     if not isinstance(relative_path, str) or not relative_path:
         raise PermissionError("Repair path must be a non-empty string")
 
@@ -22,7 +20,7 @@ def _authorized_target(relative_path: str) -> Path:
     if normalized not in ALLOWED_REPAIR_FILES:
         raise PermissionError("Repair target is not an authorized Java source file")
 
-    workspace_root = WORKSPACE.resolve()
+    workspace_root = workspace.resolve(strict=True)
     target = (workspace_root / normalized).resolve()
     if not target.is_relative_to(workspace_root):
         raise PermissionError("Repair path escapes the isolated workspace")
@@ -31,7 +29,7 @@ def _authorized_target(relative_path: str) -> Path:
     return target
 
 
-def apply_approved_repair(change: dict) -> dict:
+def apply_approved_repair(change: dict, workspace: Path) -> dict:
     """Apply one human-approved, exact replacement to an allowlisted file."""
     if not isinstance(change, dict):
         raise ValueError("Approved repair must be a mapping")
@@ -50,12 +48,12 @@ def apply_approved_repair(change: dict) -> dict:
     if not old_text or old_text == new_text:
         raise ValueError("Repair must replace non-empty text with different text")
 
-    target = _authorized_target(relative_path)
+    target = _authorized_target(relative_path, workspace)
     current = target.read_text(encoding="utf-8")
     if current.count(old_text) != 1:
         raise ValueError("Expected repair text must occur exactly once")
 
-    checkpoint = create_checkpoint(relative_path)
+    checkpoint = create_checkpoint(relative_path, workspace)
     target.write_text(current.replace(old_text, new_text, 1), encoding="utf-8")
     expected_current_hash = file_hash(target.read_bytes())
 

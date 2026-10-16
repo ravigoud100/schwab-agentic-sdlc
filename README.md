@@ -2,19 +2,19 @@
 
 This repository demonstrates a governed, agent-assisted software delivery workflow around a Spring Boot URL shortener. The Python orchestrator analyzes requirements and code, creates an implementation plan, pauses for human approval, performs controlled implementation and validation, and can propose approved repairs when validation fails.
 
-The project is intentionally approval-gated. AI output does not directly execute shell commands, and source changes are restricted to the isolated URL-expiration worktree.
+The project is intentionally approval-gated. AI output does not directly execute shell commands, and source changes are restricted to the isolated workflow worktree.
 
 ## Project layout
 
 ```text
 url-shortener/                 Spring Boot 4 URL shortener
 agent-orchestrator/            LangGraph workflow and governance modules
-.agent-workspaces/url-expiration/
+.agent-workspaces/<workflow_id>/
                                Isolated validation/repair worktree
 docs/                          Architecture and demonstration guides
 ```
 
-The main Java source is under `url-shortener/`. The implementation and validation agents target the isolated `.agent-workspaces/url-expiration/` worktree so experiments and rollback checkpoints do not overwrite the completed application.
+The main Java source is under `url-shortener/`. The implementation and validation agents target the isolated `.agent-workspaces/<workflow_id>/` worktree so experiments and rollback checkpoints do not overwrite the completed application.
 
 ## Objectives
 
@@ -167,3 +167,5 @@ These tests mock model responses, Maven validation, file changes, and rollback w
 - The repair agent proposes changes; only the structured, allowlisted exact replacement is executable after human approval.
 - The orchestrator's deterministic tests use mocks and do not replace live Ollama, Maven, or end-to-end environment validation.
 - The application uses the default in-memory H2 configuration shown in the repository; production persistence, authentication, and deployment infrastructure are outside this assessment.
+
+Each CLI run creates a detached Git worktree at `.agent-workspaces/<workflow_id>/` from committed `HEAD`. Commit any source changes you want included before starting a run. The resolved workspace path is persisted in workflow state and passed explicitly to analysis, implementation, validation, repair, checkpoint creation, and rollback. Worktrees are retained for review; an existing workspace is never overwritten during initialization.

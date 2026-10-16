@@ -1,14 +1,6 @@
 from pathlib import Path
 from langchain_ollama import ChatOllama
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-WORKSPACE = (
-    PROJECT_ROOT
-    / ".agent-workspaces"
-    / "url-expiration"
-)
-
 ALLOWED_FILE = (
     "url-shortener/src/main/java/"
     "url_shortener/ShortUrl.java"
@@ -20,7 +12,7 @@ model = ChatOllama(
 )
 
 
-def implement_expiration(approved: bool):
+def implement_expiration(approved: bool, workspace: Path):
 
     print("\n[IMPLEMENTATION AGENT] Starting...")
 
@@ -30,13 +22,13 @@ def implement_expiration(approved: bool):
             "Implementation blocked: human approval required"
         )
 
-    if not WORKSPACE.is_dir():
+    if not workspace.is_dir():
         raise FileNotFoundError(
             "Isolated Git workspace does not exist"
         )
 
-    target_file = (WORKSPACE / ALLOWED_FILE).resolve()
-    workspace_root = WORKSPACE.resolve()
+    target_file = (workspace / ALLOWED_FILE).resolve()
+    workspace_root = workspace.resolve(strict=True)
 
     # Prevent writing outside the isolated workspace
     if not target_file.is_relative_to(workspace_root):

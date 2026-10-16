@@ -24,6 +24,7 @@ RELATIVE_JAVA_FILE = "url-shortener/src/main/java/url_shortener/ShortUrl.java"
 
 def _task_state(approval="approve"):
     return {
+        "workspace": "/tmp/test-workflow",
         "workflow_id": "scenario-test",
         "requirement": "Add URL expiration",
         "approval": approval,
@@ -139,7 +140,7 @@ def test_approved_repair_is_restricted_to_authorized_change():
         "main.log_event"
     ):
         result = repair_executor_node(state)
-    apply.assert_called_once_with(state["repair_change"])
+    apply.assert_called_once_with(state["repair_change"], Path(state["workspace"]))
     assert result["repair_applied"] is True
 
 
@@ -160,7 +161,7 @@ def test_failed_repair_rolls_back_safely():
         "main.rollback", return_value=True
     ) as rollback, patch("main.log_event"):
         result = validation_node(state)
-    rollback.assert_called_once_with(state["repair_checkpoint"], "new")
+    rollback.assert_called_once_with(state["repair_checkpoint"], "new", Path(state["workspace"]))
     assert result["repair_rolled_back"] is True
     assert result["repair_applied"] is False
 
@@ -176,7 +177,8 @@ def test_retry_exhaustion_stops_without_looping():
     assert quality_gate(state) == "failed"
     assert failure_node(
         {
-            "workflow_id": "exhausted",
+            "workspace": "/tmp/test-workflow",
+        "workflow_id": "exhausted",
             "implementation_changed": False,
             **state,
         }

@@ -22,7 +22,7 @@ This document describes the behavior implemented in the repository. It is delibe
 | Human approval node | Interrupts the graph and accepts `approve` or `reject`. |
 | Task scheduler | Validates task fields and dependencies, detects cycles/missing IDs/duplicates, marks eligible tasks, and reports independent nonoverlapping batches. |
 | Implementation Agent | Requires approval and writes only the isolated `ShortUrl.java` target; it skips generation if expiration support already exists. |
-| Validation Agent | Runs `./mvnw clean test` in the isolated URL-expiration worktree and returns pass/fail, exit code, duration, and bounded output. |
+| Validation Agent | Runs `./mvnw clean test` in the isolated workflow worktree and returns pass/fail, exit code, duration, and bounded output. |
 | Repair Agent | Analyzes bounded Maven output against the isolated Java source and returns a proposal. It does not modify files or execute commands. |
 | Replanning Agent | Produces strict JSON containing a revised plan and change summary using requirement, current plan, failure metadata/output, and retry history. |
 | Repair Executor | Applies only an approved exact `old_text` → `new_text` replacement in the allowlisted Java file after checkpointing. |
@@ -60,7 +60,7 @@ flowchart LR
 
     Model[Ollama qwen2.5-coder:latest] --> Analysis
     Codebase --> Analysis
-    Repair --> Worktree[Isolated URL-expiration worktree]
+    Repair --> Worktree[Isolated workflow worktree]
     Worktree --> Maven[Maven Wrapper validation]
     Maven --> Orchestrator
 ```
