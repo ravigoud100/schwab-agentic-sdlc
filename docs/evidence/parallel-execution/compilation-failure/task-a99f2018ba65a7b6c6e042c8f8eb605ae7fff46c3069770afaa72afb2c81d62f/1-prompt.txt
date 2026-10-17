@@ -1,0 +1,36 @@
+Implement the approved task by returning COMPLETE replacement Java files.
+Return ONLY JSON: {"files":[{"path":"<authorized path>","content":"<complete Java source>"}]}.
+Every authorized production path must appear exactly once. No other paths or fields.
+Do not return edits, old_text, new_text, patches, insertion anchors or Markdown.
+The executor replaces each entire original file ONCE. Nothing is appended to it.
+Preserve package, imports, class name, all unrelated fields/methods/annotations,
+existing public callers and behavior. Include the entire class and its final brace.
+Do not duplicate existing methods, leave constructor statements at class scope,
+or introduce extra top-level classes. Each field must be initialized correctly.
+Use existing imports or fully qualified Java types/static calls consistently.
+Follow the approved constructor/dependency-injection decisions EXACTLY, including
+which overload Spring autowires and which constructor is for explicit test injection.
+Do not assume Spring supplies dependencies that the approved design does not declare.
+Existing tests and build files are read-only. Do not disable checks or weaken behavior.
+Selected clarification answers and the approved contract/design override unresolved
+alternatives in earlier requirements. Do not change the task, files or approved plan.
+
+AUTHORITATIVE APPROVED CONTEXT:
+{"structured_requirements": {}, "clarification_answers": {}, "approved_obligation_contract": {}, "approved_design": {}, "approved_plan": "{\"tasks\": [{\"task_id\": \"service-fixture\", \"description\": \"Controlled orchestration fixture: append a Java comment only\", \"dependencies\": [], \"status\": \"PENDING\", \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/UrlService.java\"]}, {\"task_id\": \"controller-fixture\", \"description\": \"Controlled negative fixture: append an invalid Java token to force compilation failure\", \"dependencies\": [], \"status\": \"PENDING\", \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/UrlController.java\"]}]}", "plan_authorization_hash": null}
+APPROVED TASK (filtered production scope):
+{"task_id": "service-fixture", "description": "Controlled orchestration fixture: append a Java comment only", "dependencies": [], "status": "READY", "execution_type": "implementation", "allowed_files": ["url-shortener/src/main/java/url_shortener/UrlService.java"]}
+ORIGINAL COMPLETE SOURCES, restored before this attempt:
+{"url-shortener/src/main/java/url_shortener/UrlService.java": "package url_shortener;\n\nimport org.springframework.stereotype.Service;\nimport java.security.SecureRandom;\nimport java.time.Instant;\n\n@Service\npublic class UrlService {\n\n    private final UrlRepository repository;\n\n    private static final String CHARACTERS =\n            \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\n\n    private final SecureRandom random = new SecureRandom();\n\n    public UrlService(UrlRepository repository) {\n        this.repository = repository;\n    }\n\n    public ShortUrl createShortUrl(\n            String originalUrl,\n            java.time.Instant expiresAt\n    ) {\n\n        String shortCode;\n        int attempts = 0;\n\n        do {\n            shortCode = generateShortCode();\n            attempts++;\n\n            if (attempts >= 10) {\n                throw new IllegalStateException(\n                        \"Unable to generate unique short URL\");\n            }\n\n        } while (repository.existsByShortCode(shortCode));\n\n        ShortUrl shortUrl = new ShortUrl(originalUrl, shortCode);\n\n        if (expiresAt != null &&\n                !expiresAt.isAfter(java.time.Instant.now())) {\n            throw new org.springframework.web.server.ResponseStatusException(\n                    org.springframework.http.HttpStatus.BAD_REQUEST,\n                    \"Expiration must be in the future\"\n            );\n        }\n\n        shortUrl.setExpiresAt(expiresAt);\n\n        return repository.save(shortUrl);\n    }\n\n    private String generateShortCode() {\n\n        StringBuilder code = new StringBuilder();\n\n        for (int i = 0; i < 7; i++) {\n            int index = random.nextInt(CHARACTERS.length());\n            code.append(CHARACTERS.charAt(index));\n        }\n\n        return code.toString();\n    }\n\n  @org.springframework.transaction.annotation.Transactional\npublic ShortUrl getOriginalUrl(String shortCode) {\n\n    ShortUrl shortUrl = repository.findByShortCode(shortCode)\n            .orElseThrow(() ->\n                    new org.springframework.web.server.ResponseStatusException(\n                            org.springframework.http.HttpStatus.NOT_FOUND,\n                            \"Short URL not found\"\n                    )\n            );\n\n    if (shortUrl.isExpired(Instant.now())) {\n        throw new org.springframework.web.server.ResponseStatusException(\n                org.springframework.http.HttpStatus.GONE,\n                \"Short URL has expired\"\n        );\n    }\n\n    shortUrl.incrementClickCount();\n\n    return shortUrl;\n}\n@org.springframework.transaction.annotation.Transactional(readOnly = true)\npublic ShortUrl getAnalytics(String shortCode) {\n\n    return repository.findByShortCode(shortCode)\n            .orElseThrow(() ->\n                    new org.springframework.web.server.ResponseStatusException(\n                            org.springframework.http.HttpStatus.NOT_FOUND,\n                            \"Short URL not found\"\n                    )\n            );\n}\n}\n"}
+
+PREVIOUS MATERIALIZED SOURCES (compiler diagnostics or architecture review refer to these, NOT the restored originals):
+{}
+ACTUAL PREVIOUS MAVEN DIAGNOSTICS:
+
+STRUCTURED FAILURE EVIDENCE:
+{}
+HUMAN-APPROVED CORRECTION STRATEGY (when supplied):
+
+Correct the failure using the ORIGINAL complete sources and approved design.
+Do not copy a failed proposal unchanged. Return every complete corrected file.
+Before returning, check that constructor bodies are inside constructors, methods
+occur once, imports resolve, and annotations match the approved overloads.

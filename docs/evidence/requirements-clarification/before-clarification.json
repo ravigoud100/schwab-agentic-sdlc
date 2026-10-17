@@ -1,0 +1,91 @@
+{
+  "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "status": "CLARIFICATION_REQUIRED",
+  "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval.",
+  "requirement_version": 1,
+  "structured_requirements": {
+    "normalized_problem": "Enhance the existing URL shortener to include optional URL expiration.",
+    "functional_requirements": [
+      "Preserve existing links.",
+      "Return HTTP 410 for expired URLs.",
+      "Maintain existing active-link redirect behavior."
+    ],
+    "non_functional_requirements": [],
+    "acceptance_criteria": [
+      "The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.",
+      "The system should not execute any code changes until the later engineering plan approval."
+    ],
+    "ambiguities": [
+      {
+        "id": "A1",
+        "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?",
+        "options": [
+          "Fixed 24-hour TTL",
+          "Custom expiration timestamp"
+        ],
+        "default_assumption": null
+      }
+    ],
+    "risks": [],
+    "classification": "brownfield"
+  },
+  "requirements_hash": "23bf75a1f88e614552156382cad2cf370abc89e46a80b3b1c2ec57a3908bb1c8",
+  "requirements_source_hash": "f31f269817f04220550b969e6996453863226a4248e0cf842444dbd69e0533e4",
+  "requirements_valid": true,
+  "clarification_answers": {},
+  "clarification_complete": false,
+  "clarification_history": null,
+  "analysis": "{\"clarification_answers\": {}, \"requirements\": {\"acceptance_criteria\": [\"The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.\", \"The system should not execute any code changes until the later engineering plan approval.\"], \"ambiguities\": [{\"default_assumption\": null, \"id\": \"A1\", \"options\": [\"Fixed 24-hour TTL\", \"Custom expiration timestamp\"], \"question\": \"Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?\"}], \"classification\": \"brownfield\", \"functional_requirements\": [\"Preserve existing links.\", \"Return HTTP 410 for expired URLs.\", \"Maintain existing active-link redirect behavior.\"], \"non_functional_requirements\": [], \"normalized_problem\": \"Enhance the existing URL shortener to include optional URL expiration.\", \"risks\": []}}",
+  "codebase_analysis": null,
+  "plan": null,
+  "plan_requirements_hash": null,
+  "plan_requirement_version": null,
+  "pending_approvals": [
+    {
+      "type": "REQUIREMENT_CLARIFICATION",
+      "requirement_version": 1,
+      "requirements": {
+        "normalized_problem": "Enhance the existing URL shortener to include optional URL expiration.",
+        "functional_requirements": [
+          "Preserve existing links.",
+          "Return HTTP 410 for expired URLs.",
+          "Maintain existing active-link redirect behavior."
+        ],
+        "non_functional_requirements": [],
+        "acceptance_criteria": [
+          "The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.",
+          "The system should not execute any code changes until the later engineering plan approval."
+        ],
+        "ambiguities": [
+          {
+            "id": "A1",
+            "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?",
+            "options": [
+              "Fixed 24-hour TTL",
+              "Custom expiration timestamp"
+            ],
+            "default_assumption": null
+          }
+        ],
+        "risks": [],
+        "classification": "brownfield"
+      },
+      "questions": [
+        {
+          "id": "A1",
+          "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?",
+          "options": [
+            "Fixed 24-hour TTL",
+            "Custom expiration timestamp"
+          ],
+          "default_assumption": null
+        }
+      ],
+      "errors": [],
+      "message": "Answer every question and explicitly approve the answers. Suggested defaults are not accepted automatically."
+    }
+  ],
+  "next_nodes": [
+    "clarification"
+  ]
+}

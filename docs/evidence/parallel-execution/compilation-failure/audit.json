@@ -1,0 +1,204 @@
+[
+  {
+    "id": 1,
+    "event": "PARALLEL_ENTRY_PASSED",
+    "details": {
+      "workflow_id": "parallel-fixture-compilation-failure",
+      "workspace": "/private/tmp/schwab-parallel-execution/compilation-failure/workspace",
+      "requirements_hash": "",
+      "requirement_version": null,
+      "design_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "contract_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "plan_hash": "e86bec45f9584e92c5015231cf3fa94f1385ab99581eaa958871aff7804afa2c",
+      "tasks_hash": "a66b6a2cd37942ea66ee06743aec8eae116026cc49f320372c2a84d35841bc12",
+      "baseline_hash": "9e7de9e4d061a61ed6b18b66404fdc910b460e567daf381fa01fab67085a27c0"
+    }
+  },
+  {
+    "id": 2,
+    "event": "PARALLEL_TASK_APPROVED",
+    "details": {
+      "binding_hash": "97825aa3f4e7cfe620d7380071399029a92542828fb3d24a00c11690757a9fd8",
+      "task_id": "service-fixture",
+      "task_hash": "ada573f91abc28c6109f239d3229ca8d2cef6ae4a19c20adaac5da37026b710f"
+    }
+  },
+  {
+    "id": 3,
+    "event": "PARALLEL_TASK_APPROVED",
+    "details": {
+      "binding_hash": "97825aa3f4e7cfe620d7380071399029a92542828fb3d24a00c11690757a9fd8",
+      "task_id": "controller-fixture",
+      "task_hash": "c3d3428a341d508249ba61d074a57627ed77abbe43ec15e28655c16f024c0929"
+    }
+  },
+  {
+    "id": 4,
+    "event": "PARALLEL_BASELINE_PASSED",
+    "details": {
+      "exit_code": 0,
+      "cases": {
+        "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+        "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+        "clean",
+        "test"
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "event": "PARALLEL_ATTEMPT_STARTED",
+    "details": {
+      "task_id": "service-fixture",
+      "attempt": 1
+    }
+  },
+  {
+    "id": 6,
+    "event": "PARALLEL_ATTEMPT_STARTED",
+    "details": {
+      "task_id": "controller-fixture",
+      "attempt": 1
+    }
+  },
+  {
+    "id": 7,
+    "event": "PARALLEL_TASK_PREPARED",
+    "details": {
+      "task_id": "controller-fixture",
+      "attempt": 1,
+      "proposed_hashes": {
+        "url-shortener/src/main/java/url_shortener/UrlController.java": "f92f62004651da86fcc53bae692f64ccfc7d786fe0834ae24331fd4c96143893"
+      }
+    }
+  },
+  {
+    "id": 8,
+    "event": "PARALLEL_TASK_PREPARED",
+    "details": {
+      "task_id": "service-fixture",
+      "attempt": 1,
+      "proposed_hashes": {
+        "url-shortener/src/main/java/url_shortener/UrlService.java": "8973e59a57bb63066d06ebe9ac57e24d5e1cca666b03a6d32e339a28c54b60e6"
+      }
+    }
+  },
+  {
+    "id": 9,
+    "event": "PARALLEL_SYNCHRONIZED",
+    "details": {
+      "task_ids": [
+        "controller-fixture",
+        "service-fixture"
+      ],
+      "outcome_hash": "d5adce0f662ebdcb6996eb2e34225889f79d85cb169fba77e739809961fb0bbd"
+    }
+  },
+  {
+    "id": 10,
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "1fcf526c-2635-427c-9125-512d86a9076d:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "id": 11,
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "checkpoint_id": "1fcf526c-2635-427c-9125-512d86a9076d:url-shortener/src/main/java/url_shortener/UrlController.java",
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+      "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+    }
+  },
+  {
+    "id": 12,
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "event": "PARALLEL_TASK_CHECKPOINTS_BOUND",
+    "details": {
+      "service-fixture": {
+        "receipt": {
+          "binding_hash": "97825aa3f4e7cfe620d7380071399029a92542828fb3d24a00c11690757a9fd8",
+          "task_id": "service-fixture",
+          "task_hash": "ada573f91abc28c6109f239d3229ca8d2cef6ae4a19c20adaac5da37026b710f"
+        },
+        "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+        "checkpoints": [
+          "1fcf526c-2635-427c-9125-512d86a9076d:url-shortener/src/main/java/url_shortener/UrlService.java"
+        ]
+      },
+      "controller-fixture": {
+        "receipt": {
+          "binding_hash": "97825aa3f4e7cfe620d7380071399029a92542828fb3d24a00c11690757a9fd8",
+          "task_id": "controller-fixture",
+          "task_hash": "c3d3428a341d508249ba61d074a57627ed77abbe43ec15e28655c16f024c0929"
+        },
+        "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+        "checkpoints": [
+          "1fcf526c-2635-427c-9125-512d86a9076d:url-shortener/src/main/java/url_shortener/UrlController.java"
+        ]
+      }
+    }
+  },
+  {
+    "id": 14,
+    "event": "PARALLEL_VALIDATION_STARTED",
+    "details": {
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+      "tasks": [
+        "controller-fixture",
+        "service-fixture"
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "event": "TRANSACTION_ROLLED_BACK",
+    "details": {
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  },
+  {
+    "id": 16,
+    "event": "PARALLEL_ROLLED_BACK",
+    "details": {
+      "transaction_id": "1fcf526c-2635-427c-9125-512d86a9076d"
+    }
+  },
+  {
+    "id": 17,
+    "event": "PARALLEL_FAILED",
+    "details": {
+      "error": "Combined Maven validation failed or original tests missing/skipped",
+      "status": "STOPPED_PARALLEL_ROLLED_BACK"
+    }
+  }
+]

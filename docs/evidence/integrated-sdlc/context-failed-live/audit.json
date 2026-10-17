@@ -1,0 +1,613 @@
+[
+  {
+    "id": 1,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED",
+    "details": {
+      "parent_workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "source_checkpoint": "/private/tmp/schwab-design-correction",
+      "plan_origin": "assistant-authored proposed plan, not live planning"
+    }
+  },
+  {
+    "id": 2,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "DESIGN_APPROVED",
+    "details": {
+      "decision": "approve",
+      "feedback": "",
+      "design_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+      "design_version": 3,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "id": 3,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "MODEL_RESPONSE_RECORDED",
+    "details": {
+      "stage": "planning",
+      "origin": "assistant-authored reviewed-plan fixture",
+      "response_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45"
+    }
+  },
+  {
+    "id": 4,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "SEMANTIC_PLAN_ACCEPTED",
+    "details": {
+      "attempt": 2,
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45"
+    }
+  },
+  {
+    "id": 5,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 5,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "4e8903495f617f82b188e2ceaa76284593509a1e7e4b481ba3a227a78351d7e1",
+      "task_definition_hash": "cc56146c6307b0f0aaa01a3f406136165caaf9d1e27c4335f40213953ec0d69c"
+    }
+  },
+  {
+    "id": 6,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "ENGINEERING_PLAN_AUTHORIZED",
+    "details": {
+      "body": {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "workspace": "/private/tmp/schwab-integrated-sdlc-context/snapshot/.agent-workspaces/1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+        "requirement_version": 1,
+        "design_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+        "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+        "plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45",
+        "task_hash": "cc56146c6307b0f0aaa01a3f406136165caaf9d1e27c4335f40213953ec0d69c",
+        "project_baseline": {
+          "url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+          "url-shortener/mvnw.cmd": "46eedb8419bd14fe70d5bb2916d7b6f51806e51b39d5b76a42610384ca929c1c",
+          "url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+          "url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+          "url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+          "url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+          "url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+          "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+          "url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+          "url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+          "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+          "url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+          "url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+          "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+        },
+        "test_additions": [
+          "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"
+        ],
+        "protected_existing_test_files": [
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java"
+        ]
+      },
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734"
+    }
+  },
+  {
+    "id": 7,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "PLAN_APPROVED",
+    "details": {
+      "decision": "approve",
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_task_hash": "cc56146c6307b0f0aaa01a3f406136165caaf9d1e27c4335f40213953ec0d69c"
+    }
+  },
+  {
+    "id": 8,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_ENTRY_PASSED",
+    "details": {
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+      "baseline_hash": "a1354b1f7489e5b2d3531f0881bc8c6237caf56f594e445125cd1b49551e7848",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "design_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+      "validation": {
+        "exit_code": 0,
+        "cases": {
+          "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+          "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+          "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+        },
+        "command": [
+          "./mvnw",
+          "-o",
+          "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+          "clean",
+          "test"
+        ]
+      }
+    }
+  },
+  {
+    "id": 9,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "MODEL_RESPONSE_RECORDED",
+    "details": {
+      "stage": "implementation",
+      "origin": "live local Ollama",
+      "response_hash": "7cb5785fac29dd86ed34044e4164da7f730c2351d9c5520a21e348cb9102b8b3"
+    }
+  },
+  {
+    "id": 10,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "id": 11,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "ENGINEERING_EXECUTION_BOUND",
+    "details": {
+      "body": {
+        "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+        "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+        "task_id": "clock-boundary-seam",
+        "workspace": "/private/tmp/schwab-integrated-sdlc-context/snapshot/.agent-workspaces/1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "expected_project_hashes": {
+          "url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+          "url-shortener/mvnw.cmd": "46eedb8419bd14fe70d5bb2916d7b6f51806e51b39d5b76a42610384ca929c1c",
+          "url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+          "url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+          "url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+          "url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+          "url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+          "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+          "url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+          "url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+          "url-shortener/src/main/java/url_shortener/UrlService.java": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+          "url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+          "url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+          "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+        }
+      },
+      "execution_hash": "1d908ffcb0c17403d7c1f8120dcba5e93a48bbbe4ca111fa86e8a4f7055b6cec"
+    }
+  },
+  {
+    "id": 13,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+    "details": {
+      "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+      "execution_hash": "1d908ffcb0c17403d7c1f8120dcba5e93a48bbbe4ca111fa86e8a4f7055b6cec",
+      "proposal_hash": "bf774ca599ebb3a2198c3f14198e815f693feef9f96520ad05bfdab0b640eb65"
+    }
+  },
+  {
+    "id": 14,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+    "details": {
+      "attempt": 1,
+      "phase": "implementation-1",
+      "validation": {
+        "exit_code": 1,
+        "cases": {},
+        "command": [
+          "./mvnw",
+          "-o",
+          "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+          "clean",
+          "test"
+        ]
+      },
+      "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734"
+    }
+  },
+  {
+    "id": 15,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_ROLLED_BACK",
+    "details": {
+      "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 16,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_STAGE_STOPPED",
+    "details": {
+      "error": "Implementation compilation/original-test gate failed",
+      "recovery": "rolled_back"
+    }
+  },
+  {
+    "id": 17,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_SAME_PLAN_RETRY",
+    "details": {
+      "attempt": 2,
+      "plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45",
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+      "diagnostic_hash": "fcb5f74e410b7f4affe17253280f13b7139589a0cac5cfbc429cfd14b2787101"
+    }
+  },
+  {
+    "id": 18,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "MODEL_RESPONSE_RECORDED",
+    "details": {
+      "stage": "implementation",
+      "origin": "live local Ollama",
+      "response_hash": "7cb5785fac29dd86ed34044e4164da7f730c2351d9c5520a21e348cb9102b8b3"
+    }
+  },
+  {
+    "id": 19,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "02960fba-eb23-457d-a58c-4c437067b023:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "id": 20,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "ENGINEERING_EXECUTION_BOUND",
+    "details": {
+      "body": {
+        "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+        "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+        "task_id": "clock-boundary-seam",
+        "workspace": "/private/tmp/schwab-integrated-sdlc-context/snapshot/.agent-workspaces/1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "expected_project_hashes": {
+          "url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+          "url-shortener/mvnw.cmd": "46eedb8419bd14fe70d5bb2916d7b6f51806e51b39d5b76a42610384ca929c1c",
+          "url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+          "url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+          "url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+          "url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+          "url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+          "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+          "url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+          "url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+          "url-shortener/src/main/java/url_shortener/UrlService.java": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+          "url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+          "url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+          "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+        }
+      },
+      "execution_hash": "64430ecab920e4da2e3adac5678c2262b21434697808023efa4dacb66001404f"
+    }
+  },
+  {
+    "id": 22,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+    "details": {
+      "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+      "execution_hash": "64430ecab920e4da2e3adac5678c2262b21434697808023efa4dacb66001404f",
+      "proposal_hash": "bf774ca599ebb3a2198c3f14198e815f693feef9f96520ad05bfdab0b640eb65"
+    }
+  },
+  {
+    "id": 23,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+    "details": {
+      "attempt": 2,
+      "phase": "implementation-2",
+      "validation": {
+        "exit_code": 1,
+        "cases": {},
+        "command": [
+          "./mvnw",
+          "-o",
+          "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+          "clean",
+          "test"
+        ]
+      },
+      "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734"
+    }
+  },
+  {
+    "id": 24,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_ROLLED_BACK",
+    "details": {
+      "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 25,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_STAGE_STOPPED",
+    "details": {
+      "error": "Implementation compilation/original-test gate failed",
+      "recovery": "rolled_back"
+    }
+  },
+  {
+    "id": 26,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_SAME_PLAN_RETRY",
+    "details": {
+      "attempt": 3,
+      "plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45",
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+      "diagnostic_hash": "e6f922898e335b1671138e8a8e98769ca15535e567b26c36edf9a4adacef7d7f"
+    }
+  },
+  {
+    "id": 27,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "MODEL_RESPONSE_RECORDED",
+    "details": {
+      "stage": "implementation",
+      "origin": "live local Ollama",
+      "response_hash": "7cb5785fac29dd86ed34044e4164da7f730c2351d9c5520a21e348cb9102b8b3"
+    }
+  },
+  {
+    "id": 28,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "id": 29,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 30,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "ENGINEERING_EXECUTION_BOUND",
+    "details": {
+      "body": {
+        "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734",
+        "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+        "task_id": "clock-boundary-seam",
+        "workspace": "/private/tmp/schwab-integrated-sdlc-context/snapshot/.agent-workspaces/1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "expected_project_hashes": {
+          "url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+          "url-shortener/mvnw.cmd": "46eedb8419bd14fe70d5bb2916d7b6f51806e51b39d5b76a42610384ca929c1c",
+          "url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+          "url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+          "url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+          "url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+          "url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+          "url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+          "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+          "url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+          "url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+          "url-shortener/src/main/java/url_shortener/UrlService.java": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+          "url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+          "url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+          "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+        }
+      },
+      "execution_hash": "68330c2bd23c5c81df9af70e7bef08b288bcf6214a951baa664a592a7417998a"
+    }
+  },
+  {
+    "id": 31,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+    "details": {
+      "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+      "execution_hash": "68330c2bd23c5c81df9af70e7bef08b288bcf6214a951baa664a592a7417998a",
+      "proposal_hash": "bf774ca599ebb3a2198c3f14198e815f693feef9f96520ad05bfdab0b640eb65"
+    }
+  },
+  {
+    "id": 32,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+    "details": {
+      "attempt": 3,
+      "phase": "implementation-3",
+      "validation": {
+        "exit_code": 1,
+        "cases": {},
+        "command": [
+          "./mvnw",
+          "-o",
+          "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+          "clean",
+          "test"
+        ]
+      },
+      "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+      "authorization_hash": "2fd55475317d19797069bb7db36a9b9b199c36881f5687a3849c6d4eb976e734"
+    }
+  },
+  {
+    "id": 33,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "TRANSACTION_ROLLED_BACK",
+    "details": {
+      "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java"
+      ]
+    }
+  },
+  {
+    "id": 34,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "INTEGRATED_STAGE_STOPPED",
+    "details": {
+      "error": "Implementation compilation/original-test gate failed",
+      "recovery": "rolled_back"
+    }
+  },
+  {
+    "id": 35,
+    "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+    "event": "FAILED_ACCEPTANCE_RESTORATION_VERIFIED",
+    "details": {
+      "status": "STOPPED_INTEGRATED_STAGE",
+      "next_nodes": [],
+      "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+      "source_attempts": 3,
+      "source_transactions": 3,
+      "journal_statuses": [
+        "rolled_back",
+        "rolled_back",
+        "rolled_back"
+      ],
+      "project_restored_byte_identical": true,
+      "generated_test_created": false,
+      "documentation_generated": false,
+      "test_generation_approval_submitted": false,
+      "release_authorized": false,
+      "deployment_authorized": false,
+      "production_java_matches_baseline": true,
+      "artifact_hashes": {
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-1-response.txt": "1e48ed55e6383ed4a20db132d3926ba8e2441c4f7bf01d2b2f2b7988d7d05047",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-2-prompt.txt": "cb1b2f836c3f4a6eee5cb5ac150ad26d7b757a66627227c5e47aa0f1dd1443a4",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-3-metadata.json": "a3e9179af52d6cdcd57724fc6f15460e2390231ac26482f6429d697c9b9dad27",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-1-prompt.txt": "4c9bdeb68cf71a64f12ad6f7a9ce858d43c99f9a4e1793b65bbdd15f27a5b024",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-2-metadata.json": "21ad13aa96ec133ce99dcc8a46c6ac197d0071732500140757fe6dc086243020",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-1-metadata.json": "4580eeeb4b280475b23b784f728442ad23c2a08ac5b931e25c760f9b7b10f4e9",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-2-response.txt": "1e48ed55e6383ed4a20db132d3926ba8e2441c4f7bf01d2b2f2b7988d7d05047",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-3-prompt.txt": "cb1b2f836c3f4a6eee5cb5ac150ad26d7b757a66627227c5e47aa0f1dd1443a4",
+        "/private/tmp/schwab-integrated-sdlc-context/implementation-3-response.txt": "1e48ed55e6383ed4a20db132d3926ba8e2441c4f7bf01d2b2f2b7988d7d05047",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/baseline/maven.log": "4f530a15764e28e5224754b91575317d2acab1abc2f9b6b6434f55d4b774a8e6",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/baseline/result.json": "ff7199312e587551cdda390e572765f673614318c319e3580a8d79cc831d3055",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/baseline/TEST-url_shortener.UrlExpirationIntegrationTests.xml": "c325f954a5175c4891de141033c10d489959dc872b0adc077ee6e0e405181b4f",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/baseline/TEST-url_shortener.UrlShortenerApplicationTests.xml": "654a5ad08b038a04b3a0453054133160a7176440939928300908c233f32e48e8",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-1/maven.log": "fcb5f74e410b7f4affe17253280f13b7139589a0cac5cfbc429cfd14b2787101",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-1/result.json": "3eeeac418355ee5b28e77d1574aa848ec4e1b121cd429e67e4cb4597046e8eeb",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-2/maven.log": "e6f922898e335b1671138e8a8e98769ca15535e567b26c36edf9a4adacef7d7f",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-2/result.json": "3eeeac418355ee5b28e77d1574aa848ec4e1b121cd429e67e4cb4597046e8eeb",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-3/maven.log": "0c9a3dc0994ee23259b30238408d9bd5d61b41e23bda09d795eb65a32339e8fd",
+        "/private/tmp/schwab-integrated-sdlc-context/evidence/implementation-3/result.json": "3eeeac418355ee5b28e77d1574aa848ec4e1b121cd429e67e4cb4597046e8eeb"
+      },
+      "prompt_usage": [
+        {
+          "model": "qwen2.5-coder:latest",
+          "created_at": "2026-10-17T00:25:11.408522Z",
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 44076824500,
+          "load_duration": 3080348083,
+          "prompt_eval_count": 6145,
+          "prompt_eval_duration": 13130788000,
+          "eval_count": 664,
+          "eval_duration": 27825356000,
+          "logprobs": null,
+          "model_name": "qwen2.5-coder:latest",
+          "model_provider": "ollama"
+        },
+        {
+          "model": "qwen2.5-coder:latest",
+          "created_at": "2026-10-17T00:26:06.102917Z",
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 53080596000,
+          "load_duration": 17780792,
+          "prompt_eval_count": 9491,
+          "prompt_eval_duration": 22649909000,
+          "eval_count": 664,
+          "eval_duration": 30306071000,
+          "logprobs": null,
+          "model_name": "qwen2.5-coder:latest",
+          "model_provider": "ollama"
+        },
+        {
+          "model": "qwen2.5-coder:latest",
+          "created_at": "2026-10-17T00:26:38.476413Z",
+          "done": true,
+          "done_reason": "stop",
+          "total_duration": 30740703541,
+          "load_duration": 7975416,
+          "prompt_eval_count": 9491,
+          "prompt_eval_duration": 70289000,
+          "eval_count": 664,
+          "eval_duration": 30612616000,
+          "logprobs": null,
+          "model_name": "qwen2.5-coder:latest",
+          "model_provider": "ollama"
+        }
+      ]
+    }
+  }
+]

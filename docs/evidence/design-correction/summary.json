@@ -1,0 +1,34 @@
+{
+  "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "requirement_version": 1,
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+  "old_design_hash": "fc8e91078a167e302d60568f6010ce82719acb464698f2393df35810fe1bdbda",
+  "design_version": 2,
+  "design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "java_files_changed": 0,
+  "human_approved_revised_design": true,
+  "approved_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "plan_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "new_plan_passed_semantic_gate": true,
+  "next_nodes": [
+    "approval"
+  ],
+  "old_artifact_preserved_in_sqlite_audit": true,
+  "old_approval_rejected_on_revised_artifact": true,
+  "design_obligations_covered": 8,
+  "plan_obligations_covered": 8,
+  "graph_checkpoint_count": 18,
+  "live_design_calls": 1,
+  "live_planning_calls": 1,
+  "maven_executed": false,
+  "event_sequence": [
+    "DESIGN_CORRECTION_STARTED",
+    "DESIGN_CHANGES_REQUESTED",
+    "STAGE_GATE_PASSED",
+    "STAGE_GATE_PASSED",
+    "DESIGN_APPROVED",
+    "SEMANTIC_PLAN_ACCEPTED",
+    "PLAN_CREATED"
+  ]
+}

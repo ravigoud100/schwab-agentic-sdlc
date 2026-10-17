@@ -56,9 +56,12 @@ def test_successful_execution_reaches_completion():
     with TemporaryDirectory() as directory:
         modified_file = Path(directory) / "ShortUrl.java"
         modified_file.write_text("updated", encoding="utf-8")
+        from main import _task_definition_hash
+        state["approved_task_hash"] = _task_definition_hash(state["tasks"])
         checkpoint = {"path": RELATIVE_JAVA_FILE, "original_hash": "old"}
         with patch("main.create_checkpoint", return_value=checkpoint), patch(
-            "main.implement_expiration", return_value=modified_file
+            "main.implement_task", return_value={"transaction_id": "test-transaction", "paths": [RELATIVE_JAVA_FILE],
+                "checkpoints": [checkpoint], "expected_hashes": {RELATIVE_JAVA_FILE: "new"}}
         ), patch("main.file_hash", return_value="new"), patch("main.log_event"):
             implementation = implementation_node(state)
 
@@ -74,7 +77,7 @@ def test_successful_execution_reaches_completion():
                 "duration_seconds": 0.1,
                 "output": "BUILD SUCCESS",
             },
-        ), patch("main.log_event"):
+        ), patch("main.log_event"), patch("main.finish_transaction"):
             validated = validation_node(passed)
 
         completed = {**passed, **validated}
@@ -85,7 +88,7 @@ def test_successful_execution_reaches_completion():
 
 def test_rejected_plan_stops_without_implementation():
     state = _task_state(approval="reject")
-    with patch("main.log_event"), patch("main.implement_expiration") as implement:
+    with patch("main.log_event"), patch("main.implement_task") as implement:
         assert rejected_node(state)["status"] == "STOPPED"
         result = implementation_node(state)
     implement.assert_not_called()
@@ -200,7 +203,7 @@ def test_mock_verification_plan_runs_validation_without_source_changes(tmp_path)
     from main import human_approval
     with patch("main.interrupt", return_value="approve"):
         state.update(human_approval(state))
-    with patch("main.log_event"), patch("main.implement_expiration") as implement, patch(
+    with patch("main.log_event"), patch("main.implement_task") as implement, patch(
         "main.create_checkpoint"
     ) as checkpoint, patch("main.apply_approved_repair") as repair:
         state.update(task_scheduler_node(state))
@@ -278,7 +281,7 @@ def test_validation_only_graph_requires_approval_then_reaches_final_review(tmp_p
     passed = {"passed": True, "exit_code": 0, "duration_seconds": 0.1, "output": "BUILD SUCCESS"}
     with patch("main.model", model), patch("agents.codebase_agent.get_model", return_value=model), patch(
         "main.validate_implementation", return_value=passed
-    ) as validate, patch("main.implement_expiration") as implement, patch(
+    ) as validate, patch("main.implement_task") as implement, patch(
         "main.create_checkpoint"
     ) as checkpoint, patch("main.apply_approved_repair") as repair, patch("main.log_event"):
         paused = app.invoke(state, config=config)

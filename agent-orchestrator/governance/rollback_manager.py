@@ -1,5 +1,6 @@
 from pathlib import Path
 import hashlib
+from governance.source_policy import authorized_java_target
 
 ALLOWED_FILES = {
     "url-shortener/src/main/java/url_shortener/ShortUrl.java"
@@ -10,8 +11,10 @@ def file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def create_checkpoint(relative_path: str, workspace: Path) -> dict:
-    if relative_path not in ALLOWED_FILES:
+def create_checkpoint(relative_path: str, workspace: Path, *, allowed_files=None) -> dict:
+    if allowed_files is not None:
+        authorized_java_target(relative_path, workspace, allowed_files)
+    elif relative_path not in ALLOWED_FILES:
         raise PermissionError("File is not authorized for rollback")
 
     workspace_root = workspace.resolve(strict=True)
@@ -32,10 +35,12 @@ def create_checkpoint(relative_path: str, workspace: Path) -> dict:
     }
 
 
-def rollback(checkpoint: dict, expected_current_hash: str, workspace: Path) -> bool:
+def rollback(checkpoint: dict, expected_current_hash: str, workspace: Path, *, allowed_files=None) -> bool:
     relative_path = checkpoint["path"]
 
-    if relative_path not in ALLOWED_FILES:
+    if allowed_files is not None:
+        authorized_java_target(relative_path, workspace, allowed_files)
+    elif relative_path not in ALLOWED_FILES:
         raise PermissionError("Unauthorized rollback target")
 
     workspace_root = workspace.resolve(strict=True)

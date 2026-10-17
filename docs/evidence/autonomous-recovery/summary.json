@@ -1,0 +1,17 @@
+{
+  "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+  "workspace": "/private/tmp/schwab-autonomous-recovery/snapshot/.agent-workspaces/309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+  "status": "AWAITING_FINAL_HUMAN_REVIEW",
+  "attempts": 2,
+  "retry_count": 1,
+  "plan_version": 2,
+  "material_change": false,
+  "failure_category": "java_compilation",
+  "rolled_back_before_retry": true,
+  "maven_tests_passed": 13,
+  "source_files_changed": 2,
+  "sqlite_checkpoint_count": 13,
+  "initial_proposal": "recorded live-model fixture with one deliberately seeded type-name defect",
+  "replanner_and_corrector": "real local Ollama qwen2.5-coder:latest",
+  "human_approval_basis": "Existing user approval of the identical API plan; unchanged recovery task definitions required no new approval"
+}

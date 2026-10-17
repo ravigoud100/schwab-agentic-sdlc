@@ -39,7 +39,7 @@ def test_cli_persists_approved_validation_result_and_audit(tmp_path, monkeypatch
         "main.initialize_workspace", side_effect=lambda workflow_id: initialize_workspace(workflow_id, repo)
     ), patch("main.model", provider), patch("agents.codebase_agent.get_model", return_value=provider), patch(
         "llm.provider.OllamaProvider.invoke", side_effect=AssertionError("Ollama must not be contacted")
-    ), patch("main.implement_expiration", side_effect=AssertionError("No source generation")), patch(
+    ), patch("main.implement_task", side_effect=AssertionError("No source generation")), patch(
         "agents.validation_agent.subprocess.run", wraps=subprocess.run
     ) as run:
         # Allow real Git operations; replace only the Maven subprocess boundary.

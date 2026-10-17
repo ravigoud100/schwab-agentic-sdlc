@@ -150,3 +150,17 @@ def test_mock_planning_produces_valid_task_dag(monkeypatch):
     assert tasks[0]["task_id"] == "verify-expiration"
     assert tasks[0]["dependencies"] == []
     validate_task_plan(tasks)
+
+
+def test_ollama_has_explicit_context_and_preserves_usage_metadata(monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+    constructor=Mock(return_value=Mock(invoke=Mock(return_value=SimpleNamespace(content='ok',response_metadata={'prompt_eval_count':9000}))))
+    monkeypatch.setattr('llm.provider.ChatOllama',constructor)
+    monkeypatch.delenv('OLLAMA_NUM_CTX',raising=False)
+    response=OllamaProvider().invoke('large engineering context',stage='implementation')
+    assert constructor.call_args.kwargs['num_ctx']==32768
+    assert response.metadata['prompt_eval_count']==9000
+    monkeypatch.setenv('OLLAMA_NUM_CTX','16384')
+    OllamaProvider()
+    assert constructor.call_args.kwargs['num_ctx']==16384

@@ -1,0 +1,6 @@
+{
+  "command": ".venv/bin/python -m pytest -q",
+  "passed": 476,
+  "failed": 0,
+  "historical_audit_rows_unchanged": true
+}

@@ -1,0 +1,42 @@
+--- a/url-shortener/src/main/java/url_shortener/UrlService.java
++++ b/url-shortener/src/main/java/url_shortener/UrlService.java
+@@ -8,14 +8,21 @@
+ public class UrlService {
+ 
+     private final UrlRepository repository;
++    private final java.time.Clock clock;
+ 
+     private static final String CHARACTERS =
+             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+ 
+     private final SecureRandom random = new SecureRandom();
+ 
++    @org.springframework.beans.factory.annotation.Autowired
+     public UrlService(UrlRepository repository) {
++        this(repository, java.time.Clock.systemUTC());
++    }
++
++    public UrlService(UrlRepository repository, java.time.Clock clock) {
+         this.repository = repository;
++        this.clock = java.util.Objects.requireNonNull(clock);
+     }
+ 
+     public ShortUrl createShortUrl(
+@@ -40,7 +47,7 @@
+         ShortUrl shortUrl = new ShortUrl(originalUrl, shortCode);
+ 
+         if (expiresAt != null &&
+-                !expiresAt.isAfter(java.time.Instant.now())) {
++                !expiresAt.isAfter(java.time.Instant.now(clock))) {
+             throw new org.springframework.web.server.ResponseStatusException(
+                     org.springframework.http.HttpStatus.BAD_REQUEST,
+                     "Expiration must be in the future"
+@@ -75,7 +82,7 @@
+                     )
+             );
+ 
+-    if (shortUrl.isExpired(Instant.now())) {
++    if (shortUrl.isExpired(Instant.now(clock))) {
+         throw new org.springframework.web.server.ResponseStatusException(
+                 org.springframework.http.HttpStatus.GONE,
+                 "Short URL has expired"

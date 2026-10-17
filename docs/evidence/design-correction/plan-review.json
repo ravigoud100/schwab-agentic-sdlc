@@ -1,0 +1,16 @@
+{
+  "decision": "request_plan_changes_before_implementation",
+  "workflow_state_unchanged": true,
+  "next_nodes": [
+    "approval"
+  ],
+  "implementation_approved": false,
+  "plan_sha256": "1209f7cbdd83e943f41b26f6e5b3d00f597d27e511d53e948a7352c6939a08bf",
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "obligation_count": 8,
+  "task_count": 1,
+  "structural_and_declared_coverage_checks_pass": true,
+  "workspace_java_hashes_unchanged": true,
+  "http_400": "Explicitly included in prior design-v2 approval; existing service and test use 400. No implementation approval granted."
+}

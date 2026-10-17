@@ -1,0 +1,40 @@
+[
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:21:27.046701+00:00",
+    "agent": "design_demo",
+    "event": "DESIGN_ACCEPTANCE_STARTED",
+    "details": {
+      "checkpoint_source": "/private/tmp/schwab-semantic-plan-schema-fixed",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:21:27.049635+00:00",
+    "agent": "design_entry_gate",
+    "event": "STAGE_GATE_PASSED",
+    "details": {
+      "stage": "design",
+      "gate": "entry",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "requirement_version": 1,
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:22:40.466223+00:00",
+    "agent": "design_exit_gate",
+    "event": "STAGE_GATE_PASSED",
+    "details": {
+      "stage": "design",
+      "gate": "exit",
+      "design_hash": "fc8e91078a167e302d60568f6010ce82719acb464698f2393df35810fe1bdbda",
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  }
+]

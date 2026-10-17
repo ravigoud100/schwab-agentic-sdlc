@@ -1,0 +1,27 @@
+{
+  "path": "/private/tmp/schwab-integrated-sdlc-fixed/evidence/engineering-notes.md",
+  "sha256": "87ba2457b3b1e42333b6932db9795ccd94b300d1a13c0224fe7e5c442c7d85de",
+  "selection": {
+    "api_change_summary": [
+      "contract"
+    ],
+    "implementation_notes": [
+      "source_origin",
+      "source_hash",
+      "test_origin"
+    ],
+    "testing_evidence": [
+      "baseline",
+      "positive"
+    ],
+    "limitations": [
+      "bounded",
+      "negative"
+    ],
+    "release_considerations": [
+      "lineage",
+      "release"
+    ]
+  },
+  "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5"
+}

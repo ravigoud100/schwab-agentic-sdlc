@@ -1,0 +1,214 @@
+[
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T20:57:10.936647+00:00",
+    "agent": "clarification_demo",
+    "event": "WORKFLOW_STARTED",
+    "details": {
+      "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval."
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T20:57:24.767592+00:00",
+    "agent": "requirements_agent",
+    "event": "REQUIREMENTS_VALIDATED",
+    "details": {
+      "version": 1,
+      "requirements_hash": "23bf75a1f88e614552156382cad2cf370abc89e46a80b3b1c2ec57a3908bb1c8",
+      "ambiguity_ids": [
+        "A1"
+      ]
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:00:18.571586+00:00",
+    "agent": "human_clarification",
+    "event": "CLARIFICATION_APPROVED",
+    "details": {
+      "requirement_version": 1,
+      "answers": {
+        "A1": "Custom expiration timestamp"
+      },
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:10.422073+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 1,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "10e14e610ac314c55c2d89e4ffb53582e75e17c95a478077544d06ccb710c2fa",
+      "task_definition_hash": "ab221ea93103413e8254ce3518cf0ec215335587452a9d9587d2c444bae0341a"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:41.301762+00:00",
+    "agent": "clarification_demo",
+    "event": "UNAPPROVED_PLAN_REGENERATION_REQUESTED",
+    "details": {
+      "reason": "First plan used generic example description; require explicit approved clarification behavior",
+      "previous_plan_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:58.236311+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 2,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "10e14e610ac314c55c2d89e4ffb53582e75e17c95a478077544d06ccb710c2fa",
+      "task_definition_hash": "ab221ea93103413e8254ce3518cf0ec215335587452a9d9587d2c444bae0341a"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:08:02.578538+00:00",
+    "agent": "semantic_plan_demo",
+    "event": "SEMANTIC_ACCEPTANCE_STARTED",
+    "details": {
+      "controlled_first_proposal": true,
+      "human_contract_approved": true,
+      "source_checkpoint_directory": "/private/tmp/schwab-requirements-clarification"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:08:02.588619+00:00",
+    "agent": "requirement_contract_review",
+    "event": "REQUIREMENT_CONTRACT_APPROVED",
+    "details": {
+      "contract": {
+        "decision_id": "A1",
+        "selected_answer": "Custom expiration timestamp",
+        "obligations": [
+          {
+            "id": "caller-expiration",
+            "kind": "implementation",
+            "spec": {
+              "operation": "accept_optional_input",
+              "field": "expiresAt",
+              "source": "caller",
+              "representation": "UTC_timestamp"
+            }
+          },
+          {
+            "id": "future-only",
+            "kind": "implementation",
+            "spec": {
+              "operation": "validate",
+              "field": "expiresAt",
+              "predicate": "strictly_after_now",
+              "otherwise": "rejected"
+            }
+          },
+          {
+            "id": "utc-consistency",
+            "kind": "implementation",
+            "spec": {
+              "operation": "compare_and_store",
+              "field": "expiresAt",
+              "time_basis": "UTC"
+            }
+          },
+          {
+            "id": "missing-compatibility",
+            "kind": "implementation",
+            "spec": {
+              "operation": "preserve",
+              "when": "expiresAt_missing",
+              "behavior": "no_expiration_existing_links_and_redirects"
+            }
+          },
+          {
+            "id": "test-future",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now_plus_1_hour",
+              "clock": "fixed_UTC",
+              "expected": "accepted"
+            }
+          },
+          {
+            "id": "test-past",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now_minus_1_hour",
+              "clock": "fixed_UTC",
+              "expected": "rejected"
+            }
+          },
+          {
+            "id": "test-boundary",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now",
+              "clock": "fixed_UTC",
+              "expected": "rejected"
+            }
+          },
+          {
+            "id": "test-missing",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": null,
+              "clock": "fixed_UTC",
+              "expected": "no_expiration"
+            }
+          }
+        ]
+      },
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "requirement_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:08:02.590737+00:00",
+    "agent": "semantic_plan_gate",
+    "event": "SEMANTIC_PLAN_REJECTED",
+    "details": {
+      "attempt": 1,
+      "error": "Plan requires a structured coverage array",
+      "proposal": "{\"tasks\": [{\"task_id\": \"generic\", \"description\": \"Implement URL expiration functionality.\", \"dependencies\": [], \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/ShortUrl.java\"]}]}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:09:04.631434+00:00",
+    "agent": "semantic_plan_gate",
+    "event": "SEMANTIC_PLAN_ACCEPTED",
+    "details": {
+      "attempt": 2,
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "e40314fac2507a48dae5af12a02a9be666f5006ead3c1ce5f5180f50fcd485ce"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:09:04.634697+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 3,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "5839ebfa0674e38aa5e6896dc2fa9b95e9cd4c4008a60952413c2146c8cffbbe",
+      "task_definition_hash": "ce459ca272a8ce04914444c2b179adf9fa89eab06187efc18e167200d3b8d1cc"
+    }
+  }
+]

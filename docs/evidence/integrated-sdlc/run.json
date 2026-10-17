@@ -1,0 +1,8 @@
+{
+  "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+  "parent_workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "workspace": "/private/tmp/schwab-integrated-sdlc/snapshot/.agent-workspaces/a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+  "source_checkpoint": "/private/tmp/schwab-design-correction",
+  "design_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+  "plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45"
+}

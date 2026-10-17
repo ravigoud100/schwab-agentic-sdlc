@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+      "check": "unique_rollback_transactions",
+      "value": 4
+    },
+    {
+      "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+      "check": "unique_rollback_transactions",
+      "value": 3
+    },
+    {
+      "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+      "check": "unique_rollback_transactions",
+      "value": 3
+    },
+    {
+      "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+      "check": "blocked_not_released_and_recovery_arithmetic",
+      "seconds": 1211.328118
+    },
+    {
+      "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+      "check": "unique_rollback_transactions",
+      "value": 1
+    },
+    {
+      "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+      "check": "live_recovery_mttr",
+      "seconds": 72.414036
+    },
+    {
+      "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+      "check": "unique_rollback_transactions",
+      "value": 1
+    },
+    {
+      "workflow_id": "parallel-fixture-success",
+      "check": "unique_rollback_transactions",
+      "value": 0
+    },
+    {
+      "workflow_id": "parallel-fixture-success",
+      "check": "concurrent_worker_union",
+      "union_seconds": 0.008135,
+      "sum_seconds": 0.016162
+    },
+    {
+      "workflow_id": "parallel-fixture-compilation-failure",
+      "check": "unique_rollback_transactions",
+      "value": 1
+    }
+  ],
+  "scope": "Retained examples; audit interpretation and arithmetic, not production reliability"
+}

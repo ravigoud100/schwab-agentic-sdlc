@@ -1,0 +1,44 @@
+[
+  {
+    "id": 26,
+    "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+    "event": "TEST_GENERATION_ARCHITECTURE_REVIEW_BLOCKED",
+    "details": {
+      "review_status": "BLOCKED_DESIGN_CORRECTION_REQUIRED",
+      "checkpoint_status": "AWAITING_TEST_GENERATION_APPROVAL",
+      "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+      "workspace": "/private/tmp/schwab-integrated-sdlc-fixed/snapshot/.agent-workspaces/e43f07a6-4824-4f49-865f-69ae19899ca1",
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_design_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+      "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "approved_plan_hash": "8aaaedc578c7d8422e4023ec99f825e3939e4999d0b901dc9fb31ed5b2ebdd45",
+      "authorization_hash": "aa49cac78b548f9fe6fca8c7bb089529d72245f484a1671b8937c47d325f9488",
+      "source_transaction_id": "482a54dd-f8e5-4761-8ce7-c1bc03009cc8",
+      "source_transaction_status": "applied",
+      "source_path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "reviewed_source_hash": "3a67479b05cdd4cc4ea7549ca9ab9bbaea34c75a3bc1b14f54aea52be8beb939",
+      "integrity_verified": true,
+      "only_authorized_production_file_changed": true,
+      "original_tests_build_and_other_files_byte_identical": true,
+      "maven_original_tests_passed": 8,
+      "mandatory_design_decision": {
+        "id": "clock-seam",
+        "decision": "Keep the public UrlService(UrlRepository) constructor, annotate it with @org.springframework.beans.factory.annotation.Autowired, and delegate to this(repository, java.time.Clock.systemUTC()). Add public UrlService(UrlRepository, java.time.Clock), store a private final Clock, and use java.time.Instant.now(clock) for both creation validation and redirect expiration checks. Use fixed UTC in additive GeneratedExpirationBoundaryTest; existing tests and build remain unchanged.",
+        "rationale": "Deterministic equality-boundary testing without altering HTTP 201/400/404/410, optional expiration, redirects, or click behavior."
+      },
+      "observed_constructor_body": "this.repository = repository;\n        this.clock = java.time.Clock.systemUTC();",
+      "mandatory_design_delegation_present": false,
+      "required_correction": "Retain @Autowired on public UrlService(UrlRepository repository); its body must delegate with this(repository, java.time.Clock.systemUTC()). Retain the explicit repository/Clock constructor and all other approved behavior.",
+      "source_attempts_used": 2,
+      "maximum_attempts": 3,
+      "remaining_source_attempts": 1,
+      "test_generation_approval_requested": false,
+      "test_generation_approved": false,
+      "generated_test_exists": false,
+      "graph_resumed": false,
+      "source_modified_during_review": false,
+      "test_results_documentation_release_deployment_approved": false
+    }
+  }
+]

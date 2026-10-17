@@ -177,7 +177,7 @@ def finish_tasks(tasks: list[dict], task_ids: list[str], success: bool) -> list[
     return finished
 
 
-def tasks_from_plan(plan: str, allowed_file: str) -> list[dict]:
+def tasks_from_plan(plan: str, allowed_file: str, *, strict: bool = False) -> list[dict]:
     """Parse strict JSON task plans; retain a safe one-task legacy fallback."""
     import json
 
@@ -199,8 +199,12 @@ def tasks_from_plan(plan: str, allowed_file: str) -> list[dict]:
                 )
             validate_task_plan(tasks)
             return tasks
-    except (KeyError, TypeError, json.JSONDecodeError):
-        pass
+    except (KeyError, TypeError, json.JSONDecodeError) as error:
+        if strict:
+            raise TaskPlanError("Planner must return a valid JSON task plan") from error
+
+    if strict:
+        raise TaskPlanError("Planner must return a JSON tasks array")
 
     return [
         {
@@ -212,3 +216,16 @@ def tasks_from_plan(plan: str, allowed_file: str) -> list[dict]:
             "allowed_files": [allowed_file],
         }
     ]
+
+
+def task_definition_hash(tasks: list[dict]) -> str:
+    """Bind approval to task definitions while allowing scheduler status changes."""
+    import hashlib
+    import json
+    validate_task_plan(tasks)
+    definitions = [
+        {**{key: value for key, value in task.items() if key != "status"},
+         "execution_type": task.get("execution_type", "implementation")}
+        for task in tasks
+    ]
+    return hashlib.sha256(json.dumps(definitions, sort_keys=True).encode()).hexdigest()

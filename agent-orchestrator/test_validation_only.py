@@ -44,7 +44,7 @@ def test_validation_only_graph_executes_maven_only_after_approval(
     with patch("main.model", provider), patch(
         "agents.codebase_agent.get_model", return_value=provider
     ), patch("agents.validation_agent.subprocess.run", return_value=process) as run, patch(
-        "main.implement_expiration"
+        "main.implement_task"
     ) as implement, patch("main.apply_approved_repair") as repair, patch(
         "main.create_checkpoint"
     ) as checkpoint, patch("main.rollback") as rollback, patch("main.log_event"):
@@ -96,12 +96,14 @@ def test_implementation_tasks_keep_original_execution_path(tmp_path, explicit_ty
         "approval": "approve", "task_plan_valid": True,
         "active_task_ids": ["implementation"], "tasks": [task],
     }
+    from main import _task_definition_hash
+    state["approved_task_hash"] = _task_definition_hash(state["tasks"])
     assert task_scheduler_router(state) == "implementation"
-    with patch("main.create_checkpoint", return_value={"original_hash": "original"}) as checkpoint, patch(
-        "main.implement_expiration", return_value=target
-    ) as implement, patch("main.log_event"):
+    transaction = {"transaction_id": "test-transaction", "paths": task["allowed_files"],
+                   "checkpoints": [{"path": IMPLEMENTATION_RELATIVE_PATH, "original_hash": "original"}],
+                   "expected_hashes": {IMPLEMENTATION_RELATIVE_PATH: "new"}}
+    with patch("main.implement_task", return_value=transaction) as implement, patch("main.log_event"):
         result = implementation_node(state)
-    checkpoint.assert_called_once_with(IMPLEMENTATION_RELATIVE_PATH, tmp_path)
-    implement.assert_called_once_with(approved=True, workspace=tmp_path)
+    implement.assert_called_once_with(task=task, workspace=tmp_path, context=state)
     assert result["status"] == "IMPLEMENTATION_COMPLETED"
     assert result["tasks"][0]["status"] == "RUNNING"

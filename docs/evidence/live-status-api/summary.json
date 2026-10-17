@@ -1,0 +1,24 @@
+{
+  "success": {
+    "workflow_id": "b9866229-4f35-408c-872c-d7c4a6c5e338",
+    "transaction_id": "4a9297bf-44d2-4bd0-aaac-9da982122e54",
+    "status": "AWAITING_FINAL_HUMAN_REVIEW",
+    "source_directory": "/private/tmp/schwab-live-status-api-success-11",
+    "checkpoint_count": 7,
+    "source_files_changed": 2,
+    "tests": 13,
+    "test_failures": 0,
+    "model": "qwen2.5-coder:latest"
+  },
+  "rollback": {
+    "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+    "transaction_id": "b92599db-d9ef-4802-95f5-c629d9583d8b",
+    "status": "STOPPED_ROLLED_BACK",
+    "source_directory": "/private/tmp/schwab-live-status-api-rollback-final",
+    "checkpoint_count": 7,
+    "source_files_changed": 0,
+    "tests": 13,
+    "test_failures": 1,
+    "model": "qwen2.5-coder:latest"
+  }
+}

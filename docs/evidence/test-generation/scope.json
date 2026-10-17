@@ -1,0 +1,8 @@
+{
+  "production_file": "url-shortener/src/main/java/url_shortener/UrlService.java",
+  "new_test_file": "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java",
+  "architecture": "Preserve the existing Spring/autowired one-argument constructor using Clock.systemUTC(); add a two-argument constructor for explicit Clock injection. Use the same injected clock for creation validation and redirect expiration checks. Keep Instant storage and existing HTTP behavior.",
+  "policy": "Original tests, build configuration and unrelated files remain byte-identical. Only create the named new test file. Existing-file changes restricted to the exact reviewed service patch.",
+  "negative_fixture": "In a separate isolated run, change strictly-future validation to allow equality; generated equal-now test must fail as an assertion while original tests remain executable. Restore correct implementation for final Maven validation.",
+  "generator": "AI produces a constrained JSON test specification; a trusted deterministic renderer generates JUnit assertions. Arbitrary generated Java is rejected."
+}

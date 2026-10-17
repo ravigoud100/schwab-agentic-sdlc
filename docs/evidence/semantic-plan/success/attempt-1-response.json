@@ -1,0 +1,1 @@
+{"tasks": [{"task_id": "generic", "description": "Implement URL expiration functionality.", "dependencies": [], "execution_type": "implementation", "allowed_files": ["url-shortener/src/main/java/url_shortener/ShortUrl.java"]}]}

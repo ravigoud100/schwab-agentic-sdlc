@@ -1,0 +1,7 @@
+{
+  "status": "validated",
+  "test_path": "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java",
+  "test_hash": "3410e143197f0d0289e8a14e4b1e13ede7e388c1c4b7faf2094681d186b71fa9",
+  "scope_hash": "4f51e47773aefda2cfdddaee80f464a83026f1afbdb942ba4045e22c6fc5c1cc",
+  "source_transaction_id": "ca838012-fd43-450e-a79e-3d5fb77d5d8f"
+}

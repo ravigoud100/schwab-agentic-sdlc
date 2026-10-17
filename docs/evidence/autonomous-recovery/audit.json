@@ -1,0 +1,361 @@
+[
+  {
+    "timestamp": "2026-10-16T20:44:11.239250+00:00",
+    "agent": "recovery_demo",
+    "event": "WORKFLOW_STARTED",
+    "details": {
+      "source_plan_hash": "b5370d3f17b923ca1525518025a03cf1ec3a4129998422cc3a6b86878b5bac40",
+      "controlled_fault_fixture": true
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.005736+00:00",
+    "agent": "human_approval",
+    "event": "PLAN_APPROVED",
+    "details": {
+      "decision": "approve"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.006464+00:00",
+    "agent": "task_scheduler",
+    "event": "TASKS_SCHEDULED",
+    "details": {
+      "ready_task_ids": [
+        "implement-requirement"
+      ],
+      "active_task_ids": [
+        "implement-requirement"
+      ],
+      "parallel_batches": [
+        [
+          "implement-requirement"
+        ]
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.007120+00:00",
+    "agent": "task_scheduler",
+    "event": "TASKS_STARTED",
+    "details": {
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.007455+00:00",
+    "agent": "implementation_agent",
+    "event": "IMPLEMENTATION_ATTEMPT_STARTED",
+    "details": {
+      "attempt": 1,
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.008395+00:00",
+    "agent": "recovery_demo",
+    "event": "CONTROLLED_MODEL_OUTPUT_FAULT_INJECTED",
+    "details": {
+      "source": "docs/evidence/live-status-api/success-proposal.json",
+      "defect": "java.util.Mapp"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.009614+00:00",
+    "agent": "implementation_executor",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.009850+00:00",
+    "agent": "implementation_executor",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "checkpoint_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93:url-shortener/src/main/java/url_shortener/UrlController.java",
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93",
+      "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.011101+00:00",
+    "agent": "implementation_executor",
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:41.011323+00:00",
+    "agent": "implementation_agent",
+    "event": "IMPLEMENTATION_COMPLETED",
+    "details": {
+      "file_changed": true,
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ],
+      "task_id": "implement-requirement",
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93",
+      "attempt": 1,
+      "checkpoints": [
+        {
+          "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+          "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+          "checkpoint_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93:url-shortener/src/main/java/url_shortener/UrlService.java"
+        },
+        {
+          "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+          "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "checkpoint_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93:url-shortener/src/main/java/url_shortener/UrlController.java"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.695705+00:00",
+    "agent": "validation_agent",
+    "event": "VALIDATION_FAILED",
+    "details": {
+      "exit_code": 1,
+      "duration_seconds": 1.68,
+      "retry_count": 0,
+      "repair_applied": false
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.696434+00:00",
+    "agent": "task_scheduler",
+    "event": "TASKS_FAILED",
+    "details": {
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.699093+00:00",
+    "agent": "rollback_manager",
+    "event": "TRANSACTION_ROLLED_BACK",
+    "details": {
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.699628+00:00",
+    "agent": "rollback_manager",
+    "event": "ROLLBACK_COMPLETED",
+    "details": {
+      "attempt": 1,
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ],
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.700233+00:00",
+    "agent": "failure_classifier",
+    "event": "FAILURE_CLASSIFIED",
+    "details": {
+      "attempt": 1,
+      "category": "java_compilation",
+      "recoverable": true,
+      "evidence_hash": "017dd5f7a98696455c5813c54056e76fbf4569e8c89a3ae153e00bbda37e2065"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:44:42.700634+00:00",
+    "agent": "diagnostic_collector",
+    "event": "DIAGNOSTICS_COLLECTED",
+    "details": {
+      "attempt": 1,
+      "proposal_available": true,
+      "original_hashes": {
+        "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+      },
+      "restored_hashes": {
+        "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+      },
+      "test_failure_count": 0,
+      "transaction_id": "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:12.947934+00:00",
+    "agent": "recovery_replanner",
+    "event": "RECOVERY_PLAN_CREATED",
+    "details": {
+      "plan_version": 2,
+      "material_change": false,
+      "attempt": 1,
+      "evidence_hash": "017dd5f7a98696455c5813c54056e76fbf4569e8c89a3ae153e00bbda37e2065"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:12.988536+00:00",
+    "agent": "recovery_controller",
+    "event": "RECOVERY_PLAN_APPROVED",
+    "details": {
+      "plan_version": 2,
+      "material_change": false,
+      "approval_basis": "unchanged_approved_tasks"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:12.996951+00:00",
+    "agent": "recovery_controller",
+    "event": "IMPLEMENTATION_RETRY_STARTED",
+    "details": {
+      "retry_count": 1,
+      "attempt": 2,
+      "plan_version": 2
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:12.998444+00:00",
+    "agent": "task_scheduler",
+    "event": "TASKS_STARTED",
+    "details": {
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:12.999403+00:00",
+    "agent": "implementation_agent",
+    "event": "IMPLEMENTATION_ATTEMPT_STARTED",
+    "details": {
+      "attempt": 2,
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:45.889330+00:00",
+    "agent": "recovery_demo",
+    "event": "LIVE_CORRECTION_GENERATED",
+    "details": {
+      "correction": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:46.129059+00:00",
+    "agent": "implementation_executor",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "checkpoint_id": "2022b0cb-8311-4777-829b-2d8014ec9d93:url-shortener/src/main/java/url_shortener/UrlService.java",
+      "transaction_id": "2022b0cb-8311-4777-829b-2d8014ec9d93",
+      "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:46.136071+00:00",
+    "agent": "implementation_executor",
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "checkpoint_id": "2022b0cb-8311-4777-829b-2d8014ec9d93:url-shortener/src/main/java/url_shortener/UrlController.java",
+      "transaction_id": "2022b0cb-8311-4777-829b-2d8014ec9d93",
+      "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:46.159881+00:00",
+    "agent": "implementation_executor",
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "2022b0cb-8311-4777-829b-2d8014ec9d93",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:46.172109+00:00",
+    "agent": "implementation_agent",
+    "event": "IMPLEMENTATION_COMPLETED",
+    "details": {
+      "file_changed": true,
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ],
+      "task_id": "implement-requirement",
+      "transaction_id": "2022b0cb-8311-4777-829b-2d8014ec9d93",
+      "attempt": 2,
+      "checkpoints": [
+        {
+          "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+          "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+          "checkpoint_id": "2022b0cb-8311-4777-829b-2d8014ec9d93:url-shortener/src/main/java/url_shortener/UrlService.java"
+        },
+        {
+          "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+          "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "checkpoint_id": "2022b0cb-8311-4777-829b-2d8014ec9d93:url-shortener/src/main/java/url_shortener/UrlController.java"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:55.109741+00:00",
+    "agent": "validation_agent",
+    "event": "VALIDATION_PASSED",
+    "details": {
+      "exit_code": 0,
+      "duration_seconds": 8.91,
+      "retry_count": 1,
+      "repair_applied": false
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:55.111144+00:00",
+    "agent": "task_scheduler",
+    "event": "TASKS_COMPLETED",
+    "details": {
+      "task_ids": [
+        "implement-requirement"
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-10-16T20:45:55.115311+00:00",
+    "agent": "quality_gate",
+    "event": "AWAITING_FINAL_HUMAN_REVIEW",
+    "details": {}
+  },
+  {
+    "timestamp": "2026-10-16T20:45:55.133452+00:00",
+    "agent": "recovery_demo",
+    "event": "WORKFLOW_FINISHED",
+    "details": {
+      "status": "AWAITING_FINAL_HUMAN_REVIEW",
+      "retry_count": 1
+    }
+  }
+]

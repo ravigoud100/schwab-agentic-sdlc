@@ -1,0 +1,6 @@
+{
+  "controlled_fixture": true,
+  "status": "REJECTED_BEFORE_DOCUMENT_PUBLICATION",
+  "error": "Unsupported or missing documentation claims in implementation_notes",
+  "engineering_notes_created": false
+}

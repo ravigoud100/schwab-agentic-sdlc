@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "task_id": "implement-requirement",
+      "description": "Add a new GET endpoint /api/urls/{shortCode}/status to the existing URL API. Return HTTP 200 with JSON fields shortCode (string) and expired (boolean). An unset or future expiration means expired=false; a past expiration means true. Unknown codes must return HTTP 404. Reading status must never increment clicks. Add public java.util.Map<String,Object> getStatus(String shortCode) to UrlService using a read-only transaction, the existing repository lookup, existing 404 behavior, and Instant.now() to evaluate expiration. Add the annotated controller endpoint to UrlController, delegating to urlService.getStatus(shortCode). Preserve existing endpoints and behavior.",
+      "dependencies": [],
+      "execution_type": "implementation",
+      "allowed_files": [
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java"
+      ]
+    }
+  ]
+}

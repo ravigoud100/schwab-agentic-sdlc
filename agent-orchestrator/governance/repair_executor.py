@@ -49,12 +49,21 @@ def apply_approved_repair(change: dict, workspace: Path) -> dict:
         raise ValueError("Repair must replace non-empty text with different text")
 
     target = _authorized_target(relative_path, workspace)
-    current = target.read_text(encoding="utf-8")
+    from governance.source_policy import authorized_java_target
+    target = authorized_java_target(relative_path,workspace,ALLOWED_REPAIR_FILES)
+    original = target.read_bytes()
+    current = original.decode('utf-8')
     if current.count(old_text) != 1:
         raise ValueError("Expected repair text must occur exactly once")
 
+    updated=current.replace(old_text, new_text, 1)
+    from governance.policy_engine import enforce, execution_context
+    workflow_id,approvals=execution_context.get() or ('standalone-repair', ())
+    enforce({relative_path:updated.encode('utf-8')},{relative_path:original},workspace,workflow_id,approvals=approvals)
     checkpoint = create_checkpoint(relative_path, workspace)
-    target.write_text(current.replace(old_text, new_text, 1), encoding="utf-8")
+    if checkpoint['original_content']!=original or target.read_bytes()!=original:
+        raise RuntimeError('Repair source changed before write')
+    target.write_text(updated, encoding="utf-8")
     expected_current_hash = file_hash(target.read_bytes())
 
     return {

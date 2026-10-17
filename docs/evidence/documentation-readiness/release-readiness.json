@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED",
+  "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+  "checks": {
+    "artifact_lineage_and_source_integrity": true,
+    "requirements_and_design_approved": true,
+    "clock_and_test_scope_approved": true,
+    "original_and_generated_tests_verified": true,
+    "genuine_maven_evidence": true,
+    "matching_implementation_plan_approved": false,
+    "human_test_results_review": true,
+    "documentation_verified": true,
+    "release_security_and_operational_signoff": false
+  },
+  "blockers": [
+    "matching_implementation_plan_approved",
+    "release_security_and_operational_signoff"
+  ],
+  "errors": [],
+  "deployment_authorized": false,
+  "earlier_four_file_plan_authorized": false
+}

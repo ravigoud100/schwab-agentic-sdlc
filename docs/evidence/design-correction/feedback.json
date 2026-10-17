@@ -1,0 +1,4 @@
+{
+  "decision": "request_changes",
+  "feedback": "Correct the stale compatibility risk claiming the expiration configuration decision has not been approved. A1 is already human-approved: optional caller-provided future UTC expiration timestamps, preserving missing-expiration behavior. Replace that obsolete risk with an actual compatibility risk and mitigation, and explicitly acknowledge the approved decision in the architectural rationale. Preserve all eight approved obligations and valid production/test component references. Do not change requirements, the approved contract, or Java source."
+}

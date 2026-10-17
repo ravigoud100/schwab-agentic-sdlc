@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "obligation_id": "caller-expiration",
+      "spec": {
+        "operation": "accept_optional_input",
+        "field": "expiresAt",
+        "source": "caller",
+        "representation": "UTC_timestamp"
+      }
+    },
+    {
+      "obligation_id": "future-only",
+      "spec": {
+        "operation": "validate",
+        "field": "expiresAt",
+        "predicate": "strictly_after_now",
+        "otherwise": "rejected"
+      }
+    },
+    {
+      "obligation_id": "utc-consistency",
+      "spec": {
+        "operation": "compare_and_store",
+        "field": "expiresAt",
+        "time_basis": "UTC"
+      }
+    },
+    {
+      "obligation_id": "missing-compatibility",
+      "spec": {
+        "operation": "preserve",
+        "when": "expiresAt_missing",
+        "behavior": "no_expiration_existing_links_and_redirects"
+      }
+    }
+  ]
+}

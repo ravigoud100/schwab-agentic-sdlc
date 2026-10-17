@@ -1,0 +1,67 @@
+[
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "redirectsActiveUrlWithFound",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "expiredUrlDoesNotIncreaseClickCount",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "rejectsPastExpiration",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "createsShortUrlWithoutExpiration",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "returnsGoneForExpiredUrl",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "createsShortUrlWithFutureExpiration",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "test": "returnsNotFoundForUnknownShortCode",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlShortenerApplicationTests",
+    "test": "contextLoads",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "test": "expiredStatusDoesNotIncrementClicks",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "test": "activeStatusesDoNotIncrementClicks",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "test": "optionalFailureProbe",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "test": "unknownCodeReturns404",
+    "passed": true
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "test": "serviceProvidesStatusWithoutIncrementingClicks",
+    "passed": true
+  }
+]

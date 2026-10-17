@@ -1,0 +1,81 @@
+{
+  "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+  "status": "AWAITING_FINAL_HUMAN_REVIEW",
+  "bundle_sha256": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+  "documentation_sha256": "87ba2457b3b1e42333b6932db9795ccd94b300d1a13c0224fe7e5c442c7d85de",
+  "readiness": {
+    "status": "BLOCKED",
+    "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+    "checks": {
+      "artifact_lineage_and_source_integrity": true,
+      "requirements_and_design_approved": true,
+      "test_generation_scope_approved": true,
+      "original_and_generated_tests_verified": true,
+      "genuine_maven_evidence": true,
+      "matching_implementation_plan_approved": true,
+      "human_test_results_review": true,
+      "documentation_verified": true,
+      "release_security_and_operational_signoff": false
+    },
+    "blockers": [
+      "release_security_and_operational_signoff"
+    ],
+    "errors": [],
+    "deployment_authorized": false,
+    "earlier_four_file_plan_authorized": false
+  },
+  "sqlite_checkpoints": {
+    "": 8,
+    "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21": 7,
+    "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82": 10,
+    "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c": 7
+  },
+  "pending_interrupt": {
+    "type": "FINAL_RELEASE_REVIEW",
+    "report": {
+      "status": "BLOCKED",
+      "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "test_generation_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": true,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [],
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    },
+    "message": "Blocked readiness cannot be overridden by this review. No deployment is performed."
+  },
+  "maven_cases": {
+    "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#futureExpiration": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#missingExpiration": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#equalNowExpiration": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#pastExpiration": "passed",
+    "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+  },
+  "original_tests_build_preserved": true,
+  "constructor_delegation_verified": true,
+  "documentation_model_calls": 2,
+  "regression_tests": {
+    "passed": 347,
+    "command": ".venv/bin/python -m pytest -q"
+  },
+  "original_databases": "/private/tmp/schwab-integrated-sdlc-fixed",
+  "final_review_resumed": false
+}

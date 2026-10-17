@@ -1,0 +1,49 @@
+--- a/url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java
++++ b/url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java
+@@ -0,0 +1,46 @@
++package url_shortener;
++import static org.junit.jupiter.api.Assertions.*;
++import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
++import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
++import java.time.Instant;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
++import org.springframework.test.web.servlet.MockMvc;
++import org.springframework.transaction.annotation.Transactional;
++@SpringBootTest @AutoConfigureMockMvc
++class UrlStatusIntegrationTest {
++ @Autowired MockMvc mvc;
++ @Autowired UrlRepository repository;
++ @BeforeEach void clean() { repository.deleteAll(); }
++ @Test void statusPreservesClicksAndRedirectCompatibility() throws Exception {
++  ShortUrl url = new ShortUrl("https://example.com/status", "status1");
++  url.incrementClickCount(); repository.save(url);
++  mvc.perform(get("/api/urls/status1/status")).andExpect(status().isOk())
++   .andExpect(jsonPath("$.shortCode").value("status1"))
++   .andExpect(jsonPath("$.expired").value(false));
++  mvc.perform(get("/api/urls/status1/analytics")).andExpect(status().isOk())
++   .andExpect(jsonPath("$.totalClicks").value(1));
++  mvc.perform(get("/status1")).andExpect(status().is3xxRedirection())
++   .andExpect(header().string("Location", "https://example.com/status"));
++  mvc.perform(get("/api/urls/status1/analytics")).andExpect(status().isOk())
++   .andExpect(jsonPath("$.totalClicks").value(2));
++ }
++ @Test void expirationStatesAreReadOnly() throws Exception {
++  ShortUrl past = new ShortUrl("https://example.com/past", "past1");
++  past.setExpiresAt(Instant.parse("2000-01-01T00:00:00Z")); repository.save(past);
++  ShortUrl future = new ShortUrl("https://example.com/future", "future1");
++  future.setExpiresAt(Instant.parse("2100-01-01T00:00:00Z")); repository.save(future);
++  mvc.perform(get("/api/urls/past1/status")).andExpect(status().isOk()).andExpect(jsonPath("$.expired").value(true));
++  mvc.perform(get("/api/urls/future1/status")).andExpect(status().isOk()).andExpect(jsonPath("$.expired").value(false));
++  for (String code : new String[]{"past1","future1"})
++   mvc.perform(get("/api/urls/"+code+"/analytics")).andExpect(status().isOk()).andExpect(jsonPath("$.totalClicks").value(0));
++ }
++ @Test void unknownIs404AndServiceDeclaresReadOnly() throws Exception {
++  mvc.perform(get("/api/urls/missing/status")).andExpect(status().isNotFound());
++  Transactional annotation = UrlService.class.getMethod("getStatus", String.class).getAnnotation(Transactional.class);
++  assertNotNull(annotation); assertTrue(annotation.readOnly());
++ }
++}

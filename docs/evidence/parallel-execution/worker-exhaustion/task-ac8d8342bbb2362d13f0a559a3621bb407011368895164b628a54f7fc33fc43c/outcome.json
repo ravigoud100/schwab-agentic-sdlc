@@ -1,0 +1,16 @@
+{
+  "task_id": "a",
+  "ok": true,
+  "attempts": 1,
+  "receipt": {
+    "binding_hash": "9360f0f28387358541422595f06e2f2a3e3bbbbf2ed95484545e0df23ee04056",
+    "task_id": "a",
+    "task_hash": "06054e1dd80ae168f1c012ae8bc5a89c30e248de7c97e7dd66df4798a9d03d38"
+  },
+  "proposals": {
+    "url-shortener/src/main/java/url_shortener/A.java": "Y2xhc3MgQSB7IGludCB2YWx1ZSA9IDI7IH0="
+  },
+  "originals": {
+    "url-shortener/src/main/java/url_shortener/A.java": "Y2xhc3MgQSB7IGludCB2YWx1ZSA9IDE7IH0="
+  }
+}

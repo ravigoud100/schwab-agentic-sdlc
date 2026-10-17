@@ -1,0 +1,30 @@
+{
+  "scope": {
+    "authorization_hash": "aa49cac78b548f9fe6fca8c7bb089529d72245f484a1671b8937c47d325f9488",
+    "test_path": "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java",
+    "execution_hash": "be8007ab0996c929a50da3eb53eac956d6b6dd4e2982bf78d83745642d456e56",
+    "policy": "immutable-original-project;one-additive-vetted-expiration-test"
+  },
+  "scope_hash": "c61c0c6befcc8f012e3fa21eab0f8839109e276ade39879e887e50e09324be80",
+  "profile": "vetted-expiration-renderer",
+  "cases": [
+    "futureExpiration",
+    "pastExpiration",
+    "equalNowExpiration",
+    "missingExpiration"
+  ],
+  "clock": "Clock.fixed(2030-01-01T00:00:00Z, ZoneOffset.UTC)",
+  "expected_total_tests": 12,
+  "permitted_actions": [
+    "create only the approved additive test",
+    "run real offline Maven clean test",
+    "compensate on failure without overwriting external changes"
+  ],
+  "prohibited_actions": [
+    "modify existing tests/build files",
+    "generate new production edits",
+    "approve test results",
+    "generate documentation",
+    "approve release or deployment"
+  ]
+}

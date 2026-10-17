@@ -1,0 +1,19 @@
+# Structured requirements and clarification — October 16, 2026
+
+The live Requirements Agent returned validated JSON and interrupted before codebase analysis or planning. The human selected **Custom expiration timestamp**. That answer was approved, saved in SQLite, and supplied to codebase analysis and planning on the same LangGraph thread, `d3ea55e8-4661-4a8d-a370-2c14ad42f5ac`. The workflow now waits at engineering plan approval. No implementation, Maven validation, or source modification executed.
+
+[Before clarification](before-clarification.json) records the unresolved A1 question and absence of a plan. [The answer](answers.json), [final state](result.json), and [audit](audit.json) record the decision and its requirement hash. The final plan is bound to that hash and requirement version. [Verification summary](summary.json) records eight graph checkpoints under one thread and matching hashes for every Java file across the workspace, baseline snapshot, and production checkout. Original SQLite databases and the retained workspace are under `/private/tmp/schwab-requirements-clarification/`.
+
+## Live planning limitation
+
+The live planner received the selected answer but copied a generic example task description. One assistant-initiated regeneration of the unapproved plan, after strengthening the prompt to demand concrete decision-specific descriptions, also returned the generic description. Both live responses are retained: [first plan](first-plan.json), [first prompt](first-planning-prompt.txt), [second plan](plan.json), and [second prompt](planning-prompt.txt). The regeneration was recorded as `UNAPPROVED_PLAN_REGENERATION_REQUESTED`; it reused the same thread and did not execute source changes. This is not an autonomous correction claim.
+
+The selected decision is explicit in the downstream prompt and approval payload, but these live task descriptions do **not** establish that the choice changed generated implementation behavior. The model's requirements output also phrases one criterion as allowing users to choose either mode; downstream prompts explicitly make the approved clarification binding and exclude unselected modes. Structural schema validation does not establish semantic quality. Further semantic plan validation remains necessary before treating arbitrary live plans as reliable.
+
+## Regression verification
+
+The focused selection passes **139 tests**, including **23 clarification tests** in `agent-orchestrator/test_requirement_clarification.py`. Deterministic graph tests separately exercise both offered answers and produce distinct task descriptions, assert answer transfer into both downstream prompts, persist the answer in SQLite, and resume the same thread. This demonstrates the integration contract with controlled model outputs; it does not substitute for decision-specific live model planning.
+
+Additional tests cover malformed requirements, duplicate ambiguity IDs, invalid options/defaults, incomplete or unknown answers, correction after invalid answers, free-text questions, explicit rejection, CLI clarification, and `request_changes`. Changed requirements invalidate old plans and approvals, increment the requirement version, retain history, and require new clarification even when an ambiguity ID is reused. Stale raw requirement text, versions, and hashes cannot reuse an old approval. Existing implementation, multi-file recovery, validation, repair, rollback, audit, and workspace-isolation tests remain passing.
+
+`request_changes` is supported at initial engineering plan review. Low-level legacy state shapes retain compatibility; new workflows starting at START must pass strict requirements validation. This evidence does not claim full SDLC stages, parallel task execution, general semantic completeness, or reliable arbitrary-requirement understanding.

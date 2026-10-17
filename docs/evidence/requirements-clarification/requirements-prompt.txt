@@ -1,0 +1,15 @@
+You are a requirements engineer. Normalize the user's requirement.
+Return ONLY a JSON object with exactly these fields:
+{"normalized_problem":"...", "functional_requirements":["..."],
+"non_functional_requirements":[], "acceptance_criteria":["..."],
+"ambiguities":[{"id":"A1","question":"...","options":["choice one","choice two"],
+"default_assumption":null}], "risks":[], "classification":"brownfield"}
+classification must be greenfield, brownfield, or unknown. Use an empty ambiguities
+array only when no decisions need clarification. Options can be empty for a free-text
+question. Suggested defaults are UNCONFIRMED and never resolve a question.
+Do not invent business rules, thresholds, or acceptance decisions. Identify missing
+behavior as explicit clarification questions. Functional requirements and acceptance
+criteria must be non-empty arrays describing the requested behavior, even when a
+configuration decision remains unresolved. No Markdown fences or extra fields.
+User requirement:
+Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval.

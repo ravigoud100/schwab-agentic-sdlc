@@ -1,0 +1,128 @@
+{
+  "purpose": "Infrastructure only; no engineering attempt or Java generation",
+  "request": {
+    "model": "qwen2.5-coder:latest",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Infrastructure diagnostic only. Reply with the single word OK. Do not generate code."
+      }
+    ],
+    "stream": false,
+    "options": {
+      "temperature": 0,
+      "num_ctx": 32768
+    }
+  },
+  "probe": {
+    "http_status": 200,
+    "elapsed_seconds": 0.3558043339289725,
+    "response": {
+      "model": "qwen2.5-coder:latest",
+      "created_at": "2026-10-17T02:25:47.884932Z",
+      "message": {
+        "role": "assistant",
+        "content": "OK"
+      },
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 338528625,
+      "load_duration": 29194792,
+      "prompt_eval_count": 45,
+      "prompt_eval_cached_count": 24,
+      "prompt_eval_duration": 205693000,
+      "eval_count": 2,
+      "eval_duration": 39468000
+    }
+  },
+  "attempts": [
+    {
+      "attempt_id": "c49cafcf-e66b-4109-9114-48ec50ee175d",
+      "workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c",
+      "ordinal": 1,
+      "receipt_hash": "2e2e157039c243c04f3d444de4156c3b5767087af8ca1eae6cf75e6c27411105",
+      "prompt_hash": "b32a6bfac6bafdefbd6a69a36eeae93d8a8caa66ea12cda5a360121b57d591f8",
+      "model": "qwen2.5-coder:latest",
+      "state": "INTERRUPTED",
+      "created_at": "2026-10-17T02:20:24.614220+00:00",
+      "updated_at": "2026-10-17T02:21:10.002059+00:00",
+      "response_hash": null,
+      "error": null
+    },
+    {
+      "attempt_id": "cf4ec2bf-5436-4086-ad4b-66450d91f1c6",
+      "workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c",
+      "ordinal": 2,
+      "receipt_hash": "6fb04a0545598ffea571128e74d285f849722d5e1fc5a5bfcce1749ace5cce83",
+      "prompt_hash": "6d1ff6ef03efad8cdcd3321e6f272069a79b31a0a49e8004087711d179bd11da",
+      "model": "qwen2.5-coder:latest",
+      "state": "INTERRUPTED",
+      "created_at": "2026-10-17T02:23:21.602740+00:00",
+      "updated_at": "2026-10-17T02:24:00.927404+00:00",
+      "response_hash": null,
+      "error": null
+    }
+  ],
+  "approved_source_hashes_match": {
+    "url-shortener/src/main/java/url_shortener/UrlService.java": true,
+    "url-shortener/src/main/java/url_shortener/UrlController.java": true
+  },
+  "workflow_files_unchanged": true,
+  "before_hashes": {
+    "attempts.db": "92521d5c35cf0aebbc4bf73fa461d8837a25fddc71429978114dd0e0e16f9cdc",
+    "continuation-2-prompt.txt": "6d1ff6ef03efad8cdcd3321e6f272069a79b31a0a49e8004087711d179bd11da",
+    "workflow.db": "40b9ae8df812a083ac37a4e2bba0c0bd90d1db8603df6265126d7a8bcfa05634",
+    "workflow.db-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+    "audit.db": "ba113627b8a14ec52b24a7e69174bdac7f67f5bd745aad9fcaaaedac9fb4af7a",
+    "workflow.db-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "attempt-1-prompt.txt": "b32a6bfac6bafdefbd6a69a36eeae93d8a8caa66ea12cda5a360121b57d591f8",
+    "workspace/url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+    "workspace/url-shortener/mvnw.cmd": "4a361e1374a3e5ad6d03e18e9adc0cf181ac5058ac6203b76f0ba3b456b56481",
+    "workspace/url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+    "workspace/url-shortener/HELP.md": "6ade3a5e39ccc4a3dfc040ad7241c317d8542b506bfeb967b2e905af4304d1f7",
+    "workspace/url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+    "workspace/url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+    "workspace/url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+    "workspace/url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+    "workspace/url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+    "workspace/url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+    "workspace/url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+    "workspace/url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+    "workspace/url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+    "workspace/url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+    "workspace/url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+  },
+  "after_hashes": {
+    "attempts.db": "92521d5c35cf0aebbc4bf73fa461d8837a25fddc71429978114dd0e0e16f9cdc",
+    "continuation-2-prompt.txt": "6d1ff6ef03efad8cdcd3321e6f272069a79b31a0a49e8004087711d179bd11da",
+    "workflow.db": "40b9ae8df812a083ac37a4e2bba0c0bd90d1db8603df6265126d7a8bcfa05634",
+    "workflow.db-shm": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
+    "audit.db": "ba113627b8a14ec52b24a7e69174bdac7f67f5bd745aad9fcaaaedac9fb4af7a",
+    "workflow.db-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "attempt-1-prompt.txt": "b32a6bfac6bafdefbd6a69a36eeae93d8a8caa66ea12cda5a360121b57d591f8",
+    "workspace/url-shortener/.DS_Store": "e88491a680085965263dcf55cf4fe67a6a0c0dff6195124127bb1d60dfd1533a",
+    "workspace/url-shortener/mvnw.cmd": "4a361e1374a3e5ad6d03e18e9adc0cf181ac5058ac6203b76f0ba3b456b56481",
+    "workspace/url-shortener/pom.xml": "9dbbeb0944ad9af2e1a2cd0e9a049b52bd5e3d1074504ed187c2aece96df0be9",
+    "workspace/url-shortener/HELP.md": "6ade3a5e39ccc4a3dfc040ad7241c317d8542b506bfeb967b2e905af4304d1f7",
+    "workspace/url-shortener/.gitignore": "089382e4d7944ab6cb6900a1269678ebff93c00d441ada788cd05a8da182b22b",
+    "workspace/url-shortener/.gitattributes": "5775a77ad2f6d12dde053a3fb0cca4309189163f0888f4e7e984cd0ab327028b",
+    "workspace/url-shortener/mvnw": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+    "workspace/url-shortener/.mvn/wrapper/maven-wrapper.properties": "e475c49e0cb54793fef372f979672f56bfe7d272b981ad6f5ebd5e50e08ee1dd",
+    "workspace/url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/progress.md": "703bd63d7db52edce8286aa878cc8bf1009932c4b5851ea1eec73f10fac56b6d",
+    "workspace/url-shortener/.github/modernize/java-upgrade/manual-java25-20261015/plan.md": "a7b589a04bd4029129719e7d9c41cf2faaacc5ccac754092c4d77573b6095cbb",
+    "workspace/url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+    "workspace/url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+    "workspace/url-shortener/src/main/resources/application.properties": "66c82310fe9e7f3290f57afa4c7cc80ec78f7d431a3be6976d78176fae6a119d",
+    "workspace/url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+    "workspace/url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+    "workspace/url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+  },
+  "attempt_3_present": false
+}

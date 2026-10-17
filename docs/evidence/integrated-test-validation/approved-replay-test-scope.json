@@ -1,0 +1,11 @@
+{
+  "type": "INTEGRATED_TEST_GENERATION_APPROVAL",
+  "scope": {
+    "authorization_hash": "aa49cac78b548f9fe6fca8c7bb089529d72245f484a1671b8937c47d325f9488",
+    "test_path": "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java",
+    "execution_hash": "5130bbdcfcb329b53521c0aca737c029414338684a4eb74a19bed70469c49a86",
+    "policy": "immutable-original-project;one-additive-vetted-expiration-test"
+  },
+  "scope_hash": "4f51e47773aefda2cfdddaee80f464a83026f1afbdb942ba4045e22c6fc5c1cc",
+  "message": "Approve only additive constrained tests against this existing implementation transaction; no patch replay."
+}

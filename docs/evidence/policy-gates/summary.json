@@ -1,0 +1,12 @@
+{
+  "provenance": "Seeded transaction fixtures; retrospective readiness on independently verified retained live evidence using copied audit authority",
+  "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+  "scenario_count": 8,
+  "high_risk_approval_granted": false,
+  "human_security_signoff": false,
+  "human_operational_signoff": false,
+  "readiness": "BLOCKED",
+  "historical_decisions_unchanged": true,
+  "live_workflow_resumed": false,
+  "deployment_authorized": false
+}

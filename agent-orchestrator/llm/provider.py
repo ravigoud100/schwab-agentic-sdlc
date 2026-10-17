@@ -1,6 +1,6 @@
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from langchain_ollama import ChatOllama
 
@@ -8,6 +8,7 @@ from langchain_ollama import ChatOllama
 @dataclass
 class ModelResponse:
     text: str
+    metadata: dict = field(default_factory=dict)
 
 
 class OllamaProvider:
@@ -18,29 +19,36 @@ class OllamaProvider:
                 "qwen2.5-coder:latest"
             ),
             temperature=0,
+            format=os.getenv("OLLAMA_FORMAT") or None,
+            num_ctx=int(os.getenv('OLLAMA_NUM_CTX','32768')),
         )
 
     def invoke(self, prompt, *, stage: str | None = None):
         response = self.model.invoke(prompt)
 
         return ModelResponse(
-            text=response.content
+            text=response.content,
+            metadata=getattr(response,'response_metadata',{})
         )
 
 
 SUPPORTED_STAGES = frozenset({
-    "requirements", "codebase", "planning", "implementation", "repair",
+    "requirements", "codebase", "design", "planning", "implementation", "repair", "test_generation", "documentation",
 })
 
 # These are synthetic review responses, not claims about the supplied source.
 # Source-changing stages require vetted scenario fixtures before being enabled.
 MOCK_SCENARIOS = {
     "url-expiration": {
-        "requirements": (
-            "Mock scenario: URL expiration. Verify the existing expiration timestamp; "
-            "preserve existing URL behavior. Review boundary semantics and test "
-            "expired, unexpired, and unset timestamps before approval."
-        ),
+        "requirements": json.dumps({
+            "normalized_problem": "Verify existing URL expiration functionality",
+            "functional_requirements": ["Verify optional URL expiration and existing expired URL behavior"],
+            "non_functional_requirements": ["Preserve existing URL behavior"],
+            "acceptance_criteria": ["Run the existing Maven test suite without changing Java source"],
+            "ambiguities": [],
+            "risks": ["Predefined review output does not establish correctness; real tests are required"],
+            "classification": "brownfield",
+        }),
         "codebase": (
             "Mock scenario: inspect url-shortener/src/main/java/url_shortener/"
             "ShortUrl.java for expiration support. This predefined response does "

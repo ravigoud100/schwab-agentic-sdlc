@@ -1,0 +1,38 @@
+{
+  "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "requirement_version": 1,
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+  "design_hash": "fc8e91078a167e302d60568f6010ce82719acb464698f2393df35810fe1bdbda",
+  "design_approved": false,
+  "status": "AWAITING_DESIGN_APPROVAL",
+  "next_nodes": [
+    "design_review"
+  ],
+  "obligations_covered": 8,
+  "live_calls_in_success_branch": 1,
+  "graph_checkpoint_count": 14,
+  "java_files_changed": 0,
+  "java_hashes_match_baseline_and_production": true,
+  "implementation_started": false,
+  "maven_executed": false,
+  "event_sequence": [
+    "DESIGN_ACCEPTANCE_STARTED",
+    "STAGE_GATE_PASSED",
+    "STAGE_GATE_PASSED"
+  ],
+  "earlier_runs": [
+    {
+      "directory": "/private/tmp/schwab-design-acceptance",
+      "outcome": "superseded_and_interrupted",
+      "completed_responses": 2,
+      "interrupted_call": 3
+    },
+    {
+      "directory": "/private/tmp/schwab-design-final",
+      "outcome": "STOPPED_DESIGN_INVALID",
+      "completed_responses": 3
+    }
+  ],
+  "note": "Separate SQLite checkpoint forks of the same approved requirement thread. Successful branch uses explicit test-component schema and targeted feedback; no hand-edited model artifacts."
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc/audit.db",
+    "workflow_db": "/private/tmp/schwab-integrated-sdlc/workflow.db",
+    "cohort": "retained_live_integrated",
+    "provenance": "Live model with manually orchestrated environment/prompt corrections; historical failed branch",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc-context/audit.db",
+    "workflow_db": "/private/tmp/schwab-integrated-sdlc-context/workflow.db",
+    "cohort": "retained_live_integrated",
+    "provenance": "Live model; bounded compilation failure; assistant-authored plan fixture",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc-fixed/audit.db",
+    "workflow_db": "/private/tmp/schwab-integrated-sdlc-fixed/workflow.db",
+    "cohort": "retained_live_integrated",
+    "provenance": "Live model implementation with human-directed correction and exact replay; assistant-authored plan fixture",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-autonomous-recovery/audit.db",
+    "workflow_db": "/private/tmp/schwab-autonomous-recovery/workflow.db",
+    "cohort": "controlled_failure_live_recovery",
+    "provenance": "Seeded compilation defect; live recovery model and real Maven",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-live-status-api-rollback-final/audit.db",
+    "workflow_db": "/private/tmp/schwab-live-status-api-rollback-final/workflow.db",
+    "cohort": "controlled_validation_failure_live_model",
+    "provenance": "Live model; deliberate Maven assertion failure",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-parallel-execution/success/audit.db",
+    "workflow_db": "/private/tmp/schwab-parallel-execution/success/workflow.db",
+    "cohort": "deterministic_parallel_fixture",
+    "provenance": "Deterministic model and synthetic approvals; real Maven",
+    "max_attempts": 3
+  },
+  {
+    "audit_db": "/private/tmp/schwab-parallel-execution/compilation-failure/audit.db",
+    "workflow_db": "/private/tmp/schwab-parallel-execution/compilation-failure/workflow.db",
+    "cohort": "deterministic_parallel_fixture",
+    "provenance": "Deterministic model and synthetic approvals; deliberately uncompilable source; real Maven",
+    "max_attempts": 3
+  }
+]

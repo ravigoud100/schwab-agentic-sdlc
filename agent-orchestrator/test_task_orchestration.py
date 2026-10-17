@@ -138,3 +138,12 @@ def test_validation_routing_requires_unchanged_human_approved_plan():
     state["tasks"][0]["description"] = "unreviewed replacement"
     with pytest.raises(PermissionError):
         task_scheduler_router(state)
+
+
+def test_strict_planning_rejects_prose_and_fenced_json():
+    import pytest
+    from governance.task_orchestrator import tasks_from_plan
+    for plan in ('Implement the requirement', '```json\n{"tasks": []}\n```', '{}'):
+        with pytest.raises(TaskPlanError):
+            tasks_from_plan(plan, 'src/entity.java', strict=True)
+    assert tasks_from_plan('Legacy plan', 'src/entity.java')[0]['task_id'] == 'implementation'

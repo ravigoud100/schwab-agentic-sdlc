@@ -1,0 +1,19 @@
+{
+  "status": "STOPPED_INTEGRATED_STAGE",
+  "next_nodes": [],
+  "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+  "source_attempts_in_bounded_loop": 3,
+  "preliminary_source_attempts": 1,
+  "source_transactions": 4,
+  "journal_statuses": [
+    "rolled_back",
+    "rolled_back",
+    "rolled_back",
+    "rolled_back"
+  ],
+  "project_restored_byte_identical": true,
+  "generated_test_created": false,
+  "documentation_generated": false,
+  "mandatory_human_test_generation_approval_submitted": false,
+  "production_java_matches_baseline": true
+}

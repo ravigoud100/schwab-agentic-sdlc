@@ -1,0 +1,13 @@
+{
+  "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+  "policy_evidence_hashes_recomputed": true,
+  "historical_databases_unchanged": true,
+  "maven_passed": 12,
+  "maven_failures": 0,
+  "maven_errors": 0,
+  "maven_skips": 0,
+  "human_signoffs_granted": false,
+  "live_workflow_resumed": false,
+  "release_authorized": false,
+  "deployment_authorized": false
+}

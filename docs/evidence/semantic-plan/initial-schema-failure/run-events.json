@@ -1,0 +1,146 @@
+[
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:07:18.611766+00:00",
+    "agent": "semantic_plan_demo",
+    "event": "SEMANTIC_ACCEPTANCE_STARTED",
+    "details": {
+      "controlled_first_proposal": true,
+      "human_contract_approved": true,
+      "source_checkpoint_directory": "/private/tmp/schwab-requirements-clarification"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:07:18.615246+00:00",
+    "agent": "requirement_contract_review",
+    "event": "REQUIREMENT_CONTRACT_APPROVED",
+    "details": {
+      "contract": {
+        "decision_id": "A1",
+        "selected_answer": "Custom expiration timestamp",
+        "obligations": [
+          {
+            "id": "caller-expiration",
+            "kind": "implementation",
+            "spec": {
+              "operation": "accept_optional_input",
+              "field": "expiresAt",
+              "source": "caller",
+              "representation": "UTC_timestamp"
+            }
+          },
+          {
+            "id": "future-only",
+            "kind": "implementation",
+            "spec": {
+              "operation": "validate",
+              "field": "expiresAt",
+              "predicate": "strictly_after_now",
+              "otherwise": "rejected"
+            }
+          },
+          {
+            "id": "utc-consistency",
+            "kind": "implementation",
+            "spec": {
+              "operation": "compare_and_store",
+              "field": "expiresAt",
+              "time_basis": "UTC"
+            }
+          },
+          {
+            "id": "missing-compatibility",
+            "kind": "implementation",
+            "spec": {
+              "operation": "preserve",
+              "when": "expiresAt_missing",
+              "behavior": "no_expiration_existing_links_and_redirects"
+            }
+          },
+          {
+            "id": "test-future",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now_plus_1_hour",
+              "clock": "fixed_UTC",
+              "expected": "accepted"
+            }
+          },
+          {
+            "id": "test-past",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now_minus_1_hour",
+              "clock": "fixed_UTC",
+              "expected": "rejected"
+            }
+          },
+          {
+            "id": "test-boundary",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": "now",
+              "clock": "fixed_UTC",
+              "expected": "rejected"
+            }
+          },
+          {
+            "id": "test-missing",
+            "kind": "test",
+            "spec": {
+              "input_expiresAt": null,
+              "clock": "fixed_UTC",
+              "expected": "no_expiration"
+            }
+          }
+        ]
+      },
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "requirement_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:07:18.616632+00:00",
+    "agent": "semantic_plan_gate",
+    "event": "SEMANTIC_PLAN_REJECTED",
+    "details": {
+      "attempt": 1,
+      "error": "Plan requires a structured coverage array",
+      "proposal": "{\"tasks\": [{\"task_id\": \"generic\", \"description\": \"Implement URL expiration functionality.\", \"dependencies\": [], \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/ShortUrl.java\"]}]}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:07:32.746325+00:00",
+    "agent": "semantic_plan_gate",
+    "event": "SEMANTIC_PLAN_REJECTED",
+    "details": {
+      "attempt": 2,
+      "error": "Plan requires a structured coverage array",
+      "proposal": "{\n  \"tasks\": [\n    {\n      \"task_id\": \"implement-requirement\",\n      \"description\": \"Implement the feature to allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp for URL shorteners. Ensure that the system returns HTTP 410 for expired URLs and maintains existing active-link redirect behavior. The implementation must adhere to the approved obligations and test cases.\",\n      \"dependencies\": [],\n      \"execution_type\": \"implementation\",\n      \"allowed_files\": [\n        \"url-shortener/src/main/java/url_shortener/ShortUrl.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    }\n  ]\n}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:07:40.875305+00:00",
+    "agent": "semantic_plan_gate",
+    "event": "SEMANTIC_PLAN_REJECTED",
+    "details": {
+      "attempt": 3,
+      "error": "Plan requires a structured coverage array",
+      "proposal": "{\n  \"tasks\": [\n    {\n      \"task_id\": \"implement-requirement\",\n      \"description\": \"Implement the feature to allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp for URL shorteners. Ensure that the system returns HTTP 410 for expired URLs and maintains existing active-link redirect behavior. The implementation must adhere to the approved obligations and test cases.\",\n      \"dependencies\": [],\n      \"execution_type\": \"implementation\",\n      \"allowed_files\": [\n        \"url-shortener/src/main/java/url_shortener/ShortUrl.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    }\n  ]\n}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1
+    }
+  }
+]

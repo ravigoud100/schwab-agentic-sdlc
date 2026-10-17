@@ -1,0 +1,35 @@
+{
+  "classification": "brownfield",
+  "requirement": "Support expiration for newly created short URLs.",
+  "ambiguities": [
+    {
+      "id": "expiration-mode",
+      "question": "How is expiration selected?",
+      "options": [
+        "Caller-provided UTC timestamp",
+        "Fixed 24-hour TTL"
+      ],
+      "default_assumption": null
+    }
+  ],
+  "answers": {
+    "Caller-provided UTC timestamp": {
+      "selected": "Caller-provided UTC timestamp",
+      "plan_effect": "Accept optional Instant input, reject at-or-before fixed UTC now, retain missing expiration.",
+      "behavior": [
+        "future accepted",
+        "past/equal rejected",
+        "missing accepted"
+      ]
+    },
+    "Fixed 24-hour TTL": {
+      "selected": "Fixed 24-hour TTL",
+      "plan_effect": "Do not expose caller expiration input; calculate creation time plus exactly 24 hours.",
+      "behavior": [
+        "caller timestamp ignored",
+        "expires at fixed TTL",
+        "missing input irrelevant"
+      ]
+    }
+  }
+}

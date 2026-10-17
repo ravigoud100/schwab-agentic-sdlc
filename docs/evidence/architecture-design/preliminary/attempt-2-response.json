@@ -1,0 +1,168 @@
+{
+  "api_contracts": [
+    {
+      "id": "api-create",
+      "method": "POST",
+      "path": "/api/urls",
+      "request_fields": [
+        {
+          "name": "expiresAt",
+          "type": "UTC timestamp",
+          "required": false
+        }
+      ],
+      "response_behavior": [
+        "If 'expiresAt' is provided and is in the future, the URL is created with the specified expiration time. Returns the short code and short URL.",
+        "If 'expiresAt' is provided and is not in the future, returns HTTP 400 Bad Request.",
+        "If 'expiresAt' is missing, the URL is created without an expiration time. Returns the short code and short URL."
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "url-service",
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "responsibility": "Provides business logic for creating and retrieving short URLs. Handles the creation of short URLs with optional expiration times and checks if URLs have expired."
+    },
+    {
+      "id": "url-controller",
+      "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "responsibility": "Handles the API requests for creating and retrieving short URLs. Uses the UrlService to perform the operations."
+    },
+    {
+      "id": "url-repository",
+      "path": "url-shortener/src/main/java/url_shortener/UrlRepository.java",
+      "responsibility": "Provides data access for the ShortUrl entity. Includes methods for finding and checking the existence of short URLs."
+    },
+    {
+      "id": "redirect-controller",
+      "path": "url-shortener/src/main/java/url_shortener/RedirectController.java",
+      "responsibility": "Handles the redirect requests. It uses the UrlService to retrieve the original URL and perform the redirect."
+    }
+  ],
+  "interactions": [
+    {
+      "from": "url-controller",
+      "to": "url-service",
+      "operation": "createShortUrl"
+    },
+    {
+      "from": "redirect-controller",
+      "to": "url-service",
+      "operation": "getOriginalUrl"
+    }
+  ],
+  "data_model_changes": [
+    {
+      "component_id": "url-service",
+      "field": "expiresAt",
+      "change": "Retained semantics. The field is now optional and can be used to specify a future UTC expiration timestamp."
+    }
+  ],
+  "compatibility_risks": [
+    {
+      "id": "risk-1",
+      "description": "If the expiration time is provided and is not in the future, the current implementation returns HTTP 400 Bad Request. This could be confusing for users who expect the URL to be created even if the expiration time is in the past.",
+      "mitigation": "The new requirement specifies that if the expiration time is provided and is not in the future, the URL should be rejected. This behavior is consistent with the existing implementation."
+    }
+  ],
+  "architectural_decisions": [
+    {
+      "id": "decision-1",
+      "decision": "Custom expiration timestamp",
+      "rationale": "The new requirement specifies that the caller should provide a future UTC expiration timestamp. This decision ensures that the URL expiration is flexible and can be set by the caller."
+    }
+  ],
+  "coverage": [
+    {
+      "obligation_id": "caller-expiration",
+      "kind": "implementation",
+      "spec": {
+        "operation": "accept_optional_input",
+        "field": "expiresAt",
+        "source": "caller",
+        "representation": "UTC_timestamp"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "future-only",
+      "kind": "implementation",
+      "spec": {
+        "operation": "validate",
+        "field": "expiresAt",
+        "predicate": "strictly_after_now",
+        "otherwise": "rejected"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "utc-consistency",
+      "kind": "implementation",
+      "spec": {
+        "operation": "compare_and_store",
+        "field": "expiresAt",
+        "time_basis": "UTC"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "missing-compatibility",
+      "kind": "implementation",
+      "spec": {
+        "operation": "preserve",
+        "when": "expiresAt_missing",
+        "behavior": "no_expiration_existing_links_and_redirects"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "test-future",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now_plus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "accepted"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "test-past",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now_minus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "test-boundary",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    },
+    {
+      "obligation_id": "test-missing",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": null,
+        "clock": "fixed_UTC",
+        "expected": "no_expiration"
+      },
+      "component_ids": ["url-service"],
+      "decision_ids": ["decision-1"]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "api_change_summary": ["api_change_summary.contract"],
+  "implementation_notes": ["implementation_notes.source_origin", "implementation_notes.source_hash", "implementation_notes.test_origin"],
+  "testing_evidence": ["testing_evidence.baseline", "testing_evidence.positive"],
+  "limitations": ["limitations.bounded", "limitations.negative"],
+  "release_considerations": ["release_considerations.lineage", "release_considerations.release"]
+}

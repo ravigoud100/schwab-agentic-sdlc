@@ -1,0 +1,6 @@
+{
+  "command": ".venv/bin/python -m pytest -q",
+  "passed": 409,
+  "prior_tests_preserved": 384,
+  "new_metrics_tests": 25
+}

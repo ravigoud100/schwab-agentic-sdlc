@@ -1,0 +1,22 @@
+{
+  "workflow_id": "assessment-scenarios-2026-10-16",
+  "catalog_hash": "4f5e85d1863ff6b442c73435193a08c5f87764e4d3dd76556048cde5f1d86c75",
+  "status": "AWAITING_SCENARIO_PLAN_APPROVALS",
+  "live_generation": false,
+  "source_writes": 0,
+  "release_authorized": false,
+  "scenarios": {
+    "greenfield": {
+      "proposal_hash": "a0c5a874b05bb820e65ccef8a45124d34f51181a4233e4d71e3292ad1000aae8",
+      "status": "AWAITING_PLAN_APPROVAL"
+    },
+    "brownfield": {
+      "proposal_hash": "37159ec6198899542756efd74b502926a2d27d89a744875634a2ebaed7947848",
+      "status": "AWAITING_PLAN_APPROVAL"
+    },
+    "ambiguous": {
+      "proposal_hash": "39fd551b8a940f630a162074bb8ccaca1e03a3632a6a918a62b99b2bf4e4c53c",
+      "status": "AWAITING_PLAN_APPROVAL"
+    }
+  }
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "redirectsActiveUrlWithFound",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "expiredUrlDoesNotIncreaseClickCount",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "rejectsPastExpiration",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "createsShortUrlWithoutExpiration",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "returnsGoneForExpiredUrl",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "createsShortUrlWithFutureExpiration",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlExpirationIntegrationTests",
+    "name": "returnsNotFoundForUnknownShortCode",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlShortenerApplicationTests",
+    "name": "contextLoads",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "name": "expiredStatusDoesNotIncrementClicks",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "name": "activeStatusesDoNotIncrementClicks",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "name": "optionalFailureProbe",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "name": "unknownCodeReturns404",
+    "failure": null,
+    "error": null
+  },
+  {
+    "class": "url_shortener.UrlStatusAcceptanceTest",
+    "name": "serviceProvidesStatusWithoutIncrementingClicks",
+    "failure": null,
+    "error": null
+  }
+]

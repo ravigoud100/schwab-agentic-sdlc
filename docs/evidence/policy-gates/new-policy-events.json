@@ -1,0 +1,520 @@
+[
+  {
+    "id": 61,
+    "timestamp": "2026-10-17T01:35:59.065979+00:00",
+    "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "2a1ebd72959b5491ad86aea0459f8867fb4d77d7b36f8cee980901fae328fea5",
+      "policy_ids": [
+        "BASELINE-STATIC-CONTROLS"
+      ],
+      "decision": "allow",
+      "phase": "release",
+      "findings": [],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "workspace": "/private/tmp/schwab-integrated-sdlc-fixed/snapshot/.agent-workspaces/e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "phase": "release",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/RedirectController.java": {
+            "original_hash": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+            "proposed_hash": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72"
+          },
+          "url-shortener/src/main/java/url_shortener/ShortUrl.java": {
+            "original_hash": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+            "proposed_hash": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3"
+          },
+          "url-shortener/src/main/java/url_shortener/UrlController.java": {
+            "original_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+            "proposed_hash": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+          },
+          "url-shortener/src/main/java/url_shortener/UrlRepository.java": {
+            "original_hash": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+            "proposed_hash": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de"
+          },
+          "url-shortener/src/main/java/url_shortener/UrlService.java": {
+            "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+            "proposed_hash": "f39cf52ddd01f17d03cc957b8fc5e83632796e50b4425c11ff7559a670085318"
+          },
+          "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": {
+            "original_hash": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80",
+            "proposed_hash": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+          },
+          "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java": {
+            "original_hash": null,
+            "proposed_hash": "3410e143197f0d0289e8a14e4b1e13ede7e388c1c4b7faf2094681d186b71fa9"
+          },
+          "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": {
+            "original_hash": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+            "proposed_hash": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2"
+          },
+          "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": {
+            "original_hash": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+            "proposed_hash": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb"
+          }
+        },
+        "authorized_additive_tests": [
+          "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"
+        ],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "allow"
+    }
+  },
+  {
+    "id": 63,
+    "timestamp": "2026-10-17T01:35:59.070217+00:00",
+    "workflow_id": "policy-fixture-secret",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "779f6afd364d6855a66f6ae26ac2b7d136479e72ef23636d9160a350e224ac46",
+      "policy_ids": [
+        "SEC-SECRETS"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "SEC-SECRETS",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "f95668896d12cb682e0770a6be0a709bebaa2c3c4f2db872e62660fcaa468fe5",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-secret",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "f95668896d12cb682e0770a6be0a709bebaa2c3c4f2db872e62660fcaa468fe5"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 64,
+    "timestamp": "2026-10-17T01:35:59.070784+00:00",
+    "workflow_id": "policy-fixture-process",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "d83f67d01e51285528f9bb0ac78411111c87746406750584af22cc9f67c05d00",
+      "policy_ids": [
+        "SEC-PROCESS"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "SEC-PROCESS",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "b9271510aaec6e6446a9c8f1b2419302f923210bb421ece4d5e21ddb238ead31",
+          "decision": "deny"
+        },
+        {
+          "policy_id": "SEC-PROCESS",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "b9271510aaec6e6446a9c8f1b2419302f923210bb421ece4d5e21ddb238ead31",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-process",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "b9271510aaec6e6446a9c8f1b2419302f923210bb421ece4d5e21ddb238ead31"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 65,
+    "timestamp": "2026-10-17T01:35:59.071335+00:00",
+    "workflow_id": "policy-fixture-sql",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "34646e32b5bb523665e1d77350b9ec650a6b4246b7effba741769373437fb894",
+      "policy_ids": [
+        "SEC-SQL"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "SEC-SQL",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "e1c5fd6611fe223df9a1bd19ab839d7e7ea90a3f23bff4630c6eb3935e29b6f8",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-sql",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "e1c5fd6611fe223df9a1bd19ab839d7e7ea90a3f23bff4630c6eb3935e29b6f8"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 66,
+    "timestamp": "2026-10-17T01:35:59.071860+00:00",
+    "workflow_id": "policy-fixture-pii_log",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "da62121d658cc45811919cda08fe6af94677b24f6eddc06dd14b0bf0cc8dcda5",
+      "policy_ids": [
+        "COM-PII-LOG"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "COM-PII-LOG",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "abf85320be601313e620fc251757ac44f7e68e5d1551061d099e27371147d5ff",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-pii_log",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "abf85320be601313e620fc251757ac44f7e68e5d1551061d099e27371147d5ff"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 67,
+    "timestamp": "2026-10-17T01:35:59.072329+00:00",
+    "workflow_id": "policy-fixture-dependency",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "da8371ace6e5a153f130401ac612b9918a26dd1a96c6f3f8214a0f3f87f5d1ef",
+      "policy_ids": [
+        "SEC-DEPENDENCY-ALLOWLIST"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "SEC-DEPENDENCY-ALLOWLIST",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "56dbb663ca94f5c9ea4e8793fe2abbfa38798c635c1d83f0bddb06cb0a6d6840",
+          "decision": "deny"
+        },
+        {
+          "policy_id": "SEC-DEPENDENCY-ALLOWLIST",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "56dbb663ca94f5c9ea4e8793fe2abbfa38798c635c1d83f0bddb06cb0a6d6840",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-dependency",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "56dbb663ca94f5c9ea4e8793fe2abbfa38798c635c1d83f0bddb06cb0a6d6840"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 68,
+    "timestamp": "2026-10-17T01:35:59.072763+00:00",
+    "workflow_id": "policy-fixture-test_disable",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "88d219e10dcd4064aa52266567a1f9b060cb37cbf5fc9cbfc2734b2c69b625f4",
+      "policy_ids": [
+        "TEST-DISABLE"
+      ],
+      "decision": "deny",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "TEST-DISABLE",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "e118f420c9b9d0b995d470521665a7b7df50c5be6c4504e26227e3880994f36f",
+          "decision": "deny"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-test_disable",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "e118f420c9b9d0b995d470521665a7b7df50c5be6c4504e26227e3880994f36f"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "deny"
+    }
+  },
+  {
+    "id": 69,
+    "timestamp": "2026-10-17T01:35:59.073245+00:00",
+    "workflow_id": "policy-fixture-reviewable_process",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "5c2900d40b20aa78f37226b935b54a45917fb600206ed2ed98ad5268e3bd3865",
+      "policy_ids": [
+        "SEC-PROCESS"
+      ],
+      "decision": "requires_approval",
+      "phase": "pre_write",
+      "findings": [
+        {
+          "policy_id": "SEC-PROCESS",
+          "path": "url-shortener/src/main/java/url_shortener/PolicyProbe.java",
+          "line": 1,
+          "evidence_sha256": "ba91fcb5e201c7b136d6e45331a6d2c4b0962545fdc5f11c6fc9309b7f65096b",
+          "decision": "requires_approval"
+        }
+      ],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-reviewable_process",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "ba91fcb5e201c7b136d6e45331a6d2c4b0962545fdc5f11c6fc9309b7f65096b"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "requires_approval"
+    }
+  },
+  {
+    "id": 70,
+    "timestamp": "2026-10-17T01:35:59.073686+00:00",
+    "workflow_id": "policy-fixture-legitimate",
+    "agent": "policy_engine",
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "8bae26865d29aad5d3a7df260f4ebd35ab7e62f24788fab9154c9f72c27cf0d2",
+      "policy_ids": [
+        "BASELINE-STATIC-CONTROLS"
+      ],
+      "decision": "allow",
+      "phase": "pre_write",
+      "findings": [],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "policy-fixture-legitimate",
+        "workspace": "/private/tmp/schwab-policy-evidence/fixture-workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/PolicyProbe.java": {
+            "original_hash": "65f28d0cedb9100c1fbeab0a30dba4389bfde093497b28d004803a69333bfa4c",
+            "proposed_hash": "acfcb1ee283a91353898edff118e40224f53fedc7410109143f0bda8d6a74689"
+          }
+        },
+        "authorized_additive_tests": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "allow"
+    }
+  }
+]

@@ -1,0 +1,16 @@
+--- original/ShortUrl.java
++++ implemented/ShortUrl.java
+@@ -19,6 +19,13 @@
+     private String shortCode;
+ 
+     private Long clickCount = 0L;
++
++    public boolean hasReachedClickLimit(long maxClicks) {
++        if (maxClicks <= 0) {
++            throw new IllegalArgumentException("maxClicks must be greater than zero");
++        }
++        return clickCount >= maxClicks;
++    }
+ 
+     private LocalDateTime createdAt = LocalDateTime.now();
+ 
