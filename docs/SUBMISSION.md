@@ -21,7 +21,7 @@ Three distinct assessment scenarios were executed and their evidence is preserve
 |---|---|---|
 | **Greenfield** | `GREENFIELD_RESULTS_APPROVED` | `docs/evidence/assessment-scenarios/greenfield-execution/` |
 | **Brownfield** | `STOPPED_RETRY_EXHAUSTED` + Option A finalization | `docs/evidence/assessment-scenarios/brownfield-final-report/` |
-| **Ambiguous** | `AWAITING_AMBIGUOUS_RESULTS_REVIEW` (verification-only) | `docs/evidence/assessment-scenarios/ambiguous-execution/` |
+| **Ambiguous** | `AMBIGUOUS_RESULTS_APPROVED` (verification-only) | `docs/evidence/assessment-scenarios/ambiguous-execution/` |
 
 ---
 
