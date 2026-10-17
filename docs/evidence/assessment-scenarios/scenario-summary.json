@@ -1,22 +1,37 @@
 {
   "workflow_id": "assessment-scenarios-2026-10-16",
   "catalog_hash": "4f5e85d1863ff6b442c73435193a08c5f87764e4d3dd76556048cde5f1d86c75",
-  "status": "AWAITING_SCENARIO_PLAN_APPROVALS",
+  "status": "AMBIGUOUS_AWAITING_RESULTS_REVIEW",
   "live_generation": false,
   "source_writes": 0,
   "release_authorized": false,
   "scenarios": {
     "greenfield": {
       "proposal_hash": "a0c5a874b05bb820e65ccef8a45124d34f51181a4233e4d71e3292ad1000aae8",
-      "status": "AWAITING_PLAN_APPROVAL"
+      "workflow_id": "de438ac8-6252-4e90-8b4c-9a6063acfd83",
+      "status": "GREENFIELD_RESULTS_APPROVED",
+      "bundle_hash": "dc5c1352ca60063282c90aeae3e96bedbbb06c4ff2d1822c00ab9c9458be9f97",
+      "maven_tests": 9,
+      "evidence": "docs/evidence/assessment-scenarios/greenfield-execution/"
     },
     "brownfield": {
       "proposal_hash": "37159ec6198899542756efd74b502926a2d27d89a744875634a2ebaed7947848",
-      "status": "AWAITING_PLAN_APPROVAL"
+      "workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c",
+      "status": "STOPPED_RETRY_EXHAUSTED",
+      "resolution": "Option A — offline-assisted 11-test pass with documented architecture gap",
+      "architecture_compliance": "unresolved",
+      "evidence": "docs/evidence/assessment-scenarios/brownfield-final-report/"
     },
     "ambiguous": {
       "proposal_hash": "39fd551b8a940f630a162074bb8ccaca1e03a3632a6a918a62b99b2bf4e4c53c",
-      "status": "AWAITING_PLAN_APPROVAL"
+      "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+      "status": "AWAITING_AMBIGUOUS_RESULTS_REVIEW",
+      "decision": "Custom expiration timestamp",
+      "clarification_req_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "e3726f8d5c537ce485dbd7c9f249e7668f8b4158749f1784974934e2b7818298",
+      "verification_approach": "Option A — verification-only; existing implementation confirmed",
+      "maven_tests": 8,
+      "evidence": "docs/evidence/assessment-scenarios/ambiguous-execution/"
     }
   }
 }

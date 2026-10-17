@@ -1,0 +1,174 @@
+[
+  {
+    "id": 1,
+    "event": "WORKFLOW_STARTED",
+    "details": {
+      "scenario": "greenfield",
+      "workspace": "/private/tmp/schwab-assessment-greenfield-success/workspace",
+      "proposal_hash": "a0c5a874b05bb820e65ccef8a45124d34f51181a4233e4d71e3292ad1000aae8"
+    }
+  },
+  {
+    "id": 2,
+    "event": "GREENFIELD_PLAN_APPROVED",
+    "details": {
+      "proposal_hash": "a0c5a874b05bb820e65ccef8a45124d34f51181a4233e4d71e3292ad1000aae8",
+      "decision_source": "explicit user decision"
+    }
+  },
+  {
+    "id": 3,
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "d3299eeef246caeb0245fd900eeca6342ff860addbd1b0fda4bda36da743cadd",
+      "policy_ids": [
+        "BASELINE-STATIC-CONTROLS"
+      ],
+      "decision": "allow",
+      "phase": "pre_write",
+      "findings": [],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "de438ac8-6252-4e90-8b4c-9a6063acfd83",
+        "workspace": "/private/tmp/schwab-assessment-greenfield-success/workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java": {
+            "original_hash": null,
+            "proposed_hash": "76f101bea202515f901eb69003109fda7f26ba3a7e1a881ffca2e70371c98a35"
+          }
+        },
+        "authorized_additive_tests": [],
+        "authorized_new_production_files": [
+          "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java"
+        ],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "allow"
+    }
+  },
+  {
+    "id": 4,
+    "event": "FILE_CHECKPOINT_CREATED",
+    "details": {
+      "path": "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+      "checkpoint_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753:url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+      "transaction_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753",
+      "original_hash": null
+    }
+  },
+  {
+    "id": 5,
+    "event": "TRANSACTION_APPLIED",
+    "details": {
+      "transaction_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753",
+      "paths": [
+        "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java"
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "event": "GREENFIELD_SOURCE_APPLIED",
+    "details": {
+      "transaction_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753",
+      "path": "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+      "source_hash": "76f101bea202515f901eb69003109fda7f26ba3a7e1a881ffca2e70371c98a35",
+      "approval": "explicit"
+    }
+  },
+  {
+    "id": 7,
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "evidence_hash": "94c0e166bd2f4624b2ea90ac2fdb3f53c83f5439d245b8ef3c9bae536166bcab",
+      "policy_ids": [
+        "BASELINE-STATIC-CONTROLS"
+      ],
+      "decision": "allow",
+      "phase": "pre_write",
+      "findings": [],
+      "evidence_body": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "workflow_id": "de438ac8-6252-4e90-8b4c-9a6063acfd83",
+        "workspace": "/private/tmp/schwab-assessment-greenfield-success/workspace",
+        "phase": "pre_write",
+        "files": {
+          "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java": {
+            "original_hash": null,
+            "proposed_hash": "ba9b1cb2e27b54933c00c7988c0c69b4587b0bf4de4ec41c0cc1457f1e59a1e2"
+          }
+        },
+        "authorized_additive_tests": [
+          "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java"
+        ],
+        "authorized_new_production_files": [],
+        "checked_policy_ids": [
+          "COM-PII-LOG",
+          "GOV-OBFUSCATION",
+          "GOV-PROTECTED-CONFIG",
+          "GOV-UNSCANNABLE",
+          "GOV-UNSUPPORTED-CREATION",
+          "SEC-DEPENDENCY-ALLOWLIST",
+          "SEC-PROCESS",
+          "SEC-SECRETS",
+          "SEC-SQL",
+          "TEST-DISABLE",
+          "TEST-PRESERVE-ORIGINAL",
+          "TEST-UNAUTHORIZED-CREATION"
+        ]
+      },
+      "approval_reference": null,
+      "enforced_decision": "allow"
+    }
+  },
+  {
+    "id": 8,
+    "event": "TEST_SCOPE_APPROVED",
+    "details": {
+      "path": "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java",
+      "renderer": "vetted deterministic unit-test renderer"
+    }
+  },
+  {
+    "id": 9,
+    "event": "TEST_FILE_CREATED",
+    "details": {
+      "path": "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java",
+      "sha256": "ba9b1cb2e27b54933c00c7988c0c69b4587b0bf4de4ec41c0cc1457f1e59a1e2"
+    }
+  },
+  {
+    "id": 10,
+    "event": "WORKFLOW_FINISHED",
+    "details": {
+      "status": "AWAITING_GREENFIELD_RESULTS_REVIEW",
+      "workflow_id": "de438ac8-6252-4e90-8b4c-9a6063acfd83",
+      "transaction_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753",
+      "changed_files": [
+        "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+        "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java"
+      ],
+      "maven_exit_code": 0,
+      "component_model": "real local Ollama",
+      "test_provenance": "vetted deterministic renderer",
+      "release_authorized": false
+    }
+  }
+]

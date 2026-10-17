@@ -1,0 +1,23 @@
+{
+  "normalized_problem": "Enhance the existing URL shortener to include optional URL expiration.",
+  "functional_requirements": [
+    "Preserve existing links.",
+    "Return HTTP 410 for expired URLs.",
+    "Maintain existing active-link redirect behavior."
+  ],
+  "non_functional_requirements": [],
+  "acceptance_criteria": [
+    "The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.",
+    "The system should not execute any code changes until the later engineering plan approval."
+  ],
+  "ambiguities": [
+    {
+      "id": "A1",
+      "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?",
+      "options": ["Fixed 24-hour TTL", "Custom expiration timestamp"],
+      "default_assumption": null
+    }
+  ],
+  "risks": [],
+  "classification": "brownfield"
+}

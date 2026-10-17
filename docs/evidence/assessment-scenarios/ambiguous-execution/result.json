@@ -1,0 +1,40 @@
+{
+  "scenario": "ambiguous",
+  "decision": "Custom expiration timestamp",
+  "verification_approach": "Option A — verification-only; no source modification",
+  "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+  "clarification_req_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "plan_hash": "e3726f8d5c537ce485dbd7c9f249e7668f8b4158749f1784974934e2b7818298",
+  "isolated_workspace": "/private/tmp/schwab-assessment-ambiguous-verification",
+  "maven_exit_code": 0,
+  "java_version": "21.0.12.1",
+  "maven_cache": "/private/tmp/schwab-test-generation/maven-cache",
+  "test_results": {
+    "total": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": {
+      "UrlExpirationIntegrationTests": {
+        "tests": 7,
+        "cases": [
+          "createsShortUrlWithFutureExpiration",
+          "rejectsPastExpiration",
+          "createsShortUrlWithoutExpiration",
+          "returnsGoneForExpiredUrl",
+          "redirectsActiveUrlWithFound",
+          "expiredUrlDoesNotIncreaseClickCount",
+          "returnsNotFoundForUnknownShortCode"
+        ]
+      },
+      "UrlShortenerApplicationTests": {
+        "tests": 1,
+        "cases": ["contextLoads"]
+      }
+    }
+  },
+  "production_checkout_modified": false,
+  "source_provenance": "existing verified implementation — not AI-generated for this scenario",
+  "status": "AWAITING_AMBIGUOUS_RESULTS_REVIEW",
+  "release_authorized": false
+}

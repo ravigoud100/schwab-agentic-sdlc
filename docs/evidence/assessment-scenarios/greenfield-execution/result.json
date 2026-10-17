@@ -1,0 +1,13 @@
+{
+  "status": "AWAITING_GREENFIELD_RESULTS_REVIEW",
+  "workflow_id": "de438ac8-6252-4e90-8b4c-9a6063acfd83",
+  "transaction_id": "609fcbd7-afe7-4bbd-8242-84b1fd989753",
+  "changed_files": [
+    "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+    "url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java"
+  ],
+  "maven_exit_code": 0,
+  "component_model": "real local Ollama",
+  "test_provenance": "vetted deterministic renderer",
+  "release_authorized": false
+}

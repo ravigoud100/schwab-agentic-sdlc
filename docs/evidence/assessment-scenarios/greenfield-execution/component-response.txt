@@ -1,0 +1,10 @@
+```json
+{
+  "files": [
+    {
+      "path": "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+      "content": "package url_shortener;\n\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class UrlHealthComponent {\n    public String status() {\n        return \"ready\";\n    }\n}\n"
+    }
+  ]
+}
+```

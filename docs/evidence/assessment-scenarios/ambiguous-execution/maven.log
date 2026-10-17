@@ -1,0 +1,139 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24117 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] -------------------< com.schwab.demo:url-shortener >--------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 74 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ url-shortener ---
+[INFO] Deleting /private/tmp/schwab-assessment-ambiguous-verification/url-shortener/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ url-shortener ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ url-shortener ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 6 source files with javac [debug parameters release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ url-shortener ---
+[INFO] skip non existing resourceDirectory /private/tmp/schwab-assessment-ambiguous-verification/url-shortener/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ url-shortener ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ url-shortener ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running url_shortener.UrlExpirationIntegrationTests
+22:32:20.360 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [url_shortener.UrlExpirationIntegrationTests]: UrlExpirationIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:32:20.404 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlExpirationIntegrationTests
+22:32:20.430 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [url_shortener.UrlExpirationIntegrationTests]: UrlExpirationIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:32:20.431 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlExpirationIntegrationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.8)
+
+2026-10-16T22:32:20.538-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : Starting UrlExpirationIntegrationTests using Java 21.0.12.1 with PID 70305 (started by ruwicc in /private/tmp/schwab-assessment-ambiguous-verification/url-shortener)
+2026-10-16T22:32:20.538-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : No active profile set, falling back to 1 default profile: "default"
+2026-10-16T22:32:20.766-05:00  INFO 70305 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-16T22:32:20.781-05:00  INFO 70305 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 1 JPA repository interface.
+2026-10-16T22:32:20.921-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-16T22:32:20.983-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:1ad7bb69-a895-4eb2-8306-c1c338097e8a user=SA
+2026-10-16T22:32:20.984-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-16T22:32:20.996-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-16T22:32:21.019-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+2026-10-16T22:32:21.164-05:00  INFO 70305 --- [url-shortener] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-16T22:32:21.192-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:1ad7bb69-a895-4eb2-8306-c1c338097e8a]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: 1AD7BB69-A895-4EB2-8306-C1C338097E8A/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-16T22:32:21.464-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-16T22:32:21.476-05:00  INFO 70305 --- [url-shortener] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-16T22:32:21.530-05:00  INFO 70305 --- [url-shortener] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-16T22:32:21.642-05:00  WARN 70305 --- [url-shortener] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-16T22:32:21.822-05:00  INFO 70305 --- [url-shortener] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-10-16T22:32:21.822-05:00  INFO 70305 --- [url-shortener] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-10-16T22:32:21.824-05:00  INFO 70305 --- [url-shortener] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-10-16T22:32:21.827-05:00  INFO 70305 --- [url-shortener] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 5 ms
+2026-10-16T22:32:21.846-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : Started UrlExpirationIntegrationTests in 1.395 seconds (process running for 1.752)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/private/tmp/schwab-test-generation/maven-cache/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.093 s -- in url_shortener.UrlExpirationIntegrationTests
+[INFO] Running url_shortener.UrlShortenerApplicationTests
+2026-10-16T22:32:22.396-05:00  INFO 70305 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-16T22:32:22.397-05:00  INFO 70305 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests
+2026-10-16T22:32:22.397-05:00  INFO 70305 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-16T22:32:22.397-05:00  INFO 70305 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.8)
+
+2026-10-16T22:32:22.405-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Starting UrlShortenerApplicationTests using Java 21.0.12.1 with PID 70305 (started by ruwicc in /private/tmp/schwab-assessment-ambiguous-verification/url-shortener)
+2026-10-16T22:32:22.405-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : No active profile set, falling back to 1 default profile: "default"
+2026-10-16T22:32:22.448-05:00  INFO 70305 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-16T22:32:22.450-05:00  INFO 70305 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 1 ms. Found 1 JPA repository interface.
+2026-10-16T22:32:22.473-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-10-16T22:32:22.478-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:2a7a88c7-7aae-4803-b55c-b57654abda42 user=SA
+2026-10-16T22:32:22.478-05:00  INFO 70305 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-10-16T22:32:22.479-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-16T22:32:22.484-05:00  INFO 70305 --- [url-shortener] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-16T22:32:22.485-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:2a7a88c7-7aae-4803-b55c-b57654abda42]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: 2A7A88C7-7AAE-4803-B55C-B57654ABDA42/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-16T22:32:22.492-05:00  INFO 70305 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-16T22:32:22.493-05:00  INFO 70305 --- [url-shortener] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-16T22:32:22.505-05:00  WARN 70305 --- [url-shortener] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-16T22:32:22.537-05:00  INFO 70305 --- [url-shortener] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-10-16T22:32:22.541-05:00  INFO 70305 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Started UrlShortenerApplicationTests in 0.142 seconds (process running for 2.447)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.148 s -- in url_shortener.UrlShortenerApplicationTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.447 s
+[INFO] Finished at: 2026-10-16T22:32:22-05:00
+[INFO] ------------------------------------------------------------------------
