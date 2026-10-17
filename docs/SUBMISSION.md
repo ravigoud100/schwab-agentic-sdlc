@@ -117,7 +117,7 @@ This is a valid agentic SDLC outcome: analysis determined no change was necessar
 | Greenfield results | `de438ac8` | `GREENFIELD_RESULTS_APPROVED` (`dc5c1352…`) | ✅ Recorded |
 | Ambiguous plan | `06a48ae8` | `PLAN_CREATED` (`e3726f8d…`) | ✅ Recorded; verification executed |
 | Brownfield attempts 1–3 | `e4e0d578` | 3 × `ATTEMPT_FAILED` | ✅ Preserved |
-| Ambiguous results | `06a48ae8` | — | ⏳ **AWAITING_AMBIGUOUS_RESULTS_REVIEW** |
+| Ambiguous results | `06a48ae8` | `AMBIGUOUS_RESULTS_APPROVED` (`224c4285…`) | ✅ Recorded |
 
 ---
 

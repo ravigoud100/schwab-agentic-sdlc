@@ -1,0 +1,21 @@
+{
+  "status": "AMBIGUOUS_RESULTS_APPROVED",
+  "bundle_hash": "224c428507fb0639e68c166e9e076935a01b953095e7705e39af40d519d0d27b",
+  "decision_source": "explicit user decision",
+  "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+  "clarification_answer": "Custom expiration timestamp",
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "plan_hash": "e3726f8d5c537ce485dbd7c9f249e7668f8b4158749f1784974934e2b7818298",
+  "task_definition_hash": "6effd4cb2497f1c13dd1f7d8aafbb37c5a500277af4edc904a349dc9be580acf",
+  "verification_approach": "Option A — verification-only; no source modification; no AI generation",
+  "source_provenance": "existing implementation — not AI-generated for this scenario",
+  "maven_exit_code": 0,
+  "tests_run": 8,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ai_generated_code": false,
+  "release_authorized": false,
+  "audit_event_id": 5,
+  "audit_event_timestamp": "2026-10-17T15:24:03.522370+00:00"
+}
