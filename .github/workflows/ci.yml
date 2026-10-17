@@ -27,22 +27,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r agent-orchestrator/requirements.txt
 
-      - name: Run offline Python tests
+      - name: Run offline Python tests (full suite — 476 tests)
         working-directory: agent-orchestrator
         env:
           LLM_PROVIDER: mock
           MOCK_SCENARIO: url-expiration
         run: |
-          python -m pytest \
-            test_llm_provider.py \
-            test_rollback.py \
-            test_workspace_isolation.py \
-            test_task_orchestration.py \
-            test_replanning.py \
-            test_repair_approval.py \
-            test_repair_execution.py \
-            test_workflow_scenarios.py \
-            -q
+          python -m pytest . -q
 
   java-tests:
     name: Java 21 Maven Tests
