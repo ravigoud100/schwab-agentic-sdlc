@@ -1,7 +1,19 @@
-# Charles Schwab Agentic SDLC Assessment — Gap Analysis
+# Charles Schwab Agentic SDLC Assessment — Gap Analysis (Historical Baseline)
 
-**Audit scope:** repository state inspected on 2026-10-15  
-**Audit mode:** read-only; no application files, Java files, branches, or commits were changed.  
+> [!NOTE]
+> **HISTORICAL DOCUMENTATION (As of 2026-10-15)**
+>
+> This gap analysis represents the initial pre-improvement audit baseline conducted on 2026-10-15 prior to subsequent development milestones. It is preserved intact for audit lineage and historical evidence.
+> Since this initial inspection, the major identified gaps have been remediated and validated:
+> - **Requirements Clarification & Decisions (R1.3, R1.9, R1.10):** Implemented via LangGraph clarification interrupts and proven in the Ambiguous scenario (`docs/evidence/assessment-scenarios/ambiguous-execution/`).
+> - **Dependency-Aware Multi-Wave Parallel Orchestration (R2.2, R2.3, R2.4, R2.5, R2.6):** Fully implemented with topological wave partitioning, concurrent workers, level synchronization barriers, and whole-set transactional rollback (`agent-orchestrator/governance/parallel_execution.py`).
+> - **Autonomous Brownfield Execution (R3.x, R4.x):** Demonstrated and approved with real Ollama generation, conservative pre-Maven import diagnostics, and 11 passing Maven tests on Attempt 1 (`docs/evidence/assessment-scenarios/brownfield-autonomous-run/`).
+> - **Test Suite & CI (R8.x, R10.x):** Expanded to 493 deterministic offline Python tests across 40 test modules, passing GitHub Actions CI, and 8 baseline Maven tests.
+>
+> For the current system status, architecture, and verified outcomes, refer to [docs/SUBMISSION.md](file:///Users/ruwicc/Projects/schwab-agentic-sdlc/docs/SUBMISSION.md) and [docs/ARCHITECTURE.md](file:///Users/ruwicc/Projects/schwab-agentic-sdlc/docs/ARCHITECTURE.md).
+
+**Audit scope:** repository state inspected on 2026-10-15
+**Audit mode:** read-only historical baseline; preserved for assessment provenance.
 **System under review:** Java 21 / Spring Boot 4 URL shortener with a Python LangGraph orchestrator.
 
 ## 1. Executive Summary

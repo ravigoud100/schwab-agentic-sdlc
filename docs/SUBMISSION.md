@@ -2,8 +2,8 @@
 
 **Project:** Charles Schwab Agentic SDLC — URL Shortener
 **Repository:** https://github.com/ravigoud100/schwab-agentic-sdlc
-**Branch:** `feature/assessment-improvements`
-**Submitted:** 2026-10-17
+**Branch:** `main` (merged from `feature/assessment-improvements`)
+**Submitted:** 2026-10-18
 **Release authorized:** ❌ No — assessment evidence only
 
 ---
@@ -38,7 +38,7 @@ Three distinct assessment scenarios were executed and their evidence is preserve
 - Test files: 40 (full suite, including 45 parallel DAG orchestration and Java import diagnostics tests)
 - Command: `python -m pytest agent-orchestrator -q`
 
-### Java URL shortener (8 tests)
+### Primary Java URL shortener (8 baseline tests)
 
 ```
 Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
@@ -47,7 +47,13 @@ BUILD SUCCESS — 3.663s
 
 - Runtime: Java 21.0.12.1 (Temurin), Spring Boot 4.0.8, H2 in-memory DB
 - Test classes: `UrlExpirationIntegrationTests` (7) + `UrlShortenerApplicationTests` (1)
-- Command: `./mvnw --batch-mode clean test`
+- Location: `url-shortener/` (primary source tree)
+- Command: `./mvnw --batch-mode clean test` (inside `url-shortener/`)
+
+> [!NOTE]
+> **Primary Java Source Tree vs. Approved Brownfield Evidence**
+> The primary repository source tree under `url-shortener/` intentionally contains the baseline implementation with **8 passing Maven tests**.
+> The successful autonomous brownfield workflow was executed and validated in an isolated workspace (`docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener`), generating the status endpoint and additive integration tests for **11 passing Maven tests** (8 baseline + 3 status integration). Those generated artifacts remain preserved as approved scenario evidence and have not been promoted into the primary source tree without separate authorization.
 
 Both suites were re-run from a **fresh `git clone`** of the GitHub repository to confirm
 repeatability without local state or IDE dependencies.
@@ -183,7 +189,8 @@ No Ollama, no external services, no production credentials required in CI.
 
 ## What is NOT included
 
-- ❌ No release, merge to `main`, or deployment
+- ❌ No production release or deployment
+- ❌ Primary Java source tree retains the baseline 8-test suite (brownfield 11-test implementation and test scope are preserved as approved isolated evidence in `docs/evidence/assessment-scenarios/brownfield-autonomous-run/`)
 - ❌ No reset of historical workflow attempt budgets (`STOPPED_RETRY_EXHAUSTED` preserved)
 - ❌ No fixed 24-hour TTL (clarification selected "Custom expiration timestamp")
 - ❌ No production credentials or Ollama API keys in the repository

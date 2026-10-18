@@ -43,3 +43,10 @@ workflow.db-*
 
 # Agent execution artifacts
 agent-orchestrator/artifacts/url-shortener/.jdk-25/
+
+# Backups
+*.bak
+*.backup
+*.worktree-backup
+*.orig
+agent-orchestrator/backups/

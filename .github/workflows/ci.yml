@@ -27,7 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r agent-orchestrator/requirements.txt
 
-      - name: Run offline Python tests (full suite — 476 tests)
+      - name: Run offline Python regression test suite
         working-directory: agent-orchestrator
         env:
           LLM_PROVIDER: mock
