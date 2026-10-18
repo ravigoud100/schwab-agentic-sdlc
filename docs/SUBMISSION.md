@@ -28,14 +28,14 @@ Three distinct assessment scenarios were executed and their evidence is preserve
 
 ## Test results (verified from fresh GitHub clone)
 
-### Python orchestrator (485 tests, Java-free, offline)
+### Python orchestrator (493 tests, Java-free, offline)
 
 ```
-485 passed in 4.52s
+493 passed in 4.85s
 ```
 
 - Runtime: Python 3.12, LangGraph 1.2.15, offline mock LLM provider
-- Test files: 40 (full suite, including new Java import diagnostics regression tests)
+- Test files: 40 (full suite, including 45 parallel DAG orchestration and Java import diagnostics tests)
 - Command: `python -m pytest agent-orchestrator -q`
 
 ### Java URL shortener (8 tests)
@@ -115,12 +115,26 @@ This is a valid agentic SDLC outcome: analysis determined no change was necessar
 | Agent orchestrator | Python 3.12, LangGraph 1.2.15, LangChain |
 | LLM (live) | Ollama `qwen2.5-coder:latest` (local) |
 | LLM (CI/tests) | Mock provider — zero Ollama dependency |
+| Task DAG execution | Dependency-aware multi-wave parallel scheduler with level barriers |
 | Checkpoints | SQLite via `langgraph-checkpoint-sqlite` |
 | Audit trail | SQLite (`audit.db`) — append-only event log |
 | Target service | Java 21, Spring Boot 4.0.8, Maven, H2 (test) |
 | Human gates | LangGraph `interrupt()` on plan, test scope, results review |
 | Policy engine | 12-policy pre-write checker (SEC, COM, GOV, TEST namespaces) |
-| Rollback | File-level checkpoint + transactional revert on Maven failure |
+| Rollback | File-level checkpoint + multi-wave whole-set transactional revert |
+
+---
+
+## Dependency-aware multi-wave parallel DAG orchestration
+
+The orchestrator includes native multi-wave parallel task execution (`agent-orchestrator/governance/parallel_execution.py`) verified by 45 dedicated automated tests:
+
+- **Topological wave partitioning:** Tasks are partitioned into dependency levels using topological sort. Tasks within each wave have zero interdependencies and strictly disjoint `allowed_files` sets.
+- **Concurrent execution with level synchronization:** Independent tasks within a wave execute concurrently (up to configurable `max_concurrency` workers) via LangGraph dynamic fan-out (`Send`), synchronizing at a superstep barrier before the next wave begins.
+- **Downstream predecessor consumption:** Dependent tasks in wave $k+1$ execute against the validated, applied source changes of predecessor tasks in waves $0 \dots k$.
+- **Whole-set rollback guarantee:** If any task or validation step fails in any wave, all previously validated wave transactions are compensated in reverse order, restoring the repository to its exact pre-orchestration state. If external file tampering occurs before rollback, the system halts with `STOPPED_PARALLEL_RECOVERY_REQUIRED` rather than overwriting external changes.
+- **Durable checkpoint resumption:** Completed wave receipts are tracked in state so interrupted workflows resume without re-executing already completed waves.
+- **Remaining limitations:** Tasks within the same wave must specify mutually disjoint `allowed_files` sets (no concurrent multi-writer support for a single file); operations are restricted to allowlisted Java production paths.
 
 ---
 
@@ -147,7 +161,7 @@ and on PR to `main`:
 
 | Job | Runs | Passes |
 |---|---|---|
-| `Python 3.12 Tests` | 485 tests (full suite) | ✅ |
+| `Python 3.12 Tests` | 493 tests (full suite) | ✅ |
 | `Java 21 Maven Tests` | 8 tests | ✅ |
 
 No Ollama, no external services, no production credentials required in CI.
@@ -159,7 +173,7 @@ No Ollama, no external services, no production credentials required in CI.
 | Check | Result |
 |---|---|
 | `git clone` from GitHub | ✅ Exit 0 |
-| Python 485 tests | ✅ `485 passed in 4.52s` |
+| Python 493 tests | ✅ `493 passed in 4.85s` |
 | Java 8 tests | ✅ `BUILD SUCCESS in 3.663s` |
 | Evidence directories present | ✅ All scenario dirs cloned |
 | No production files modified | ✅ Confirmed by pre/post-run SHA-256 inventory |
