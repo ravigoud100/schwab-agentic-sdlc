@@ -1,3 +1,4 @@
+import hashlib
 import json
 import uuid
 from pathlib import Path
@@ -41,7 +42,7 @@ from governance.task_orchestrator import (
 )
 
 from dotenv import load_dotenv
-from llm.provider import get_model
+from llm.provider import get_model, ModelUnavailableError
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import interrupt, Command
@@ -63,6 +64,13 @@ model = get_model()
 
 # Information shared between agents
 class EngineeringState(TypedDict):
+    engineering_accepted: bool
+    production_release_authorized: bool
+    final_review_decision: str
+    final_review_bundle_hash: str
+    final_review_artifact_hashes: dict
+    final_human_review_required: bool
+    final_review_error: str
     integrated_test_replay_state: dict
     integrated_correction_state: dict
     implementation_response_format: str
@@ -203,6 +211,12 @@ User requirement:
     try:
         raw = _response_text(model.invoke(prompt, stage='requirements'))
         requirements = parse_requirements(raw)
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='requirements_agent', event='MODEL_UNAVAILABLE',
+                  details={'version':version,'error_type':type(error).__name__,'error':str(error),'stage':'requirements'})
+        return {'requirements_valid':False,'requirements_error':str(error),'requirements_raw_response':'',
+                'structured_requirements':{},'clarification_complete':False,
+                'status':'STOPPED_MODEL_UNAVAILABLE'}
     except Exception as error:
         log_event(workflow_id=state['workflow_id'], agent='requirements_agent', event='REQUIREMENTS_INVALID',
                   details={'version':version,'error_type':type(error).__name__,'error':str(error)})
@@ -222,6 +236,8 @@ User requirement:
 
 
 def requirements_router(state):
+    if state.get('status') == 'STOPPED_MODEL_UNAVAILABLE':
+        return 'stop'
     if not state.get('requirements_valid'):
         return 'stop'
     return 'clarify' if not state.get('clarification_complete') else 'codebase'
@@ -340,6 +356,11 @@ Previous rejected artifact (correct the precise reference errors rather than rep
         validate_design(artifact,state)
         if state.get('design_feedback') and artifact==state.get('design_revision_base_artifact'):
             raise ValueError('Requested design correction returned an unchanged artifact')
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='design_node', event='MODEL_UNAVAILABLE',
+                  details={'stage': 'design', 'error_type': type(error).__name__, 'error': str(error)})
+        return {'design_valid': False, 'design_hash': '', 'approved_design_hash': '', 'design_artifact': {},
+                'design_errors': [str(error)], 'status': 'STOPPED_MODEL_UNAVAILABLE'}
     except Exception as error:
         attempt=state.get('design_attempts',0)+1
         evidence={'attempt':attempt,'error':str(error),'raw_response':raw,
@@ -510,8 +531,9 @@ def planning_agent(state: EngineeringState):
         coverage_schema += ', "test_stage": {"allowed_new_test_files":["url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"], "protected_existing_test_files":["<existing test paths referenced by tasks>"]}'
     print("\n[3] PLANNING AGENT")
 
-    response = model.invoke(
-        f"""
+    try:
+        response = model.invoke(
+            f"""
         You are a senior Java software architect.
 
         Original requirement:
@@ -571,8 +593,12 @@ def planning_agent(state: EngineeringState):
         answers supersede unresolved alternatives in the original requirement or
         stale codebase analysis. Do not offer both runtime expiration modes.
         """,
-        stage="planning",
-    )
+            stage="planning",
+        )
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='planning_agent', event='MODEL_UNAVAILABLE',
+                  details={'stage': 'planning', 'error_type': type(error).__name__, 'error': str(error)})
+        return {'status': 'STOPPED_MODEL_UNAVAILABLE', 'task_plan_valid': False}
 
     plan = response.text
     try:
@@ -1063,6 +1089,14 @@ def implementation_node(state: EngineeringState):
             task=approved_task, workspace=Path(state["workspace"]), context=state,
         )
     except Exception as error:
+        if isinstance(error, ModelUnavailableError) or getattr(error, 'status', None) == 'STOPPED_MODEL_UNAVAILABLE':
+            log_event(
+                workflow_id=state["workflow_id"], agent="implementation_agent",
+                event="MODEL_UNAVAILABLE", details={"stage": "implementation", "error_type": type(error).__name__, "error": str(error)},
+            )
+            return {"implementation_error": str(error),
+                    "implementation_error_type": type(error).__name__,
+                    "status": "STOPPED_MODEL_UNAVAILABLE"}
         log_event(
             workflow_id=state["workflow_id"], agent="implementation_agent",
             event="IMPLEMENTATION_BLOCKED", details={"error_type": type(error).__name__, "error": str(error)},
@@ -1544,9 +1578,184 @@ def success_node(state: EngineeringState):
         if state.get("validation_only") else {},
     )
 
-    return {
+    updates = {
         "status": "AWAITING_FINAL_HUMAN_REVIEW"
     }
+    if state.get("final_human_review_required"):
+        bundle = compute_final_review_bundle(state)
+        updates["final_review_bundle_hash"] = bundle["bundle_hash"]
+        updates["final_review_artifact_hashes"] = bundle["source_hashes"]
+    return updates
+
+
+def compute_final_review_bundle(state: EngineeringState) -> dict:
+    workspace = Path(state['workspace'])
+    source_hashes = _java_source_hashes(workspace) if (workspace / "url-shortener/src").exists() else {}
+    plan_version = state.get('plan_version', 1)
+    approved_task_hash = state.get('approved_task_hash', '')
+    validation_exit_code = state.get('validation_result', {}).get('exit_code', 0)
+    bundle_data = {
+        'workflow_id': state['workflow_id'],
+        'plan_version': plan_version,
+        'approved_task_hash': approved_task_hash,
+        'source_hashes': source_hashes,
+        'validation_exit_code': validation_exit_code,
+    }
+    bundle_hash = hashlib.sha256(json.dumps(bundle_data, sort_keys=True).encode()).hexdigest()
+    return {
+        'source_hashes': source_hashes,
+        'bundle_hash': bundle_hash,
+        'plan_version': plan_version,
+    }
+
+
+def final_human_review_node(state: EngineeringState):
+    initial_bundle_hash = state.get("final_review_bundle_hash")
+    initial_artifact_hashes = state.get("final_review_artifact_hashes")
+    if not initial_bundle_hash or initial_artifact_hashes is None:
+        bundle = compute_final_review_bundle(state)
+        initial_bundle_hash = bundle["bundle_hash"]
+        initial_artifact_hashes = bundle["source_hashes"]
+
+    plan_version = state.get("plan_version", 1)
+
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="final_human_review",
+        event="FINAL_REVIEW_REQUESTED",
+        details={
+            "workflow_id": state["workflow_id"],
+            "plan_version": plan_version,
+            "bundle_hash": initial_bundle_hash,
+            "source_hashes": initial_artifact_hashes,
+            "source_files_changed": state.get("source_files_changed", 0),
+            "disclaimer": (
+                "Engineering approval records acceptance that the implementation satisfies requirements "
+                "and passes all validation gates. It does NOT authorize production release or deployment."
+            ),
+        }
+    )
+    decision = interrupt({
+        "type": "FINAL_HUMAN_REVIEW",
+        "workflow_id": state["workflow_id"],
+        "plan_version": plan_version,
+        "bundle_hash": initial_bundle_hash,
+        "source_hashes": initial_artifact_hashes,
+        "summary": {
+            "requirement": state.get("requirement", ""),
+            "validation_passed": state.get("validation_result", {}).get("passed", True),
+            "maven_exit_code": state.get("validation_result", {}).get("exit_code", 0),
+            "source_files_changed": state.get("source_files_changed", 0),
+        },
+        "disclaimer": (
+            "Engineering approval records acceptance that the implementation satisfies requirements "
+            "and passes all validation gates. It does NOT authorize production release or deployment."
+        ),
+    })
+
+    current_bundle = compute_final_review_bundle(state)
+    if current_bundle["source_hashes"] != initial_artifact_hashes or current_bundle["bundle_hash"] != initial_bundle_hash:
+        print("\n[FINAL HUMAN REVIEW] STALE APPROVAL DETECTED — Artifacts changed after review was requested.")
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_REJECTED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "reject",
+                "reason": "stale_artifact_hash",
+                "original_bundle_hash": initial_bundle_hash,
+                "current_bundle_hash": current_bundle["bundle_hash"],
+                "engineering_accepted": False,
+                "production_release_authorized": False,
+            }
+        )
+        return {
+            "status": "STOPPED_FINAL_REVIEW_REJECTED",
+            "final_review_decision": "reject",
+            "engineering_accepted": False,
+            "production_release_authorized": False,
+            "final_review_error": "Stale review: underlying artifacts changed after review request",
+            "final_review_bundle_hash": current_bundle["bundle_hash"],
+            "final_review_artifact_hashes": current_bundle["source_hashes"],
+        }
+
+    if decision == "approve":
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_APPROVED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "approve",
+                "plan_version": plan_version,
+                "bundle_hash": initial_bundle_hash,
+                "source_hashes": initial_artifact_hashes,
+                "engineering_accepted": True,
+                "production_release_authorized": False,
+            }
+        )
+        return {
+            "status": "ENGINEERING_ACCEPTED",
+            "final_review_decision": "approve",
+            "engineering_accepted": True,
+            "production_release_authorized": False,
+            "final_review_bundle_hash": initial_bundle_hash,
+            "final_review_artifact_hashes": initial_artifact_hashes,
+        }
+    else:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_REJECTED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "reject",
+                "plan_version": plan_version,
+                "bundle_hash": initial_bundle_hash,
+                "engineering_accepted": False,
+                "production_release_authorized": False,
+            }
+        )
+        return {
+            "status": "STOPPED_FINAL_REVIEW_REJECTED",
+            "final_review_decision": "reject",
+            "engineering_accepted": False,
+            "production_release_authorized": False,
+            "final_review_bundle_hash": initial_bundle_hash,
+            "final_review_artifact_hashes": initial_artifact_hashes,
+        }
+
+
+def final_review_router(state: EngineeringState):
+    if state.get("status") == "ENGINEERING_ACCEPTED":
+        return "accepted"
+    return "rejected"
+
+
+def final_review_accepted_node(state: EngineeringState):
+    print("\n[FINAL HUMAN REVIEW] Approved — Engineering Acceptance Recorded")
+    print("NOTE: Production release authorization is NOT granted.")
+    return {
+        "status": "ENGINEERING_ACCEPTED",
+        "engineering_accepted": True,
+        "production_release_authorized": False,
+    }
+
+
+def final_review_rejected_node(state: EngineeringState):
+    print("\n[FINAL HUMAN REVIEW] Rejected — Workflow Stopped")
+    return {
+        "status": "STOPPED_FINAL_REVIEW_REJECTED",
+        "engineering_accepted": False,
+        "production_release_authorized": False,
+    }
+
+
+def success_router(state: EngineeringState):
+    if state.get("final_human_review_required"):
+        return "final_human_review"
+    return "end"
 
 
 def failure_node(state: EngineeringState):
@@ -1681,6 +1890,9 @@ workflow.add_node("repair_executor", repair_executor_node)
 workflow.add_node("repair_stopped", repair_stopped_node)
 workflow.add_node("success", success_node)
 workflow.add_node("failure", failure_node)
+workflow.add_node("final_human_review", final_human_review_node)
+workflow.add_node("final_review_accepted", final_review_accepted_node)
+workflow.add_node("final_review_rejected", final_review_rejected_node)
 
 workflow.add_edge(START, "requirements")
 workflow.add_conditional_edges('requirements', requirements_router,
@@ -1697,7 +1909,8 @@ workflow.add_conditional_edges('contract_review',
                   else 'design' if state.get('design_required') else 'plan',
     {'stop':END, 'plan':'planning','design':'design'})
 workflow.add_conditional_edges('design',
-    lambda state:'retry' if state.get('status')=='DESIGN_RETRY' else
+    lambda state:'stop' if state.get('status') in {'STOPPED_DESIGN_INVALID', 'STOPPED_MODEL_UNAVAILABLE'} else
+                 'retry' if state.get('status')=='DESIGN_RETRY' else
                  'review' if state.get('design_valid') else 'stop',
     {'retry':'design','review':'design_review','stop':END})
 workflow.add_conditional_edges('design_review',
@@ -1707,7 +1920,7 @@ workflow.add_conditional_edges('design_review',
     {'plan':'planning','correct':'design','review':'design_review','stop':END})
 workflow.add_conditional_edges('planning',
     lambda state: 'retry' if state.get('status') == 'SEMANTIC_PLAN_RETRY' else
-                  'stop' if state.get('status') == 'STOPPED_SEMANTIC_PLAN_INVALID' else 'approve',
+                  'stop' if state.get('status') in {'STOPPED_MODEL_UNAVAILABLE', 'STOPPED_SEMANTIC_PLAN_INVALID'} else 'approve',
     {'retry':'planning','stop':END,'approve':'approval'})
 
 workflow.add_conditional_edges(
@@ -1759,7 +1972,18 @@ workflow.add_conditional_edges('recovery_review', lambda state: 'retry' if state
 workflow.add_conditional_edges('recovery_retry', lambda state: 'run' if state.get('recovery_ready') else 'stop',
                                {'run': 'implementation', 'stop': END})
 
-workflow.add_edge("success", END)
+workflow.add_conditional_edges(
+    "success",
+    success_router,
+    {"final_human_review": "final_human_review", "end": END}
+)
+workflow.add_conditional_edges(
+    "final_human_review",
+    final_review_router,
+    {"accepted": "final_review_accepted", "rejected": "final_review_rejected"}
+)
+workflow.add_edge("final_review_accepted", END)
+workflow.add_edge("final_review_rejected", END)
 workflow.add_edge("failure", END)
 workflow.add_edge("replanning", "replan_review")
 workflow.add_conditional_edges(
@@ -1782,7 +2006,8 @@ workflow.add_edge("repair_stopped", END)
 
 
 def main(obligation_contract=None, design_required=False, plan_lineage_required=False,
-         integration_evidence=None, integration_cache=None, parallel_evidence=None):
+         integration_evidence=None, integration_cache=None, parallel_evidence=None,
+         final_review_required=False):
     if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
         raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
     if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
@@ -1819,6 +2044,13 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
         app = workflow.compile(checkpointer=checkpointer)
 
         initial_state = {
+            'engineering_accepted': False,
+            'production_release_authorized': False,
+            'final_review_decision': '',
+            'final_review_bundle_hash': '',
+            'final_review_artifact_hashes': {},
+            'final_human_review_required': final_review_required,
+            'final_review_error': '',
             'parallel_evidence': str(parallel_evidence or ''),
             'integrated_sdlc':bool(integration_evidence),
             'integration_evidence':str(integration_evidence or ''),
@@ -1887,6 +2119,18 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
                 print(json.dumps(payload,indent=2))
                 decision='approve' if input('Review (1 approve / 2 reject): ').strip()=='1' else 'reject'
                 result=app.invoke(Command(resume=decision),config=config)
+                continue
+
+            if isinstance(payload,dict) and payload.get('type') == 'FINAL_HUMAN_REVIEW':
+                print('\n========== FINAL HUMAN REVIEW ==========')
+                print('Workflow ID:', payload.get('workflow_id'))
+                print('Plan version:', payload.get('plan_version'))
+                print('Bundle hash:', payload.get('bundle_hash'))
+                print('Summary:', json.dumps(payload.get('summary', {}), indent=2))
+                print('\nDISCLAIMER:', payload.get('disclaimer'))
+                choice = input('Review (1 approve / 2 reject): ').strip()
+                decision = 'approve' if choice == '1' else 'reject'
+                result = app.invoke(Command(resume=decision), config=config)
                 continue
 
             if isinstance(payload,dict) and payload.get('type')=='REQUIREMENT_CLARIFICATION':
@@ -1999,9 +2243,10 @@ if __name__ == "__main__":
     parser.add_argument('--integration-evidence',type=Path,help='New external directory for sequential SDLC evidence')
     parser.add_argument('--maven-cache',type=Path,help='Existing offline Maven dependency cache')
     parser.add_argument('--parallel-evidence',type=Path,help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
+    parser.add_argument('--final-review', action='store_true', help='Require interactive checkpointed final human review after validation')
     args = parser.parse_args()
     if args.plan_lineage and (not args.design or not args.contract_file):parser.error('--plan-lineage requires --design and --contract-file')
     main(json.loads(args.contract_file.read_text()) if args.contract_file else None,
          design_required=args.design,plan_lineage_required=args.plan_lineage,
          integration_evidence=args.integration_evidence,integration_cache=args.maven_cache,
-         parallel_evidence=args.parallel_evidence)
+         parallel_evidence=args.parallel_evidence, final_review_required=args.final_review)

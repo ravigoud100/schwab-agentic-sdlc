@@ -1,6 +1,7 @@
 import json
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from langchain_ollama import ChatOllama
 
@@ -11,13 +12,23 @@ class ModelResponse:
     metadata: dict = field(default_factory=dict)
 
 
+class ModelUnavailableError(Exception):
+    """Raised when all authorized model attempts and fallbacks fail or are exhausted."""
+    def __init__(self, message: str, stage: str | None = None, attempts: int = 0, last_error: Exception | None = None):
+        super().__init__(message)
+        self.stage = stage
+        self.attempts = attempts
+        self.last_error = last_error
+
+
 class OllamaProvider:
-    def __init__(self):
+    def __init__(self, model_name: str | None = None):
+        self.model_name = model_name or os.getenv(
+            "OLLAMA_MODEL",
+            "qwen2.5-coder:latest"
+        )
         self.model = ChatOllama(
-            model=os.getenv(
-                "OLLAMA_MODEL",
-                "qwen2.5-coder:latest"
-            ),
+            model=self.model_name,
             temperature=0,
             format=os.getenv("OLLAMA_FORMAT") or None,
             num_ctx=int(os.getenv('OLLAMA_NUM_CTX','32768')),
@@ -89,6 +100,136 @@ class MockProvider:
         return ModelResponse(text=responses[stage])
 
 
+class ResilientModelProvider(OllamaProvider):
+    """Wraps model execution with bounded retries, real fallback, and live mock prohibition."""
+    def __init__(
+        self,
+        primary=None,
+        fallback=None,
+        max_retries: int = 2,
+        is_live: bool = False,
+        workflow_id: str | None = None,
+        attempts_db: Path | str | None = None,
+    ):
+        self.primary = primary if primary is not None else OllamaProvider()
+        self.fallback = fallback
+        self.max_retries = max_retries
+        self.is_live = is_live
+        self.workflow_id = workflow_id
+        self.attempts_db = Path(attempts_db) if attempts_db else None
+        self.model = getattr(self.primary, 'model', None)
+        self.model_name = getattr(self.primary, 'model_name', 'qwen2.5-coder:latest')
+
+    def invoke(self, prompt: str, *, stage: str | None = None) -> ModelResponse:
+        from governance.audit_logger import log_event
+        wid = self.workflow_id or "resilient-model"
+
+        # Prohibit mock fallback in live workflows
+        if self.is_live and self.fallback is not None and isinstance(self.fallback, MockProvider):
+            raise PermissionError("Mock provider responses are strictly prohibited in live workflows")
+
+        # Check durable attempt ledger budget if present
+        if self.attempts_db and self.attempts_db.is_file():
+            import sqlite3
+            try:
+                with sqlite3.connect(self.attempts_db) as conn:
+                    rows = conn.execute(
+                        "SELECT ordinal, state FROM model_attempts WHERE workflow_id=? ORDER BY ordinal",
+                        (wid,)
+                    ).fetchall()
+                    if rows and max(r[0] for r in rows) >= 3 and all(r[1] in {'FAILED', 'INTERRUPTED'} for r in rows):
+                        raise PermissionError("Attempt budget exhausted in durable ledger")
+            except sqlite3.OperationalError:
+                pass
+
+        attempts = 0
+        last_error = None
+        primary_name = getattr(self.primary, "model_name", type(self.primary).__name__)
+
+        # 1. Primary provider with bounded retries
+        for attempt_idx in range(self.max_retries + 1):
+            attempts += 1
+            try:
+                return self.primary.invoke(prompt, stage=stage)
+            except Exception as e:
+                last_error = e
+                if isinstance(e, (PermissionError, NotImplementedError)):
+                    raise
+
+        # Primary retries exhausted
+        log_event(
+            workflow_id=wid,
+            agent="resilient_provider",
+            event="MODEL_RETRIES_EXHAUSTED",
+            details={
+                "stage": stage,
+                "provider": primary_name,
+                "attempts": attempts,
+                "error_type": type(last_error).__name__,
+            }
+        )
+
+        # 2. Configurable real-model fallback
+        if self.fallback is not None:
+            if self.is_live and isinstance(self.fallback, MockProvider):
+                raise PermissionError("Mock provider responses are strictly prohibited in live workflows")
+
+            fallback_name = getattr(self.fallback, "model_name", type(self.fallback).__name__)
+            log_event(
+                workflow_id=wid,
+                agent="resilient_provider",
+                event="MODEL_PROVIDER_FALLBACK",
+                details={
+                    "stage": stage,
+                    "primary_provider": primary_name,
+                    "fallback_provider": fallback_name,
+                    "error_type": type(last_error).__name__,
+                }
+            )
+
+            fallback_attempts = 0
+            for attempt_idx in range(self.max_retries + 1):
+                fallback_attempts += 1
+                attempts += 1
+                try:
+                    return self.fallback.invoke(prompt, stage=stage)
+                except Exception as e:
+                    last_error = e
+                    if isinstance(e, (PermissionError, NotImplementedError)):
+                        raise
+
+            log_event(
+                workflow_id=wid,
+                agent="resilient_provider",
+                event="MODEL_RETRIES_EXHAUSTED",
+                details={
+                    "stage": stage,
+                    "provider": fallback_name,
+                    "attempts": fallback_attempts,
+                    "error_type": type(last_error).__name__,
+                }
+            )
+
+        # 3. All authorized attempts exhausted
+        log_event(
+            workflow_id=wid,
+            agent="resilient_provider",
+            event="MODEL_UNAVAILABLE",
+            details={
+                "stage": stage,
+                "total_attempts": attempts,
+                "last_error": str(last_error),
+                "error_type": type(last_error).__name__,
+            }
+        )
+        raise ModelUnavailableError(
+            f"All authorized model providers failed for stage {stage!r} after {attempts} attempts: {last_error}",
+            stage=stage,
+            attempts=attempts,
+            last_error=last_error,
+        )
+
+
 def get_model():
     provider = os.getenv(
         "LLM_PROVIDER",
@@ -96,7 +237,11 @@ def get_model():
     ).lower()
 
     if provider == "ollama":
-        return OllamaProvider()
+        primary = OllamaProvider()
+        fallback_model = os.getenv("OLLAMA_FALLBACK_MODEL")
+        fallback = OllamaProvider(model_name=fallback_model) if fallback_model else None
+        retries = int(os.getenv("MODEL_MAX_RETRIES", "2"))
+        return ResilientModelProvider(primary=primary, fallback=fallback, max_retries=retries, is_live=True)
 
     if provider == "mock":
         return MockProvider()
