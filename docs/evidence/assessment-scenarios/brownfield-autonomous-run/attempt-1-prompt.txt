@@ -1,0 +1,61 @@
+Implement the approved brownfield task by returning COMPLETE replacement Java files.
+Return ONLY JSON: {"files":[{"path":"exact approved path","content":"complete Java source"}]}.
+Every authorized production path (url-shortener/src/main/java/url_shortener/UrlService.java and url-shortener/src/main/java/url_shortener/UrlController.java) must appear exactly once.
+Do not return Markdown code blocks, explanations, patches, or partial edits.
+Each entire original file will be replaced ONCE by the returned content.
+
+APPROVED ARCHITECTURAL CONTRACT & SCOPE:
+Task: Expose a read-only URL status endpoint with service-side evaluation.
+1. url-shortener/src/main/java/url_shortener/UrlService.java (UrlService):
+   - Add method: public java.util.Map<String, Object> getStatus(String shortCode)
+   - Annotate with: @org.springframework.transaction.annotation.Transactional(readOnly = true)
+   - Behavior:
+     - Find ShortUrl via repository.findByShortCode(shortCode).
+     - If not found, throw: new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Short URL not found")
+     - Return map containing exactly:
+         "shortCode": shortUrl.getShortCode()
+         "expired": shortUrl.isExpired(java.time.Instant.now())
+     - NEVER increment click count in getStatus.
+   - Preserve all existing fields, constructor, and methods (createShortUrl, generateShortCode, getOriginalUrl, getAnalytics) exactly.
+
+2. url-shortener/src/main/java/url_shortener/UrlController.java (UrlController):
+   - Note that UrlController already has `@RequestMapping("/api/urls")` at class level.
+   - Add endpoint method:
+       @GetMapping("/{shortCode}/status")
+       public java.util.Map<String, Object> getStatus(@PathVariable String shortCode) {
+           return urlService.getStatus(shortCode);
+       }
+   - Pure delegation to urlService.getStatus(shortCode).
+   - Preserve all existing fields, constructor, CreateUrlRequest record, and existing endpoints (createShortUrl, getAnalytics) exactly.
+
+DECLARED IMPORTS PER FILE:
+{
+  "url-shortener/src/main/java/url_shortener/UrlService.java": [
+    "org.springframework.stereotype.Service",
+    "java.security.SecureRandom",
+    "java.time.Instant"
+  ],
+  "url-shortener/src/main/java/url_shortener/UrlController.java": [
+    "jakarta.validation.Valid",
+    "jakarta.validation.constraints.NotBlank",
+    "jakarta.validation.constraints.Size",
+    "org.hibernate.validator.constraints.URL",
+    "org.springframework.http.HttpStatus",
+    "org.springframework.web.bind.annotation.*",
+    "org.springframework.web.server.ResponseStatusException",
+    "java.net.URI",
+    "java.util.Map"
+  ]
+}
+
+TYPE RESOLUTION AND IMPORT OBLIGATIONS:
+- Every referenced type MUST be resolved: either explicitly imported in that file's import header or fully qualified at point of use.
+- NOTICE for url-shortener/src/main/java/url_shortener/UrlService.java: url-shortener/src/main/java/url_shortener/UrlService.java does NOT currently import java.util.Map. You MUST add `import java.util.Map;` to its imports or write `java.util.Map<String, Object>`.
+- NOTICE for url-shortener/src/main/java/url_shortener/UrlController.java: url-shortener/src/main/java/url_shortener/UrlController.java already imports java.util.Map. Since expiration evaluation occurs inside UrlService, url-shortener/src/main/java/url_shortener/UrlController.java does not need java.time.Instant.
+- Existing tests and build configuration are read-only. Do not weaken behavior or disable checks.
+
+ORIGINAL COMPLETE SOURCES:
+{
+  "url-shortener/src/main/java/url_shortener/UrlService.java": "package url_shortener;\n\nimport org.springframework.stereotype.Service;\nimport java.security.SecureRandom;\nimport java.time.Instant;\n\n@Service\npublic class UrlService {\n\n    private final UrlRepository repository;\n\n    private static final String CHARACTERS =\n            \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\n\n    private final SecureRandom random = new SecureRandom();\n\n    public UrlService(UrlRepository repository) {\n        this.repository = repository;\n    }\n\n    public ShortUrl createShortUrl(\n            String originalUrl,\n            java.time.Instant expiresAt\n    ) {\n\n        String shortCode;\n        int attempts = 0;\n\n        do {\n            shortCode = generateShortCode();\n            attempts++;\n\n            if (attempts >= 10) {\n                throw new IllegalStateException(\n                        \"Unable to generate unique short URL\");\n            }\n\n        } while (repository.existsByShortCode(shortCode));\n\n        ShortUrl shortUrl = new ShortUrl(originalUrl, shortCode);\n\n        if (expiresAt != null &&\n                !expiresAt.isAfter(java.time.Instant.now())) {\n            throw new org.springframework.web.server.ResponseStatusException(\n                    org.springframework.http.HttpStatus.BAD_REQUEST,\n                    \"Expiration must be in the future\"\n            );\n        }\n\n        shortUrl.setExpiresAt(expiresAt);\n\n        return repository.save(shortUrl);\n    }\n\n    private String generateShortCode() {\n\n        StringBuilder code = new StringBuilder();\n\n        for (int i = 0; i < 7; i++) {\n            int index = random.nextInt(CHARACTERS.length());\n            code.append(CHARACTERS.charAt(index));\n        }\n\n        return code.toString();\n    }\n\n  @org.springframework.transaction.annotation.Transactional\npublic ShortUrl getOriginalUrl(String shortCode) {\n\n    ShortUrl shortUrl = repository.findByShortCode(shortCode)\n            .orElseThrow(() ->\n                    new org.springframework.web.server.ResponseStatusException(\n                            org.springframework.http.HttpStatus.NOT_FOUND,\n                            \"Short URL not found\"\n                    )\n            );\n\n    if (shortUrl.isExpired(Instant.now())) {\n        throw new org.springframework.web.server.ResponseStatusException(\n                org.springframework.http.HttpStatus.GONE,\n                \"Short URL has expired\"\n        );\n    }\n\n    shortUrl.incrementClickCount();\n\n    return shortUrl;\n}\n@org.springframework.transaction.annotation.Transactional(readOnly = true)\npublic ShortUrl getAnalytics(String shortCode) {\n\n    return repository.findByShortCode(shortCode)\n            .orElseThrow(() ->\n                    new org.springframework.web.server.ResponseStatusException(\n                            org.springframework.http.HttpStatus.NOT_FOUND,\n                            \"Short URL not found\"\n                    )\n            );\n}\n}\n",
+  "url-shortener/src/main/java/url_shortener/UrlController.java": "package url_shortener;\n\nimport jakarta.validation.Valid;\nimport jakarta.validation.constraints.NotBlank;\nimport jakarta.validation.constraints.Size;\nimport org.hibernate.validator.constraints.URL;\nimport org.springframework.http.HttpStatus;\nimport org.springframework.web.bind.annotation.*;\nimport org.springframework.web.server.ResponseStatusException;\n\nimport java.net.URI;\nimport java.util.Map;\n\n@RestController\n@RequestMapping(\"/api/urls\")\npublic class UrlController {\n\n    private final UrlService urlService;\n\n    public UrlController(UrlService urlService) {\n        this.urlService = urlService;\n    }\n\n    public record CreateUrlRequest(\n            @NotBlank\n            @Size(max = 2048)\n            @URL(protocol = \"https\")\n            String originalUrl,\n            java.time.Instant expiresAt\n    ) {}\n\n    @PostMapping\n    @ResponseStatus(HttpStatus.CREATED)\n    public Map<String, String> createShortUrl(\n            @Valid @RequestBody CreateUrlRequest request) {\n\n        ShortUrl shortUrl = urlService.createShortUrl(\n                request.originalUrl(),\n                request.expiresAt()\n        );\n\n        return Map.of(\n                \"originalUrl\", shortUrl.getOriginalUrl(),\n                \"shortCode\", shortUrl.getShortCode(),\n                \"shortUrl\", \"http://localhost:8080/\" + shortUrl.getShortCode()\n        );\n    }\n    \n    @GetMapping(\"/{shortCode}/analytics\")\npublic Map<String, Object> getAnalytics(\n        @PathVariable String shortCode) {\n\n    ShortUrl shortUrl = urlService.getAnalytics(shortCode);\n\n    return Map.of(\n            \"shortCode\", shortUrl.getShortCode(),\n            \"originalUrl\", shortUrl.getOriginalUrl(),\n            \"totalClicks\", shortUrl.getClickCount(),\n            \"createdAt\", shortUrl.getCreatedAt().toString()\n    );\n}\n}\n"
+}

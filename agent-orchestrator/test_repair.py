@@ -1,3 +1,7 @@
+import uuid
+from governance.workspace_manager import initialize_workspace
+
+workspace = initialize_workspace(str(uuid.uuid4()))
 from agents.repair_agent import propose_repair
 
 
@@ -7,7 +11,7 @@ simulated_error = """[ERROR] COMPILATION ERROR:
 [ERROR] location: variable shortUrl of type ShortUrl
 [INFO] BUILD FAILURE"""
 
-proposal = propose_repair(simulated_error)
+proposal = propose_repair(simulated_error, workspace)
 
 print("\n========== REPAIR PROPOSAL ==========")
 print(proposal)

@@ -1,0 +1,191 @@
+[
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:45:45.186513+00:00",
+    "agent": "documentation_release",
+    "event": "TEST_RESULTS_APPROVED",
+    "details": {
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:46:09.249106+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_GATE_REJECTED",
+    "details": {
+      "error": "Exactly the five documentation sections required",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:47:09.284460+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_RETRY_REQUESTED",
+    "details": {
+      "reason": "Clarify exact fact-ID schema after first rejected live response",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:47:28.481056+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_RETRY_REQUESTED",
+    "details": {
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+      "completed_attempts": 1
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:47:31.854540+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_GATE_PASSED",
+    "details": {
+      "path": "/private/tmp/schwab-documentation-readiness/engineering-notes.md",
+      "sha256": "6331ac4dc91b020e2913d2074ac1d177e653794b97356e1bebd6c28086eccd14",
+      "selection": {
+        "api_change_summary": [
+          "api"
+        ],
+        "implementation_notes": [
+          "source_origin",
+          "clock",
+          "source_hash",
+          "test_origin"
+        ],
+        "testing_evidence": [
+          "baseline",
+          "positive",
+          "negative"
+        ],
+        "limitations": [
+          "bounded",
+          "plan"
+        ],
+        "release_considerations": [
+          "review",
+          "release"
+        ]
+      },
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:47:31.867756+00:00",
+    "agent": "documentation_release",
+    "event": "RELEASE_READINESS_EVALUATED",
+    "details": {
+      "status": "BLOCKED",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "clock_and_test_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": false,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "matching_implementation_plan_approved",
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [],
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:48:13.485567+00:00",
+    "agent": "documentation_release",
+    "event": "RELEASE_READINESS_EVALUATED",
+    "details": {
+      "status": "BLOCKED",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "clock_and_test_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": false,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "matching_implementation_plan_approved",
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [],
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:48:13.486136+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_METADATA_CLEARED",
+    "details": {
+      "previous_error": "Exactly the five documentation sections required",
+      "document_hash": "6331ac4dc91b020e2913d2074ac1d177e653794b97356e1bebd6c28086eccd14",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:48:58.781915+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_NEGATIVE_FIXTURE_STARTED",
+    "details": {
+      "fixture": "unsupported LLM source-generation claim",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:48:58.789049+00:00",
+    "agent": "documentation_release",
+    "event": "DOCUMENTATION_GATE_REJECTED",
+    "details": {
+      "error": "Unsupported or missing documentation claims in implementation_notes",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8"
+    }
+  },
+  {
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "timestamp": "2026-10-16T23:50:37.769196+00:00",
+    "agent": "documentation_release",
+    "event": "RELEASE_READINESS_EVALUATED",
+    "details": {
+      "status": "BLOCKED",
+      "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "clock_and_test_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": false,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "matching_implementation_plan_approved",
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [],
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    }
+  }
+]

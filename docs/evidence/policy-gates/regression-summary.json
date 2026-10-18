@@ -1,0 +1,6 @@
+{
+  "command": ".venv/bin/python -m pytest -q",
+  "passed": 458,
+  "prior_tests_preserved": 409,
+  "new_policy_cases": 49
+}

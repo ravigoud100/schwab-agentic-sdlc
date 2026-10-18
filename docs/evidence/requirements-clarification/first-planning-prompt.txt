@@ -1,0 +1,29 @@
+
+        You are a senior Java software architect.
+
+        Original requirement:
+        Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval.
+
+        Validated requirement version: 1
+        Human-approved clarification answers: {"A1": "Custom expiration timestamp"}
+        These answers are binding decisions. Implement the selected options only.
+        Unselected alternatives and suggested defaults are not requirements or
+        additional runtime features. Resolve any analysis ambiguity using the answers.
+        Requirement analysis:
+        {"clarification_answers": {"A1": "Custom expiration timestamp"}, "requirements": {"acceptance_criteria": ["The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.", "The system should not execute any code changes until the later engineering plan approval."], "ambiguities": [{"default_assumption": null, "id": "A1", "options": ["Fixed 24-hour TTL", "Custom expiration timestamp"], "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?"}], "classification": "brownfield", "functional_requirements": ["Preserve existing links.", "Return HTTP 410 for expired URLs.", "Maintain existing active-link redirect behavior."], "non_functional_requirements": [], "normalized_problem": "Enhance the existing URL shortener to include optional URL expiration.", "risks": []}}
+
+        Existing codebase analysis:
+        { "architecture": "The application is a Spring Boot-based URL shortener. It consists of a REST API for creating and retrieving short URLs, and a controller for handling redirects. The application uses a database to store short URLs and their associated metadata, including the original URL, short code, click count, creation time, and expiration time (if applicable).", "endpoints": { "GET /{shortCode}": "Redirects to the original URL associated with the provided short code. If the URL has expired, returns HTTP 410 Gone. If the URL is still active, increments the click count and redirects to the original URL.", "POST /api/urls": "Creates a new short URL with the provided original URL and optional expiration time. Returns the short code and short URL. If the expiration time is provided and is not in the future, returns HTTP 400 Bad Request.", "GET /{shortCode}/analytics": "Returns analytics for the short URL, including the short code, original URL, total clicks, and creation time." }, "classes": { "RedirectController": "Handles the redirect requests. It uses the UrlService to retrieve the original URL and perform the redirect.", "ShortUrl": "Represents a short URL. It includes fields for the original URL, short code, click count, creation time, and expiration time. It also includes methods for checking if the URL has expired and for incrementing the click count.", "UrlController": "Handles the API requests for creating and retrieving short URLs. It uses the UrlService to perform the operations.", "UrlRepository": "Provides data access for the ShortUrl entity. It includes methods for finding and checking the existence of short URLs.", "UrlService": "Provides business logic for creating and retrieving short URLs. It includes methods for generating short codes, creating short URLs, and retrieving the original URL and analytics for a short URL." }, "files_affected": [ "RedirectController.java", "ShortUrl.java", "UrlController.java", "UrlRepository.java", "UrlService.java" ], "new_classes_or_dependencies": [], "risks_and_compatibility_concerns": [ "The new requirement introduces a new configuration decision that has not been approved yet. This could lead to delays in implementing the feature.", "If the expiration time is provided and is not in the future, the current implementation returns HTTP 400 Bad Request. This could be confusing for users who expect the URL to be created even if the expiration time is in the past." ], "assumptions_requiring_human_approval": [ "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?" ] }
+
+        Return ONLY valid JSON. No Markdown fences, prose, locate tasks, or test tasks.
+        Group coordinated edits into one complete implementation task with all
+        affected existing Java files; do not split a coordinated feature into partial tasks. Maven validation runs separately.
+        No new files are supported. Use repository-relative paths supplied above.
+        Each allowed_files value MUST be a non-empty array of approved existing Java paths.
+        execution_type MUST be the literal string "implementation".
+        Use this exact schema (replace the example description and file as appropriate):
+        {"tasks": [{"task_id": "implement-requirement",
+          "description": "Complete the original requirement in this file, preserving existing behavior",
+          "dependencies": [], "execution_type": "implementation",
+          "allowed_files": ["url-shortener/src/main/java/url_shortener/ShortUrl.java"]}]}
+        

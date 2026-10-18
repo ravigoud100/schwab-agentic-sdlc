@@ -1,0 +1,37 @@
+{
+  "success": {
+    "workflow_id": "e3980ea1-3f1b-4b33-b3ab-0f16113aea87",
+    "status": "AWAITING_FINAL_HUMAN_REVIEW",
+    "checkpoint_count": 12,
+    "audit_events": [
+      "WORKFLOW_STARTED",
+      "PLAN_APPROVED",
+      "TASKS_SCHEDULED",
+      "TASKS_STARTED",
+      "IMPLEMENTATION_COMPLETED",
+      "VALIDATION_PASSED",
+      "TASKS_COMPLETED",
+      "AWAITING_FINAL_HUMAN_REVIEW",
+      "WORKFLOW_FINISHED"
+    ],
+    "source_directory": "/private/tmp/schwab-live-click-limit"
+  },
+  "rollback": {
+    "workflow_id": "9bd4e07f-73cf-45d9-8cee-38d4947b9e07",
+    "status": "STOPPED_ROLLED_BACK",
+    "checkpoint_count": 7,
+    "audit_events": [
+      "WORKFLOW_STARTED",
+      "PLAN_READY_FOR_APPROVAL",
+      "PLAN_APPROVED",
+      "TASKS_SCHEDULED",
+      "TASKS_STARTED",
+      "IMPLEMENTATION_COMPLETED",
+      "VALIDATION_FAILED",
+      "TASKS_FAILED",
+      "ROLLBACK_COMPLETED",
+      "WORKFLOW_FINISHED"
+    ],
+    "source_directory": "/private/tmp/schwab-live-click-limit-rollback"
+  }
+}

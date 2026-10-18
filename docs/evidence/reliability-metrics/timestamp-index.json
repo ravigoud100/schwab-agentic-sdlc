@@ -1,0 +1,2680 @@
+[
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:09:23.367852+00:00",
+        "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 2,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:47.737292+00:00",
+        "event": "DESIGN_APPROVED",
+        "agent": "design_review"
+      },
+      {
+        "id": 3,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:47.739891+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 4,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:47.740499+00:00",
+        "event": "SEMANTIC_PLAN_ACCEPTED",
+        "agent": "semantic_plan_gate"
+      },
+      {
+        "id": 5,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:47.740894+00:00",
+        "event": "PLAN_CREATED",
+        "agent": "planning_agent"
+      },
+      {
+        "id": 6,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:51.941617+00:00",
+        "event": "ENGINEERING_PLAN_AUTHORIZED",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 7,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:10:51.942682+00:00",
+        "event": "PLAN_APPROVED",
+        "agent": "human_approval"
+      },
+      {
+        "id": 8,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:11:17.776292+00:00",
+        "event": "INTEGRATED_ENTRY_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 9,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:11:17.783966+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 10,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:11:59.147227+00:00",
+        "event": "INTEGRATION_INFRASTRUCTURE_RETRY",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 11,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:03.212284+00:00",
+        "event": "INTEGRATED_ENTRY_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 12,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:46.428544+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 13,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:46.433806+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 14,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:46.437203+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 15,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:46.449818+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 16,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:12:46.450936+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 17,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:14:27.575846+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 18,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:14:27.576640+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 19,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:14:27.582335+00:00",
+        "event": "INTEGRATION_SOURCE_GATE_MIGRATION",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 20,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:14:39.493939+00:00",
+        "event": "INTEGRATED_ENTRY_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 21,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:20.109480+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 22,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:20.111543+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 23,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:20.113205+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 24,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:20.123489+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 25,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:20.123970+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 26,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:21.889201+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 27,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:21.890202+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 28,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:21.890783+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 29,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:21.893935+00:00",
+        "event": "INTEGRATED_SAME_PLAN_RETRY",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 30,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:59.016806+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 31,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:59.021582+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 32,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:59.024600+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 33,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:59.035880+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 34,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:15:59.036675+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 35,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:03.445857+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 36,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:03.446726+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 37,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:03.447257+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 38,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:03.450379+00:00",
+        "event": "INTEGRATED_SAME_PLAN_RETRY",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 39,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:31.707469+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 40,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:31.712387+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 41,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:31.715042+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 42,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:31.725452+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 43,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:31.726410+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 44,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:33.193447+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 45,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:33.194446+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 46,
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "timestamp": "2026-10-17T00:16:33.195113+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf0-1f25-6d32-8000-301c132da911",
+        "time": 1792195763.379319,
+        "timestamp": "2026-10-17T00:09:23.379319+00:00",
+        "status": "PLAN_CREATED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf3-43a8-617a-8001-aa38ab3b7e42",
+        "time": 1792195847.738183,
+        "timestamp": "2026-10-17T00:10:47.738183+00:00",
+        "status": "DESIGN_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf3-43b0-642e-8002-22753f43ed8a",
+        "time": 1792195847.741533,
+        "timestamp": "2026-10-17T00:10:47.741533+00:00",
+        "status": "PLAN_CREATED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf3-6bc0-6644-8003-9e129666f8f3",
+        "time": 1792195851.942444,
+        "timestamp": "2026-10-17T00:10:51.942444+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf3-6bc2-64f8-8004-da5a998ece80",
+        "time": 1792195851.943233,
+        "timestamp": "2026-10-17T00:10:51.943233+00:00",
+        "status": "READY_FOR_IMPLEMENTATION",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:67014ed4-76d3-f83c-1ad5-c3053ab515f9",
+        "id": "1f1c9bf3-6bcc-6570-bfff-e425d4794d64",
+        "time": 1792195851.947349,
+        "timestamp": "2026-10-17T00:10:51.947349+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:67014ed4-76d3-f83c-1ad5-c3053ab515f9",
+        "id": "1f1c9bf3-6bcc-6e8a-8000-56385342c78e",
+        "time": 1792195851.947582,
+        "timestamp": "2026-10-17T00:10:51.947582+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:67014ed4-76d3-f83c-1ad5-c3053ab515f9",
+        "id": "1f1c9bf4-6221-659c-8001-08415ca3200e",
+        "time": 1792195877.777135,
+        "timestamp": "2026-10-17T00:11:17.777135+00:00",
+        "status": "INTEGRATED_ENTRY_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:67014ed4-76d3-f83c-1ad5-c3053ab515f9",
+        "id": "1f1c9bf4-6233-6062-8002-a2658ae800a6",
+        "time": 1792195877.784377,
+        "timestamp": "2026-10-17T00:11:17.784377+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf4-6234-685e-8005-51801eb08e92",
+        "time": 1792195877.784983,
+        "timestamp": "2026-10-17T00:11:17.784983+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bf5-ecaf-6b54-8006-e68a017f297f",
+        "time": 1792195919.149332,
+        "timestamp": "2026-10-17T00:11:59.149332+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:a7ca3500-6992-bb1f-ba47-40ea9fe6c601",
+        "id": "1f1c9bf5-ecb9-6794-bfff-15780a002c3d",
+        "time": 1792195919.153343,
+        "timestamp": "2026-10-17T00:11:59.153343+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:a7ca3500-6992-bb1f-ba47-40ea9fe6c601",
+        "id": "1f1c9bf5-ecba-6554-8000-d1ab884ff2b3",
+        "time": 1792195919.153693,
+        "timestamp": "2026-10-17T00:11:59.153693+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:a7ca3500-6992-bb1f-ba47-40ea9fe6c601",
+        "id": "1f1c9bf6-1371-640e-8001-4b116df2dbfa",
+        "time": 1792195923.213201,
+        "timestamp": "2026-10-17T00:12:03.213201+00:00",
+        "status": "INTEGRATED_ENTRY_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:a7ca3500-6992-bb1f-ba47-40ea9fe6c601",
+        "id": "1f1c9bf7-afcd-6f36-8002-2bd87b9d517f",
+        "time": 1792195966.452487,
+        "timestamp": "2026-10-17T00:12:46.452487+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9bfb-7445-69b0-8007-b210d0b92b26",
+        "time": 1792196067.584234,
+        "timestamp": "2026-10-17T00:14:27.584234+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfb-bbd1-6a22-bfff-de7e26faaa4d",
+        "time": 1792196075.086489,
+        "timestamp": "2026-10-17T00:14:35.086489+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfb-bbd2-66fc-8000-f3679b430ae5",
+        "time": 1792196075.086817,
+        "timestamp": "2026-10-17T00:14:35.086817+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfb-e5dc-6c4a-8001-8fc69ee0fcc4",
+        "time": 1792196079.495062,
+        "timestamp": "2026-10-17T00:14:39.495062+00:00",
+        "status": "INTEGRATED_ENTRY_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfd-6957-6c86-8002-fa09a7bc09a9",
+        "time": 1792196120.125311,
+        "timestamp": "2026-10-17T00:15:20.125311+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfd-7a37-6448-8003-db1f3680103f",
+        "time": 1792196121.894604,
+        "timestamp": "2026-10-17T00:15:21.894604+00:00",
+        "status": "SOURCE_RETRY",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bfe-dc71-6c16-8004-aed3a7c46b4d",
+        "time": 1792196159.038113,
+        "timestamp": "2026-10-17T00:15:59.038113+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9bff-0687-6be0-8005-ac6b37ca0aae",
+        "time": 1792196163.451172,
+        "timestamp": "2026-10-17T00:16:03.451172+00:00",
+        "status": "SOURCE_RETRY",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9c00-1434-6c92-8006-736c20ae7904",
+        "time": 1792196191.72871,
+        "timestamp": "2026-10-17T00:16:31.728710+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "integrated_sdlc:16bcfc3f-d1d7-482f-31e7-b86ae14f8bd5",
+        "id": "1f1c9c00-2232-642a-8007-2d9ae88ba0ac",
+        "time": 1792196193.195721,
+        "timestamp": "2026-10-17T00:16:33.195721+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+        "namespace": "",
+        "id": "1f1c9c00-2235-6896-8008-a2afbc3f352d",
+        "time": 1792196193.197056,
+        "timestamp": "2026-10-17T00:16:33.197056+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc-context/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:23:41.573801+00:00",
+        "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 2,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:14.618322+00:00",
+        "event": "DESIGN_APPROVED",
+        "agent": "design_review"
+      },
+      {
+        "id": 3,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:14.620634+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 4,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:14.621152+00:00",
+        "event": "SEMANTIC_PLAN_ACCEPTED",
+        "agent": "semantic_plan_gate"
+      },
+      {
+        "id": 5,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:14.621415+00:00",
+        "event": "PLAN_CREATED",
+        "agent": "planning_agent"
+      },
+      {
+        "id": 6,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:22.722951+00:00",
+        "event": "ENGINEERING_PLAN_AUTHORIZED",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 7,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:22.724158+00:00",
+        "event": "PLAN_APPROVED",
+        "agent": "human_approval"
+      },
+      {
+        "id": 8,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:24:27.324107+00:00",
+        "event": "INTEGRATED_ENTRY_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 9,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:11.416685+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 10,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:11.421418+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 11,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:11.424439+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 12,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:11.436073+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 13,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:11.436979+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 14,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:13.009113+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 15,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:13.010213+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 16,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:13.010781+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 17,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:25:13.013817+00:00",
+        "event": "INTEGRATED_SAME_PLAN_RETRY",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 18,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:06.111694+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 19,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:06.116128+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 20,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:06.119354+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 21,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:06.129291+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 22,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:06.130205+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 23,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:07.723681+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 24,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:07.724745+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 25,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:07.725403+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 26,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:07.728887+00:00",
+        "event": "INTEGRATED_SAME_PLAN_RETRY",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 27,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:38.483498+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 28,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:38.488066+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 29,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:38.491128+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 30,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:38.501875+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 31,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:38.502860+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 32,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:40.270896+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 33,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:40.272117+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 34,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:26:40.272764+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 35,
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "timestamp": "2026-10-17T00:27:14.251122+00:00",
+        "event": "FAILED_ACCEPTANCE_RESTORATION_VERIFIED",
+        "agent": "integrated_demo"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c10-17a1-6f3c-8000-4f92df8c7e3a",
+        "time": 1792196621.584761,
+        "timestamp": "2026-10-17T00:23:41.584761+00:00",
+        "status": "AWAITING_DESIGN_APPROVAL",
+        "review_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c11-52ac-6662-8001-ab9a16dca72a",
+        "time": 1792196654.619181,
+        "timestamp": "2026-10-17T00:24:14.619181+00:00",
+        "status": "DESIGN_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c11-52b2-6e90-8002-dc5192ce3382",
+        "time": 1792196654.621852,
+        "timestamp": "2026-10-17T00:24:14.621852+00:00",
+        "status": "PLAN_CREATED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c11-9ff7-64c6-8003-73aeff064461",
+        "time": 1792196662.723896,
+        "timestamp": "2026-10-17T00:24:22.723896+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c11-9ff9-6532-8004-1405b7a4b7ae",
+        "time": 1792196662.72473,
+        "timestamp": "2026-10-17T00:24:22.724730+00:00",
+        "status": "READY_FOR_IMPLEMENTATION",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c11-a002-6bd2-bfff-2bf0e2003e0d",
+        "time": 1792196662.728594,
+        "timestamp": "2026-10-17T00:24:22.728594+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c11-a003-6640-8000-f7c0eeb50040",
+        "time": 1792196662.728859,
+        "timestamp": "2026-10-17T00:24:22.728859+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c11-cbd8-63ce-8001-d4e852e04570",
+        "time": 1792196667.324914,
+        "timestamp": "2026-10-17T00:24:27.324914+00:00",
+        "status": "INTEGRATED_ENTRY_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c13-708d-6026-8002-af94fe481e96",
+        "time": 1792196711.439135,
+        "timestamp": "2026-10-17T00:25:11.439135+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c13-7f92-6e90-8003-08559d6ad1f3",
+        "time": 1792196713.014433,
+        "timestamp": "2026-10-17T00:25:13.014433+00:00",
+        "status": "SOURCE_RETRY",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c15-7a24-6e5c-8004-a043f8b5016b",
+        "time": 1792196766.132148,
+        "timestamp": "2026-10-17T00:26:06.132148+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c15-8960-6d1c-8005-4025d34f451f",
+        "time": 1792196767.729583,
+        "timestamp": "2026-10-17T00:26:07.729583+00:00",
+        "status": "SOURCE_RETRY",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c16-aee0-6ff0-8006-dbfc4919a0fa",
+        "time": 1792196798.50533,
+        "timestamp": "2026-10-17T00:26:38.505330+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "integrated_sdlc:512893d8-bfd0-e4cf-943c-f026b47ca05e",
+        "id": "1f1c9c16-bfbe-6e80-8007-5e7e34678f4a",
+        "time": 1792196800.273965,
+        "timestamp": "2026-10-17T00:26:40.273965+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+        "namespace": "",
+        "id": "1f1c9c16-bfc2-6a26-8005-869fd3dcca0e",
+        "time": 1792196800.27549,
+        "timestamp": "2026-10-17T00:26:40.275490+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-integrated-sdlc-fixed/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:31:35.075111+00:00",
+        "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 2,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:15.208520+00:00",
+        "event": "DESIGN_APPROVED",
+        "agent": "design_review"
+      },
+      {
+        "id": 3,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:15.210568+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 4,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:15.211074+00:00",
+        "event": "SEMANTIC_PLAN_ACCEPTED",
+        "agent": "semantic_plan_gate"
+      },
+      {
+        "id": 5,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:15.211342+00:00",
+        "event": "PLAN_CREATED",
+        "agent": "planning_agent"
+      },
+      {
+        "id": 6,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:20.893999+00:00",
+        "event": "ENGINEERING_PLAN_AUTHORIZED",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 7,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:20.895069+00:00",
+        "event": "PLAN_APPROVED",
+        "agent": "human_approval"
+      },
+      {
+        "id": 8,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:32:25.627395+00:00",
+        "event": "INTEGRATED_ENTRY_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 9,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:05.383985+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 10,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:05.389281+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 11,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:05.392191+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 12,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:05.399549+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 13,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:05.399953+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 14,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:10.248056+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 15,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:10.249900+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 16,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:10.250521+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 17,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:10.253727+00:00",
+        "event": "INTEGRATED_SAME_PLAN_RETRY",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 18,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:46.717303+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 19,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:46.725493+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 20,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:46.728423+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 21,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:46.736422+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 22,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:46.737140+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 23,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:51.698972+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 24,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:33:51.699514+00:00",
+        "event": "AWAITING_TEST_GENERATION_APPROVAL",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 25,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:34:57.221277+00:00",
+        "event": "SOURCE_GATE_ACCEPTANCE_VERIFIED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 26,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:39:36.253425+00:00",
+        "event": "TEST_GENERATION_ARCHITECTURE_REVIEW_BLOCKED",
+        "agent": "architecture_review"
+      },
+      {
+        "id": 27,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:44:44.946191+00:00",
+        "event": "DESIGN_SOURCE_CORRECTION_APPROVED",
+        "agent": "design_correction"
+      },
+      {
+        "id": 28,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:44:44.947228+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 29,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:29.889975+00:00",
+        "event": "DESIGN_SOURCE_CORRECTION_STARTED",
+        "agent": "design_correction"
+      },
+      {
+        "id": 30,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:37.001070+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 31,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:37.005627+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 32,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:37.008336+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 33,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:37.018911+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 34,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:37.019452+00:00",
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 35,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:41.776264+00:00",
+        "event": "IMPLEMENTATION_SOURCE_GATE_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 36,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:45:41.776666+00:00",
+        "event": "AWAITING_TEST_GENERATION_APPROVAL",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 37,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:46:43.066402+00:00",
+        "event": "DESIGN_SOURCE_CORRECTION_VERIFIED",
+        "agent": "architecture_review"
+      },
+      {
+        "id": 38,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:48:09.216971+00:00",
+        "event": "TEST_SCOPE_APPROVED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 39,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:48:28.419345+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 40,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:48:28.423953+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 41,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:48:28.425126+00:00",
+        "event": "INTEGRATED_STAGE_STOPPED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 42,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:54.985917+00:00",
+        "event": "TEST_STAGE_EXACT_REPLAY_APPROVED",
+        "agent": "test_replay"
+      },
+      {
+        "id": 43,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:54.987124+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 44,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:54.988120+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 45,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:54.991165+00:00",
+        "event": "ENGINEERING_EXECUTION_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 46,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:59.860834+00:00",
+        "event": "TEST_STAGE_EXACT_REPLAY_VALIDATED",
+        "agent": "test_replay"
+      },
+      {
+        "id": 47,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:52:59.903454+00:00",
+        "event": "TEST_SCOPE_APPROVED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 48,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:53:16.665649+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 49,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:53:16.679887+00:00",
+        "event": "TEST_FILE_CREATED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 50,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:53:21.576174+00:00",
+        "event": "TEST_STAGE_EXIT_PASSED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 51,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:53:21.580177+00:00",
+        "event": "ENGINEERING_TESTS_BOUND",
+        "agent": "plan_lineage"
+      },
+      {
+        "id": 52,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:53:21.597893+00:00",
+        "event": "INTEGRATED_EVIDENCE_VERIFIED",
+        "agent": "integrated_sdlc"
+      },
+      {
+        "id": 53,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T00:54:28.027122+00:00",
+        "event": "INTEGRATED_TEST_RESULTS_VERIFIED",
+        "agent": "acceptance_verification"
+      },
+      {
+        "id": 54,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:02:10.056240+00:00",
+        "event": "TEST_RESULTS_APPROVED",
+        "agent": "documentation_release"
+      },
+      {
+        "id": 55,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:03:44.847481+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 56,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:03:44.849808+00:00",
+        "event": "DOCUMENTATION_GATE_REJECTED",
+        "agent": "documentation_release"
+      },
+      {
+        "id": 57,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:03:49.296085+00:00",
+        "event": "MODEL_RESPONSE_RECORDED",
+        "agent": "integrated_demo"
+      },
+      {
+        "id": 58,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:03:49.329827+00:00",
+        "event": "DOCUMENTATION_GATE_PASSED",
+        "agent": "documentation_release"
+      },
+      {
+        "id": 59,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:03:49.351921+00:00",
+        "event": "RELEASE_READINESS_EVALUATED",
+        "agent": "documentation_release"
+      },
+      {
+        "id": 60,
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "timestamp": "2026-10-17T01:06:31.654488+00:00",
+        "event": "FINAL_RELEASE_REVIEW_RECORDED",
+        "agent": "documentation_release"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c21-bb4c-6892-8000-91cfb4987ceb",
+        "time": 1792197095.086696,
+        "timestamp": "2026-10-17T00:31:35.086696+00:00",
+        "status": "AWAITING_DESIGN_APPROVAL",
+        "review_hash": "eb11efa9d7716674a2a4d3ac2e6158b84188a248d038ea38b2e6306f712887f5",
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c23-39ef-6f72-8001-e56b67c27345",
+        "time": 1792197135.209239,
+        "timestamp": "2026-10-17T00:32:15.209239+00:00",
+        "status": "DESIGN_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c23-39f6-6390-8002-8bfbc8c555c0",
+        "time": 1792197135.211806,
+        "timestamp": "2026-10-17T00:32:15.211806+00:00",
+        "status": "PLAN_CREATED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c23-7028-6d28-8003-feb391ac7e4a",
+        "time": 1792197140.894839,
+        "timestamp": "2026-10-17T00:32:20.894839+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c23-702a-6ad8-8004-cf6ace4bc670",
+        "time": 1792197140.895601,
+        "timestamp": "2026-10-17T00:32:20.895601+00:00",
+        "status": "READY_FOR_IMPLEMENTATION",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c23-7033-6494-bfff-8c76a7f36b8b",
+        "time": 1792197140.899136,
+        "timestamp": "2026-10-17T00:32:20.899136+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c23-7033-6d90-8000-721da164ef2a",
+        "time": 1792197140.899364,
+        "timestamp": "2026-10-17T00:32:20.899364+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c23-9d4c-6c1e-8001-be4559781b68",
+        "time": 1792197145.628157,
+        "timestamp": "2026-10-17T00:32:25.628157+00:00",
+        "status": "INTEGRATED_ENTRY_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c25-18a0-66f8-8002-af9f53455cfd",
+        "time": 1792197185.403447,
+        "timestamp": "2026-10-17T00:33:05.403447+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c25-46e7-62dc-8003-22ea266bdebf",
+        "time": 1792197190.255878,
+        "timestamp": "2026-10-17T00:33:10.255878+00:00",
+        "status": "SOURCE_RETRY",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c26-a2d9-6896-8004-52d7ae124fbd",
+        "time": 1792197226.740726,
+        "timestamp": "2026-10-17T00:33:46.740726+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 1
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:0eb31397-2460-45e1-2292-d8e5ff42ba21",
+        "id": "1f1c9c26-d226-6b26-8005-304f59f68396",
+        "time": 1792197231.700648,
+        "timestamp": "2026-10-17T00:33:51.700648+00:00",
+        "status": "AWAITING_TEST_GENERATION_APPROVAL",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c3f-280e-63e6-8005-0aff49904c87",
+        "time": 1792197884.953479,
+        "timestamp": "2026-10-17T00:44:44.953479+00:00",
+        "status": "SOURCE_CORRECTION_AUTHORIZED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c3f-7752-631c-bfff-ee595c643280",
+        "time": 1792197893.265075,
+        "timestamp": "2026-10-17T00:44:53.265075+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c3f-7753-6082-8000-4ec4114ddaad",
+        "time": 1792197893.265417,
+        "timestamp": "2026-10-17T00:44:53.265417+00:00",
+        "status": "SOURCE_CORRECTION_AUTHORIZED",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c3f-775c-6b50-8001-5df33c09044d",
+        "time": 1792197893.269379,
+        "timestamp": "2026-10-17T00:44:53.269379+00:00",
+        "status": "SOURCE_CORRECTION_AUTHORIZED",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c41-189c-6faa-8002-7c6222bb3460",
+        "time": 1792197937.021276,
+        "timestamp": "2026-10-17T00:45:37.021276+00:00",
+        "status": "IMPLEMENTATION_APPLIED",
+        "review_hash": null,
+        "source_attempt": 2
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c41-45f8-69ae-8003-c94ee281e680",
+        "time": 1792197941.777439,
+        "timestamp": "2026-10-17T00:45:41.777439+00:00",
+        "status": "AWAITING_TEST_GENERATION_APPROVAL",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c46-c412-639e-8004-c8da00ed20e1",
+        "time": 1792198089.217724,
+        "timestamp": "2026-10-17T00:48:09.217724+00:00",
+        "status": "TEST_SCOPE_APPROVED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:5fc3dfb9-5d67-acb7-85cf-e70ea5f5976c",
+        "id": "1f1c9c47-7b45-6408-8005-5c420daf541b",
+        "time": 1792198108.427531,
+        "timestamp": "2026-10-17T00:48:28.427531+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c47-7b4f-6250-8006-c76714f1942f",
+        "time": 1792198108.431577,
+        "timestamp": "2026-10-17T00:48:28.431577+00:00",
+        "status": "STOPPED_INTEGRATED_STAGE",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c51-980c-6bfe-8007-13720b0a5c3c",
+        "time": 1792198379.880739,
+        "timestamp": "2026-10-17T00:52:59.880739+00:00",
+        "status": "TEST_STAGE_REPLAY_READY",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c51-981c-631a-bfff-1fea7148bf10",
+        "time": 1792198379.887078,
+        "timestamp": "2026-10-17T00:52:59.887078+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c51-981d-635a-8000-e32e5a020e51",
+        "time": 1792198379.887494,
+        "timestamp": "2026-10-17T00:52:59.887494+00:00",
+        "status": "TEST_STAGE_REPLAY_READY",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c51-9827-62c4-8001-09ce97735dd8",
+        "time": 1792198379.891574,
+        "timestamp": "2026-10-17T00:52:59.891574+00:00",
+        "status": "TEST_STAGE_REPLAY_READY",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c51-9845-6ac6-8002-f268fdae3b27",
+        "time": 1792198379.904067,
+        "timestamp": "2026-10-17T00:52:59.904067+00:00",
+        "status": "TEST_SCOPE_APPROVED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c52-384c-672c-8003-c4b7f76086c1",
+        "time": 1792198396.683983,
+        "timestamp": "2026-10-17T00:53:16.683983+00:00",
+        "status": "ADDITIVE_TEST_CREATED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c52-672b-6e30-8004-1e363df3f149",
+        "time": 1792198401.599003,
+        "timestamp": "2026-10-17T00:53:21.599003+00:00",
+        "status": "AWAITING_TEST_RESULTS_REVIEW",
+        "review_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c66-16f0-66dc-8005-09b88e2801f6",
+        "time": 1792198930.056976,
+        "timestamp": "2026-10-17T01:02:10.056976+00:00",
+        "status": "TEST_RESULTS_APPROVED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c69-9efd-69c8-8006-25454a2993eb",
+        "time": 1792199024.853626,
+        "timestamp": "2026-10-17T01:03:44.853626+00:00",
+        "status": "DOCUMENTATION_RETRY",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c69-c9b0-6332-8007-9e3a6b84a810",
+        "time": 1792199029.330812,
+        "timestamp": "2026-10-17T01:03:49.330812+00:00",
+        "status": "DOCUMENTATION_VALIDATED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c69-c9e5-629e-8008-426eb0702a8b",
+        "time": 1792199029.352508,
+        "timestamp": "2026-10-17T01:03:49.352508+00:00",
+        "status": "AWAITING_FINAL_HUMAN_REVIEW",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "integrated_sdlc:2367f97b-4cf0-58e2-2513-45dbc7a5fb82",
+        "id": "1f1c9c6f-d5bb-6fe0-8009-0dce413c84d9",
+        "time": 1792199191.655211,
+        "timestamp": "2026-10-17T01:06:31.655211+00:00",
+        "status": "STOPPED_RELEASE_BLOCKED",
+        "review_hash": null,
+        "source_attempt": 3
+      },
+      {
+        "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+        "namespace": "",
+        "id": "1f1c9c6f-d5bf-64f6-8008-c6529f930fa8",
+        "time": 1792199191.65656,
+        "timestamp": "2026-10-17T01:06:31.656560+00:00",
+        "status": "STOPPED_RELEASE_BLOCKED",
+        "review_hash": null,
+        "source_attempt": 3
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-autonomous-recovery/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:11.239250+00:00",
+        "event": "WORKFLOW_STARTED",
+        "agent": "recovery_demo"
+      },
+      {
+        "id": 2,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.005736+00:00",
+        "event": "PLAN_APPROVED",
+        "agent": "human_approval"
+      },
+      {
+        "id": 3,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.006464+00:00",
+        "event": "TASKS_SCHEDULED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 4,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.007120+00:00",
+        "event": "TASKS_STARTED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 5,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.007455+00:00",
+        "event": "IMPLEMENTATION_ATTEMPT_STARTED",
+        "agent": "implementation_agent"
+      },
+      {
+        "id": 6,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.008395+00:00",
+        "event": "CONTROLLED_MODEL_OUTPUT_FAULT_INJECTED",
+        "agent": "recovery_demo"
+      },
+      {
+        "id": 7,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.009614+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 8,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.009850+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 9,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.011101+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 10,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:41.011323+00:00",
+        "event": "IMPLEMENTATION_COMPLETED",
+        "agent": "implementation_agent"
+      },
+      {
+        "id": 11,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.695705+00:00",
+        "event": "VALIDATION_FAILED",
+        "agent": "validation_agent"
+      },
+      {
+        "id": 12,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.696434+00:00",
+        "event": "TASKS_FAILED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 13,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.699093+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 14,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.699628+00:00",
+        "event": "ROLLBACK_COMPLETED",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 15,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.700233+00:00",
+        "event": "FAILURE_CLASSIFIED",
+        "agent": "failure_classifier"
+      },
+      {
+        "id": 16,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:44:42.700634+00:00",
+        "event": "DIAGNOSTICS_COLLECTED",
+        "agent": "diagnostic_collector"
+      },
+      {
+        "id": 17,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:12.947934+00:00",
+        "event": "RECOVERY_PLAN_CREATED",
+        "agent": "recovery_replanner"
+      },
+      {
+        "id": 18,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:12.988536+00:00",
+        "event": "RECOVERY_PLAN_APPROVED",
+        "agent": "recovery_controller"
+      },
+      {
+        "id": 19,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:12.996951+00:00",
+        "event": "IMPLEMENTATION_RETRY_STARTED",
+        "agent": "recovery_controller"
+      },
+      {
+        "id": 20,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:12.998444+00:00",
+        "event": "TASKS_STARTED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 21,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:12.999403+00:00",
+        "event": "IMPLEMENTATION_ATTEMPT_STARTED",
+        "agent": "implementation_agent"
+      },
+      {
+        "id": 22,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:45.889330+00:00",
+        "event": "LIVE_CORRECTION_GENERATED",
+        "agent": "recovery_demo"
+      },
+      {
+        "id": 23,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:46.129059+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 24,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:46.136071+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 25,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:46.159881+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 26,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:46.172109+00:00",
+        "event": "IMPLEMENTATION_COMPLETED",
+        "agent": "implementation_agent"
+      },
+      {
+        "id": 27,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:55.109741+00:00",
+        "event": "VALIDATION_PASSED",
+        "agent": "validation_agent"
+      },
+      {
+        "id": 28,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:55.111144+00:00",
+        "event": "TASKS_COMPLETED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 29,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:55.115311+00:00",
+        "event": "AWAITING_FINAL_HUMAN_REVIEW",
+        "agent": "quality_gate"
+      },
+      {
+        "id": 30,
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "timestamp": "2026-10-16T20:45:55.133452+00:00",
+        "event": "WORKFLOW_FINISHED",
+        "agent": "recovery_demo"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a25-7585-6172-8000-468d40025a3c",
+        "time": 1792183451.248667,
+        "timestamp": "2026-10-16T20:44:11.248667+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-914d-6a2a-8001-9486b24d4261",
+        "time": 1792183481.005403,
+        "timestamp": "2026-10-16T20:44:41.005403+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-914f-6aaa-8002-d432f3ed815f",
+        "time": 1792183481.006344,
+        "timestamp": "2026-10-16T20:44:41.006344+00:00",
+        "status": "READY_FOR_IMPLEMENTATION",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-9151-64d6-8003-c9a3161d7c6e",
+        "time": 1792183481.007012,
+        "timestamp": "2026-10-16T20:44:41.007012+00:00",
+        "status": "TASKS_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-915c-6ff2-8004-2466f3a5a69d",
+        "time": 1792183481.011805,
+        "timestamp": "2026-10-16T20:44:41.011805+00:00",
+        "status": "IMPLEMENTATION_COMPLETED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-a16f-6fac-8005-9f2531399507",
+        "time": 1792183482.697297,
+        "timestamp": "2026-10-16T20:44:42.697297+00:00",
+        "status": "VALIDATION_FAILED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a26-a179-68ea-8006-01e0906c8557",
+        "time": 1792183482.701222,
+        "timestamp": "2026-10-16T20:44:42.701222+00:00",
+        "status": "READY_FOR_RECOVERY_PLAN",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a27-c237-639c-8007-1fee93a79058",
+        "time": 1792183512.977855,
+        "timestamp": "2026-10-16T20:45:12.977855+00:00",
+        "status": "RECOVERY_PLAN_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a27-c264-6248-8008-66c00229afa4",
+        "time": 1792183512.996282,
+        "timestamp": "2026-10-16T20:45:12.996282+00:00",
+        "status": "RECOVERY_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a27-c268-6398-8009-5e14a46c2376",
+        "time": 1792183512.997964,
+        "timestamp": "2026-10-16T20:45:12.997964+00:00",
+        "status": "READY_FOR_IMPLEMENTATION_RETRY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a28-fedf-691a-800a-ecfef4bd4786",
+        "time": 1792183546.18171,
+        "timestamp": "2026-10-16T20:45:46.181710+00:00",
+        "status": "IMPLEMENTATION_COMPLETED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a29-5410-61a0-800b-3804d06d50ab",
+        "time": 1792183555.114603,
+        "timestamp": "2026-10-16T20:45:55.114603+00:00",
+        "status": "VALIDATION_PASSED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+        "namespace": "",
+        "id": "1f1c9a29-5415-6704-800c-27e58e603884",
+        "time": 1792183555.116805,
+        "timestamp": "2026-10-16T20:45:55.116805+00:00",
+        "status": "AWAITING_FINAL_HUMAN_REVIEW",
+        "review_hash": null,
+        "source_attempt": null
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-live-status-api-rollback-final/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:03.095109+00:00",
+        "event": "WORKFLOW_STARTED",
+        "agent": "live_demo"
+      },
+      {
+        "id": 2,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:03.104225+00:00",
+        "event": "PLAN_READY_FOR_APPROVAL",
+        "agent": "live_demo"
+      },
+      {
+        "id": 3,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:06.956028+00:00",
+        "event": "PLAN_APPROVED",
+        "agent": "human_approval"
+      },
+      {
+        "id": 4,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:06.956643+00:00",
+        "event": "TASKS_SCHEDULED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 5,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:06.957272+00:00",
+        "event": "TASKS_STARTED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 6,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:27.496402+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 7,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:27.497731+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 8,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:27.501393+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 9,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:27.502200+00:00",
+        "event": "IMPLEMENTATION_COMPLETED",
+        "agent": "implementation_agent"
+      },
+      {
+        "id": 10,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:32.539231+00:00",
+        "event": "VALIDATION_FAILED",
+        "agent": "validation_agent"
+      },
+      {
+        "id": 11,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:32.540214+00:00",
+        "event": "TASKS_FAILED",
+        "agent": "task_scheduler"
+      },
+      {
+        "id": 12,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:32.543720+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 13,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:32.544308+00:00",
+        "event": "ROLLBACK_COMPLETED",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 14,
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "timestamp": "2026-10-16T20:32:32.553803+00:00",
+        "event": "WORKFLOW_FINISHED",
+        "agent": "live_demo"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0a-555d-6234-8000-2590dbcdd684",
+        "time": 1792182723.10113,
+        "timestamp": "2026-10-16T20:32:03.101130+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0a-7a1f-6d88-8001-4974a0b6801f",
+        "time": 1792182726.955626,
+        "timestamp": "2026-10-16T20:32:06.955626+00:00",
+        "status": "APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0a-7a21-6b9c-8002-6f73c18c9831",
+        "time": 1792182726.956525,
+        "timestamp": "2026-10-16T20:32:06.956525+00:00",
+        "status": "READY_FOR_IMPLEMENTATION",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0a-7a23-6514-8003-b6254d770107",
+        "time": 1792182726.95718,
+        "timestamp": "2026-10-16T20:32:06.957180+00:00",
+        "status": "TASKS_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0b-3e19-61ee-8004-80635a9bca78",
+        "time": 1792182747.505052,
+        "timestamp": "2026-10-16T20:32:27.505052+00:00",
+        "status": "IMPLEMENTATION_COMPLETED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0b-6e21-62d8-8005-663f3bfb137b",
+        "time": 1792182752.541545,
+        "timestamp": "2026-10-16T20:32:32.541545+00:00",
+        "status": "VALIDATION_FAILED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+        "namespace": "",
+        "id": "1f1c9a0b-6e29-6514-8006-74018564275a",
+        "time": 1792182752.54489,
+        "timestamp": "2026-10-16T20:32:32.544890+00:00",
+        "status": "STOPPED_ROLLED_BACK",
+        "review_hash": null,
+        "source_attempt": null
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-parallel-execution/success/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:21.955747+00:00",
+        "event": "PARALLEL_ENTRY_PASSED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 2,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:21.961030+00:00",
+        "event": "PARALLEL_TASK_APPROVED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 3,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:21.964359+00:00",
+        "event": "PARALLEL_TASK_APPROVED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 4,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.675715+00:00",
+        "event": "PARALLEL_BASELINE_PASSED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 5,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.683636+00:00",
+        "event": "PARALLEL_ATTEMPT_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 6,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.683671+00:00",
+        "event": "PARALLEL_ATTEMPT_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 7,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.691698+00:00",
+        "event": "PARALLEL_TASK_PREPARED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 8,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.691771+00:00",
+        "event": "PARALLEL_TASK_PREPARED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 9,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.699167+00:00",
+        "event": "PARALLEL_SYNCHRONIZED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 10,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.700248+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 11,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.700512+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 12,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.701926+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 13,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.702164+00:00",
+        "event": "PARALLEL_TASK_CHECKPOINTS_BOUND",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 14,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:10:47.705756+00:00",
+        "event": "PARALLEL_VALIDATION_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 15,
+        "workflow_id": "parallel-fixture-success",
+        "timestamp": "2026-10-17T01:11:12.703802+00:00",
+        "event": "PARALLEL_VALIDATION_PASSED",
+        "agent": "parallel_executor"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c78-6a06-6274-bfff-7759e26d6e2d",
+        "time": 1792199421.952878,
+        "timestamp": "2026-10-17T01:10:21.952878+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c78-6a07-6110-8000-74bd6d203f58",
+        "time": 1792199421.953251,
+        "timestamp": "2026-10-17T01:10:21.953251+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c78-6a0e-6cee-8001-4ed6b0930deb",
+        "time": 1792199421.956421,
+        "timestamp": "2026-10-17T01:10:21.956421+00:00",
+        "status": "PARALLEL_REVIEW_REQUIRED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c78-6a23-613a-8002-a7e5fc699d0f",
+        "time": 1792199421.964724,
+        "timestamp": "2026-10-17T01:10:21.964724+00:00",
+        "status": "PARALLEL_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c79-5f58-62e0-8003-c9fbd276445c",
+        "time": 1792199447.676582,
+        "timestamp": "2026-10-17T01:10:47.676582+00:00",
+        "status": "PARALLEL_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c79-5f87-6cb6-8004-1146452c82b2",
+        "time": 1792199447.696089,
+        "timestamp": "2026-10-17T01:10:47.696089+00:00",
+        "status": "PARALLEL_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c79-5f97-66b6-8005-64200a11fe88",
+        "time": 1792199447.702491,
+        "timestamp": "2026-10-17T01:10:47.702491+00:00",
+        "status": "PARALLEL_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-success",
+        "namespace": "",
+        "id": "1f1c9c7a-4e07-69e0-8006-66876f65e901",
+        "time": 1792199472.704549,
+        "timestamp": "2026-10-17T01:11:12.704549+00:00",
+        "status": "AWAITING_PARALLEL_RESULTS_REVIEW",
+        "review_hash": null,
+        "source_attempt": null
+      }
+    ]
+  },
+  {
+    "audit_db": "/private/tmp/schwab-parallel-execution/compilation-failure/audit.db",
+    "events": [
+      {
+        "id": 1,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:12.720313+00:00",
+        "event": "PARALLEL_ENTRY_PASSED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 2,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:12.725402+00:00",
+        "event": "PARALLEL_TASK_APPROVED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 3,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:12.728253+00:00",
+        "event": "PARALLEL_TASK_APPROVED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 4,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.712881+00:00",
+        "event": "PARALLEL_BASELINE_PASSED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 5,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.720303+00:00",
+        "event": "PARALLEL_ATTEMPT_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 6,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.722049+00:00",
+        "event": "PARALLEL_ATTEMPT_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 7,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.728646+00:00",
+        "event": "PARALLEL_TASK_PREPARED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 8,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.728809+00:00",
+        "event": "PARALLEL_TASK_PREPARED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 9,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.733694+00:00",
+        "event": "PARALLEL_SYNCHRONIZED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 10,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.734747+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 11,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.734995+00:00",
+        "event": "FILE_CHECKPOINT_CREATED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 12,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.736347+00:00",
+        "event": "TRANSACTION_APPLIED",
+        "agent": "implementation_executor"
+      },
+      {
+        "id": 13,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.736609+00:00",
+        "event": "PARALLEL_TASK_CHECKPOINTS_BOUND",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 14,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:37.740253+00:00",
+        "event": "PARALLEL_VALIDATION_STARTED",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 15,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:39.200436+00:00",
+        "event": "TRANSACTION_ROLLED_BACK",
+        "agent": "rollback_manager"
+      },
+      {
+        "id": 16,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:39.201051+00:00",
+        "event": "PARALLEL_ROLLED_BACK",
+        "agent": "parallel_executor"
+      },
+      {
+        "id": 17,
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "timestamp": "2026-10-17T01:11:39.201318+00:00",
+        "event": "PARALLEL_FAILED",
+        "agent": "parallel_executor"
+      }
+    ],
+    "checkpoint_projection": [
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7a-4e27-6f60-bfff-d99175be8408",
+        "time": 1792199472.717804,
+        "timestamp": "2026-10-17T01:11:12.717804+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7a-4e28-6924-8000-125045149144",
+        "time": 1792199472.718054,
+        "timestamp": "2026-10-17T01:11:12.718054+00:00",
+        "status": null,
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7a-4e2f-68be-8001-6563a4951e4e",
+        "time": 1792199472.72091,
+        "timestamp": "2026-10-17T01:11:12.720910+00:00",
+        "status": "PARALLEL_REVIEW_REQUIRED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7a-4e42-664e-8002-b92b14e04199",
+        "time": 1792199472.728631,
+        "timestamp": "2026-10-17T01:11:12.728631+00:00",
+        "status": "PARALLEL_APPROVED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7b-3c89-6348-8003-01eb784daddc",
+        "time": 1792199497.713737,
+        "timestamp": "2026-10-17T01:11:37.713737+00:00",
+        "status": "PARALLEL_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7b-3cb2-627a-8004-3837696a5d5b",
+        "time": 1792199497.730515,
+        "timestamp": "2026-10-17T01:11:37.730515+00:00",
+        "status": "PARALLEL_READY",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7b-3cc1-6e6e-8005-f993acdfbfcd",
+        "time": 1792199497.736966,
+        "timestamp": "2026-10-17T01:11:37.736966+00:00",
+        "status": "PARALLEL_APPLIED",
+        "review_hash": null,
+        "source_attempt": null
+      },
+      {
+        "workflow_id": "parallel-fixture-compilation-failure",
+        "namespace": "",
+        "id": "1f1c9c7b-4aba-646c-8006-5bffa4102478",
+        "time": 1792199499.201845,
+        "timestamp": "2026-10-17T01:11:39.201845+00:00",
+        "status": "STOPPED_PARALLEL_ROLLED_BACK",
+        "review_hash": null,
+        "source_attempt": null
+      }
+    ]
+  }
+]

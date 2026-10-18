@@ -1,0 +1,6 @@
+{
+  "outcome": "assistant_stopped_superseded_schema_run",
+  "completed_responses": 2,
+  "interrupted_generation": 3,
+  "reason": "API consistency gate strengthened during preliminary run; superseded process stopped to avoid local-model contention. No source edits authorized or executed."
+}

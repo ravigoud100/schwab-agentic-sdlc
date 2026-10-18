@@ -1,0 +1,7 @@
+{
+  "status": "STOPPED_RETRY_EXHAUSTED",
+  "attempt": 3,
+  "next": [],
+  "interrupts": [],
+  "workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c"
+}

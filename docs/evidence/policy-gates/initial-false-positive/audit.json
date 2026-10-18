@@ -1,0 +1,102 @@
+[
+  {
+    "id": 59,
+    "event": "RELEASE_READINESS_EVALUATED",
+    "details": {
+      "status": "BLOCKED",
+      "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "test_generation_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": true,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [],
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    }
+  },
+  {
+    "id": 61,
+    "event": "POLICY_EVALUATED",
+    "details": {
+      "policy_hash": "edb8291cf4dc9a3ee4cf132c3fbac585f6949bd377063fc957cc580fbc52d642",
+      "evidence_hash": "c82e74f1d840e9355a264cd23d00b13f0b469d5eea9f961178689de8c1214ff0",
+      "policy_ids": [
+        "SEC-DEPENDENCY-ALLOWLIST"
+      ],
+      "decision": "deny",
+      "phase": "release",
+      "findings": [
+        {
+          "policy_id": "SEC-DEPENDENCY-ALLOWLIST",
+          "path": "url-shortener/src/main/java/url_shortener/ShortUrl.java",
+          "line": 3,
+          "evidence_sha256": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+          "decision": "deny"
+        },
+        {
+          "policy_id": "SEC-DEPENDENCY-ALLOWLIST",
+          "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+          "line": 6,
+          "evidence_sha256": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "decision": "deny"
+        },
+        {
+          "policy_id": "SEC-DEPENDENCY-ALLOWLIST",
+          "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+          "line": 6,
+          "evidence_sha256": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+          "decision": "deny"
+        }
+      ],
+      "approval_reference": null
+    }
+  },
+  {
+    "id": 62,
+    "event": "RELEASE_READINESS_EVALUATED",
+    "details": {
+      "status": "BLOCKED",
+      "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+      "checks": {
+        "artifact_lineage_and_source_integrity": true,
+        "requirements_and_design_approved": true,
+        "test_generation_scope_approved": true,
+        "original_and_generated_tests_verified": true,
+        "genuine_maven_evidence": true,
+        "matching_implementation_plan_approved": true,
+        "human_test_results_review": true,
+        "documentation_verified": true,
+        "static_security_compliance_controls": false,
+        "protected_inventory_and_tests": false,
+        "operational_validation_evidence": false,
+        "human_security_signoff": false,
+        "human_operational_signoff": false,
+        "release_security_and_operational_signoff": false
+      },
+      "blockers": [
+        "static_security_compliance_controls",
+        "protected_inventory_and_tests",
+        "operational_validation_evidence",
+        "human_security_signoff",
+        "human_operational_signoff",
+        "release_security_and_operational_signoff"
+      ],
+      "errors": [
+        "Policy gate: deny (SEC-DEPENDENCY-ALLOWLIST)"
+      ],
+      "policy_evidence": {},
+      "deployment_authorized": false,
+      "earlier_four_file_plan_authorized": false
+    }
+  }
+]

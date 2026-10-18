@@ -1,0 +1,39 @@
+# Automated boundary-test generation and gates — October 16, 2026
+
+The user explicitly reviewed and approved [the Clock architecture amendment and file scope](scope.json) and [the exact source patch](clock-seam.diff) before this run. The isolated workflow modifies only `UrlService.java` and creates only `GeneratedExpirationBoundaryTest.java`. It does not approve or execute the earlier four-file engineering plan, and it does not modify the production checkout.
+
+The Clock amendment preserves the existing Spring/autowired constructor, delegates to `Clock.systemUTC()`, adds an explicit Clock constructor for deterministic tests, and uses the same clock for creation validation and redirect expiration checks. This production edit is the exact human-reviewed, assistant-authored patch, **not live AI implementation generation**. [Actual applied diff](actual-clock-seam.diff) was verified byte-for-byte against the approved patch.
+
+## Genuine Maven evidence
+
+| Run | Results |
+| --- | --- |
+| Unmodified baseline | 8 original tests passed |
+| Explicit equality-allowing negative fixture | 12 tests executed; only generated `equalNowExpiration` failed; no test errors or skips |
+| Correct reviewed implementation | All 12 original and generated tests passed |
+
+The negative fixture changes `!expiresAt.isAfter(now)` to `expiresAt.isBefore(now)` in a **separate isolated project**, deliberately admitting equality. The failure is an `org.opentest4j.AssertionFailedError`: “Expected org.springframework.web.server.ResponseStatusException to be thrown, but nothing was thrown.” It demonstrates behavioral sensitivity, not compilation failure or missing dependencies. The mutation transaction was rolled back to the correct Clock implementation afterward. It is not represented as a spontaneously generated defect or as previously absent expiration functionality.
+
+Review [baseline cases](baseline/result.json), [negative cases](negative/result.json), [exact negative failure](negative/failures.json), [positive cases](positive/result.json), and the corresponding Maven logs in each directory. All three commands are real offline `./mvnw ... clean test` executions with a copied local dependency cache and Java 21. The eight original tests include real HTTP 400/404/410, HTTP 201, active redirects, and click-count checks. The four new tests assert future expiration retention, past/equal-now rejection with HTTP 400 and no repository save, and null/no-expiration behavior using a shared fixed UTC clock.
+
+## Generation and safety
+
+The real local `qwen2.5-coder:latest` receives authoritative structured requirements, clarification answers, the approved obligation contract, the approved design, and the separately approved Clock/test-scope amendment. It returns [constrained JSON case specifications](generation-response.json). [The exact prompt](generation-prompt.txt) is retained. A trusted deterministic renderer produces [the JUnit source](GeneratedExpirationBoundaryTest.java). The model cannot supply Java, assertion bodies, annotations, paths, build changes, or exclusions. All four approved test obligations and their exact specifications are mandatory. Unknown profiles, omitted cases, weakened specs, duplicate cases, or extra fields fail closed before executor source writes.
+
+This is a bounded **contract-driven generator with a vetted renderer**, not evidence of unrestricted novel Java test synthesis. The approved expiration profile is the only supported profile. The new tests exercise service-level boundaries; retained original integration tests independently cover HTTP, redirects, persistence, and clicks.
+
+Before generation, the stage preserves independent byte snapshots of original tests and all protected project files outside the editable workspace. The baseline manifest is hash-checked whenever loaded. Before source writes and at validation gates, inventories and bytes must match, except for the one exact approved source replacement and one additive test file. Existing tests cannot be overwritten, deleted, disabled, or have assertions changed. Build files, Maven wrapper/configuration, and unrelated files are immutable under this policy. Separate authorization for build changes is not implemented; this stage rejects them.
+
+The named test file is published atomically without overwriting an existing path. The reviewed source patch uses the existing checkpoint/transaction mechanism. Publication failure or failed validation compensates the source transaction and removes only the unchanged generated test. Unexpected external hashes block recovery for review rather than overwrite unrelated changes. Durable source journals and a test-creation journal are retained; automated recovery of every interrupted new-file lifecycle is not claimed. Later integrity checks also validate the complete negative-project inventory; the retained negative project was independently checked against that policy after the run.
+
+## Workflow, audit, and scope
+
+The approval-gated LangGraph subworkflow has a real `TEST_STAGE_APPROVAL` interrupt. Its entry gate requires resolved/approved requirement identity, approved design, reviewed Clock/file-scope binding, a supported renderer, a valid preservation policy, and an unchanged source baseline. Its exit gate requires authorized changes only, original tests/build integrity, all expected original and generated test identities, genuine Maven outcomes, and the specific controlled behavioral failure. It rejects skips, missing cases, compilation/test errors in place of the expected assertion failure, or a negative fixture that unexpectedly passes.
+
+[SQLite audit export](audit.json) records scope approval, entry gate, source checkpoints, test creation, the negative fixture, its rollback, and exit validation. [Positive source journal](positive-source-journals.json), [negative source journal](negative-source-journals.json), [test-creation journal](test-journal.json), [original test hashes](original-test-hashes.json), [result](result.json), and [summary](summary.json) retain the corresponding identifiers and evidence. Original databases, byte snapshots, workspaces, and Surefire XML remain under `/private/tmp/schwab-test-generation/`.
+
+This is a **separately authorized opt-in subworkflow**, using approved design version 2 plus the explicit Clock amendment. It has its own workflow/thread ID and preserves the parent requirement/design hashes. The original engineering workflow remains paused at plan approval with no implementation authorization. Successful test-stage execution returns `AWAITING_TEST_RESULTS_REVIEW` as a terminal handoff result; this subworkflow does not yet implement a separate results-review interrupt, merge, release gate, or automatic main-workflow continuation. Test artifacts and the Clock change remain only in the isolated workspace.
+
+The focused regression selection passes **219 tests**, including the prior 189 and 30 new test-stage tests. New checks cover deleted/disabled/weakened original tests, changed build configuration and exclusions, snapshot tampering, unknown contracts, arbitrary model code, incomplete/weakened specs, unauthorized paths, missing approvals, preservation failures before the first source write, missing/skipped/error test outcomes, scope rejection, publication/validation compensation, negative infrastructure errors, and preservation of externally changed generated files when rollback is blocked.
+
+Reproduce only after reviewing the Clock patch and scope: from `agent-orchestrator/`, run `JAVA_HOME=/path/to/java21 python scripts/test_generation_demo.py NEW_DIRECTORY --approved-scope`. The current evidence runner reads the retained parent checkpoint at `/private/tmp/schwab-design-correction/workflow.db`, copies the source into a fresh Git worktree, and uses installed Ollama and cached Maven dependencies. It is a retained-checkpoint acceptance harness, not a general clean-install setup tool.

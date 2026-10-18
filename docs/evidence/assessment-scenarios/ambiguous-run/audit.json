@@ -1,0 +1,50 @@
+[
+  {
+    "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+    "timestamp": "2026-10-17T01:59:27.987162+00:00",
+    "agent": "clarification_demo",
+    "event": "WORKFLOW_STARTED",
+    "details": {
+      "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval."
+    }
+  },
+  {
+    "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+    "timestamp": "2026-10-17T01:59:36.249706+00:00",
+    "agent": "requirements_agent",
+    "event": "REQUIREMENTS_VALIDATED",
+    "details": {
+      "version": 1,
+      "requirements_hash": "23bf75a1f88e614552156382cad2cf370abc89e46a80b3b1c2ec57a3908bb1c8",
+      "ambiguity_ids": [
+        "A1"
+      ]
+    }
+  },
+  {
+    "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+    "timestamp": "2026-10-17T01:59:44.546320+00:00",
+    "agent": "human_clarification",
+    "event": "CLARIFICATION_APPROVED",
+    "details": {
+      "requirement_version": 1,
+      "answers": {
+        "A1": "Custom expiration timestamp"
+      },
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+    "timestamp": "2026-10-17T02:00:20.080031+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 1,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "e3726f8d5c537ce485dbd7c9f249e7668f8b4158749f1784974934e2b7818298",
+      "task_definition_hash": "6effd4cb2497f1c13dd1f7d8aafbb37c5a500277af4edc904a349dc9be580acf"
+    }
+  }
+]

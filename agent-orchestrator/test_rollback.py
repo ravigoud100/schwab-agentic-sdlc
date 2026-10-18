@@ -12,16 +12,15 @@ def test_rollback():
         target.write_text("ORIGINAL CODE")
 
         # Use a temporary workspace, not your real Java project.
-        manager.WORKSPACE = workspace.resolve()
 
         checkpoint = manager.create_checkpoint(
-            "url-shortener/src/main/java/url_shortener/ShortUrl.java"
+            "url-shortener/src/main/java/url_shortener/ShortUrl.java", workspace
         )
 
         target.write_text("AI GENERATED CODE")
         expected_hash = manager.file_hash(target.read_bytes())
 
-        assert manager.rollback(checkpoint, expected_hash)
+        assert manager.rollback(checkpoint, expected_hash, workspace)
         assert target.read_text() == "ORIGINAL CODE"
 
         print("PASS: AI-generated changes rolled back safely.")
@@ -30,7 +29,7 @@ def test_rollback():
         target.write_text("EXTERNAL CHANGE")
 
         try:
-            manager.rollback(checkpoint, expected_hash)
+            manager.rollback(checkpoint, expected_hash, workspace)
         except RuntimeError:
             print("PASS: Unexpected changes protected.")
         else:

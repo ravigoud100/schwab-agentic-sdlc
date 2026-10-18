@@ -1,0 +1,76 @@
+[
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:14:20.119633+00:00",
+    "agent": "design_demo",
+    "event": "DESIGN_ACCEPTANCE_STARTED",
+    "details": {
+      "checkpoint_source": "/private/tmp/schwab-semantic-plan-schema-fixed",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:14:20.122447+00:00",
+    "agent": "design_entry_gate",
+    "event": "STAGE_GATE_PASSED",
+    "details": {
+      "stage": "design",
+      "gate": "entry",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:15:16.195019+00:00",
+    "agent": "design_exit_gate",
+    "event": "STAGE_GATE_REJECTED",
+    "details": {
+      "stage": "design",
+      "gate": "exit",
+      "attempt": 1,
+      "error": "Invalid data-model change",
+      "raw_response": "{\n  \"api_contracts\": [\n    {\n      \"id\": \"api-create\",\n      \"method\": \"POST\",\n      \"path\": \"/api/urls\",\n      \"request_fields\": [\n        {\n          \"name\": \"expiresAt\",\n          \"type\": \"UTC timestamp\",\n          \"required\": false\n        }\n      ],\n      \"response_behavior\": [\n        \"If 'expiresAt' is provided and is in the future, the response is the short code and short URL. If 'expiresAt' is provided and is not in the future, the response is HTTP 400 Bad Request. If 'expiresAt' is missing, the response is the short code and short URL with no expiration.\"\n      ]\n    }\n  ],\n  \"components\": [\n    {\n      \"id\": \"url-service\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n      \"responsibility\": \"Provides business logic for creating and retrieving short URLs, including handling expiration times.\"\n    },\n    {\n      \"id\": \"url-controller\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n      \"responsibility\": \"Handles API requests for creating and retrieving short URLs, invoking the UrlService.\"\n    },\n    {\n      \"id\": \"url-repository\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlRepository.java\",\n      \"responsibility\": \"Provides data access for the ShortUrl entity.\"\n    },\n    {\n      \"id\": \"redirect-controller\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/RedirectController.java\",\n      \"responsibility\": \"Handles redirect requests, invoking the UrlService to retrieve the original URL.\"\n    }\n  ],\n  \"interactions\": [\n    {\n      \"from\": \"url-controller\",\n      \"to\": \"url-service\",\n      \"operation\": \"createShortUrl\"\n    },\n    {\n      \"from\": \"redirect-controller\",\n      \"to\": \"url-service\",\n      \"operation\": \"getOriginalUrl\"\n    }\n  ],\n  \"data_model_changes\": [\n    {\n      \"component_id\": \"short-url\",\n      \"field\": \"expiresAt\",\n      \"change\": \"Retained semantics with new validation and storage requirements.\"\n    }\n  ],\n  \"compatibility_risks\": [\n    {\n      \"id\": \"risk-1\",\n      \"description\": \"If the expiration time is provided and is not in the future, the current implementation returns HTTP 400 Bad Request. This could be confusing for users who expect the URL to be created even if the expiration time is in the past.\",\n      \"mitigation\": \"The new requirement specifies that if 'expiresAt' is provided and is not in the future, the response should be HTTP 400 Bad Request. This behavior is consistent with the existing implementation.\"\n    }\n  ],\n  \"architectural_decisions\": [\n    {\n      \"id\": \"decision-1\",\n      \"decision\": \"Custom expiration timestamp\",\n      \"rationale\": \"The decision to allow custom expiration timestamps was approved to provide more flexibility in URL management.\"\n    }\n  ],\n  \"coverage\": [\n    {\n      \"obligation_id\": \"caller-expiration\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"accept_optional_input\",\n        \"field\": \"expiresAt\",\n        \"source\": \"caller\",\n        \"representation\": \"UTC_timestamp\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"future-only\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"validate\",\n        \"field\": \"expiresAt\",\n        \"predicate\": \"strictly_after_now\",\n        \"otherwise\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"utc-consistency\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"compare_and_store\",\n        \"field\": \"expiresAt\",\n        \"time_basis\": \"UTC\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"missing-compatibility\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"preserve\",\n        \"when\": \"expiresAt_missing\",\n        \"behavior\": \"no_expiration_existing_links_and_redirects\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-future\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_plus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"accepted\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-past\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_minus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-boundary\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-missing\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": null,\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"no_expiration\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    }\n  ]\n}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:15:16.201727+00:00",
+    "agent": "design_entry_gate",
+    "event": "STAGE_GATE_PASSED",
+    "details": {
+      "stage": "design",
+      "gate": "entry",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:16:20.268711+00:00",
+    "agent": "design_exit_gate",
+    "event": "STAGE_GATE_REJECTED",
+    "details": {
+      "stage": "design",
+      "gate": "exit",
+      "attempt": 2,
+      "error": "Test design obligations must reference test components",
+      "raw_response": "{\n  \"api_contracts\": [\n    {\n      \"id\": \"api-create\",\n      \"method\": \"POST\",\n      \"path\": \"/api/urls\",\n      \"request_fields\": [\n        {\n          \"name\": \"expiresAt\",\n          \"type\": \"UTC timestamp\",\n          \"required\": false\n        }\n      ],\n      \"response_behavior\": [\n        \"If 'expiresAt' is provided and is in the future, the URL is created with the specified expiration time. Returns the short code and short URL.\",\n        \"If 'expiresAt' is provided and is not in the future, returns HTTP 400 Bad Request.\",\n        \"If 'expiresAt' is missing, the URL is created without an expiration time. Returns the short code and short URL.\"\n      ]\n    }\n  ],\n  \"components\": [\n    {\n      \"id\": \"url-service\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n      \"responsibility\": \"Provides business logic for creating and retrieving short URLs. Handles the creation of short URLs with optional expiration times and checks if URLs have expired.\"\n    },\n    {\n      \"id\": \"url-controller\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n      \"responsibility\": \"Handles the API requests for creating and retrieving short URLs. Uses the UrlService to perform the operations.\"\n    },\n    {\n      \"id\": \"url-repository\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/UrlRepository.java\",\n      \"responsibility\": \"Provides data access for the ShortUrl entity. Includes methods for finding and checking the existence of short URLs.\"\n    },\n    {\n      \"id\": \"redirect-controller\",\n      \"path\": \"url-shortener/src/main/java/url_shortener/RedirectController.java\",\n      \"responsibility\": \"Handles the redirect requests. It uses the UrlService to retrieve the original URL and perform the redirect.\"\n    }\n  ],\n  \"interactions\": [\n    {\n      \"from\": \"url-controller\",\n      \"to\": \"url-service\",\n      \"operation\": \"createShortUrl\"\n    },\n    {\n      \"from\": \"redirect-controller\",\n      \"to\": \"url-service\",\n      \"operation\": \"getOriginalUrl\"\n    }\n  ],\n  \"data_model_changes\": [\n    {\n      \"component_id\": \"url-service\",\n      \"field\": \"expiresAt\",\n      \"change\": \"Retained semantics. The field is now optional and can be used to specify a future UTC expiration timestamp.\"\n    }\n  ],\n  \"compatibility_risks\": [\n    {\n      \"id\": \"risk-1\",\n      \"description\": \"If the expiration time is provided and is not in the future, the current implementation returns HTTP 400 Bad Request. This could be confusing for users who expect the URL to be created even if the expiration time is in the past.\",\n      \"mitigation\": \"The new requirement specifies that if the expiration time is provided and is not in the future, the URL should be rejected. This behavior is consistent with the existing implementation.\"\n    }\n  ],\n  \"architectural_decisions\": [\n    {\n      \"id\": \"decision-1\",\n      \"decision\": \"Custom expiration timestamp\",\n      \"rationale\": \"The new requirement specifies that the caller should provide a future UTC expiration timestamp. This decision ensures that the URL expiration is flexible and can be set by the caller.\"\n    }\n  ],\n  \"coverage\": [\n    {\n      \"obligation_id\": \"caller-expiration\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"accept_optional_input\",\n        \"field\": \"expiresAt\",\n        \"source\": \"caller\",\n        \"representation\": \"UTC_timestamp\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"future-only\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"validate\",\n        \"field\": \"expiresAt\",\n        \"predicate\": \"strictly_after_now\",\n        \"otherwise\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"utc-consistency\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"compare_and_store\",\n        \"field\": \"expiresAt\",\n        \"time_basis\": \"UTC\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"missing-compatibility\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"preserve\",\n        \"when\": \"expiresAt_missing\",\n        \"behavior\": \"no_expiration_existing_links_and_redirects\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-future\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_plus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"accepted\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-past\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_minus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-boundary\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    },\n    {\n      \"obligation_id\": \"test-missing\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": null,\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"no_expiration\"\n      },\n      \"component_ids\": [\"url-service\"],\n      \"decision_ids\": [\"decision-1\"]\n    }\n  ]\n}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:16:20.300078+00:00",
+    "agent": "design_entry_gate",
+    "event": "STAGE_GATE_PASSED",
+    "details": {
+      "stage": "design",
+      "gate": "entry",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  }
+]

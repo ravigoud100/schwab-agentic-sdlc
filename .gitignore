@@ -1,6 +1,7 @@
 # Java / Maven
 **/target/
 *.class
+**/.jdk-25/
 
 # Python
 __pycache__/
@@ -14,6 +15,7 @@ __pycache__/
 
 # Logs
 *.log
+!docs/evidence/**/*.log
 
 # macOS
 .DS_Store
@@ -23,14 +25,18 @@ __pycache__/
 
 # Local databases
 *.db
+*.db-wal
+*.db-shm
 *.sqlite
+*.sqlite-wal
+*.sqlite-shm
 *.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
 
 # LangGraph checkpoints
 workflow.db
 workflow.db-*
-*.sqlite
-*.sqlite3
 
 # Agent-generated temporary workspaces
 .agent-workspaces/

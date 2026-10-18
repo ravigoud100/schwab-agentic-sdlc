@@ -1,0 +1,36 @@
+Implement the approved task by returning COMPLETE replacement Java files.
+Return ONLY JSON: {"files":[{"path":"<authorized path>","content":"<complete Java source>"}]}.
+Every authorized production path must appear exactly once. No other paths or fields.
+Do not return edits, old_text, new_text, patches, insertion anchors or Markdown.
+The executor replaces each entire original file ONCE. Nothing is appended to it.
+Preserve package, imports, class name, all unrelated fields/methods/annotations,
+existing public callers and behavior. Include the entire class and its final brace.
+Do not duplicate existing methods, leave constructor statements at class scope,
+or introduce extra top-level classes. Each field must be initialized correctly.
+Use existing imports or fully qualified Java types/static calls consistently.
+Follow the approved constructor/dependency-injection decisions EXACTLY, including
+which overload Spring autowires and which constructor is for explicit test injection.
+Do not assume Spring supplies dependencies that the approved design does not declare.
+Existing tests and build files are read-only. Do not disable checks or weaken behavior.
+Selected clarification answers and the approved contract/design override unresolved
+alternatives in earlier requirements. Do not change the task, files or approved plan.
+
+AUTHORITATIVE APPROVED CONTEXT:
+{"structured_requirements": {}, "clarification_answers": {}, "approved_obligation_contract": {}, "approved_design": {}, "approved_plan": "{\"tasks\": [{\"task_id\": \"service-fixture\", \"description\": \"Controlled orchestration fixture: append a Java comment only\", \"dependencies\": [], \"status\": \"PENDING\", \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/UrlService.java\"]}, {\"task_id\": \"controller-fixture\", \"description\": \"Controlled orchestration fixture: append a Java comment only\", \"dependencies\": [], \"status\": \"PENDING\", \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/UrlController.java\"]}]}", "plan_authorization_hash": null}
+APPROVED TASK (filtered production scope):
+{"task_id": "controller-fixture", "description": "Controlled orchestration fixture: append a Java comment only", "dependencies": [], "status": "READY", "execution_type": "implementation", "allowed_files": ["url-shortener/src/main/java/url_shortener/UrlController.java"]}
+ORIGINAL COMPLETE SOURCES, restored before this attempt:
+{"url-shortener/src/main/java/url_shortener/UrlController.java": "package url_shortener;\n\nimport jakarta.validation.Valid;\nimport jakarta.validation.constraints.NotBlank;\nimport jakarta.validation.constraints.Size;\nimport org.hibernate.validator.constraints.URL;\nimport org.springframework.http.HttpStatus;\nimport org.springframework.web.bind.annotation.*;\nimport org.springframework.web.server.ResponseStatusException;\n\nimport java.net.URI;\nimport java.util.Map;\n\n@RestController\n@RequestMapping(\"/api/urls\")\npublic class UrlController {\n\n    private final UrlService urlService;\n\n    public UrlController(UrlService urlService) {\n        this.urlService = urlService;\n    }\n\n    public record CreateUrlRequest(\n            @NotBlank\n            @Size(max = 2048)\n            @URL(protocol = \"https\")\n            String originalUrl,\n            java.time.Instant expiresAt\n    ) {}\n\n    @PostMapping\n    @ResponseStatus(HttpStatus.CREATED)\n    public Map<String, String> createShortUrl(\n            @Valid @RequestBody CreateUrlRequest request) {\n\n        ShortUrl shortUrl = urlService.createShortUrl(\n                request.originalUrl(),\n                request.expiresAt()\n        );\n\n        return Map.of(\n                \"originalUrl\", shortUrl.getOriginalUrl(),\n                \"shortCode\", shortUrl.getShortCode(),\n                \"shortUrl\", \"http://localhost:8080/\" + shortUrl.getShortCode()\n        );\n    }\n    \n    @GetMapping(\"/{shortCode}/analytics\")\npublic Map<String, Object> getAnalytics(\n        @PathVariable String shortCode) {\n\n    ShortUrl shortUrl = urlService.getAnalytics(shortCode);\n\n    return Map.of(\n            \"shortCode\", shortUrl.getShortCode(),\n            \"originalUrl\", shortUrl.getOriginalUrl(),\n            \"totalClicks\", shortUrl.getClickCount(),\n            \"createdAt\", shortUrl.getCreatedAt().toString()\n    );\n}\n}\n"}
+
+PREVIOUS MATERIALIZED SOURCES (compiler diagnostics or architecture review refer to these, NOT the restored originals):
+{}
+ACTUAL PREVIOUS MAVEN DIAGNOSTICS:
+
+STRUCTURED FAILURE EVIDENCE:
+{}
+HUMAN-APPROVED CORRECTION STRATEGY (when supplied):
+
+Correct the failure using the ORIGINAL complete sources and approved design.
+Do not copy a failed proposal unchanged. Return every complete corrected file.
+Before returning, check that constructor bodies are inside constructors, methods
+occur once, imports resolve, and annotations match the approved overloads.

@@ -1,9 +1,6 @@
-from langchain_ollama import ChatOllama
+from llm.provider import get_model
 
-model = ChatOllama(
-    model="qwen2.5-coder:latest",
-    temperature=0
-)
+model = get_model()
 
 response = model.invoke(
     "Explain URL expiration in Java Spring Boot in two sentences."

@@ -1,0 +1,12 @@
+--- reviewed-attempt-2
++++ AI-corrected-attempt-3
+@@ -16,8 +16,7 @@
+ 
+     @Autowired
+     public UrlService(UrlRepository repository) {
+-        this.repository = repository;
+-        this.clock = java.time.Clock.systemUTC();
++        this(repository, java.time.Clock.systemUTC());
+     }
+ 
+     public UrlService(UrlRepository repository, java.time.Clock clock) {

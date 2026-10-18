@@ -2,22 +2,17 @@ import subprocess
 import time
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-WORKSPACE = (
-    PROJECT_ROOT
-    / ".agent-workspaces"
-    / "url-expiration"
-    / "url-shortener"
-).resolve()
-
-
-def validate_implementation():
+def validate_implementation(workspace: Path):
     print("\n[VALIDATION AGENT] Running Maven tests...")
 
-    if not WORKSPACE.is_dir():
+    workspace_root = workspace.resolve(strict=True)
+    project = (workspace_root / "url-shortener").resolve(strict=True)
+    if not project.is_relative_to(workspace_root):
+        raise PermissionError("Validation path escapes isolated workspace")
+
+    if not project.is_dir():
         raise FileNotFoundError(
-            f"Workspace not found: {WORKSPACE}"
+            f"Workspace not found: {project}"
         )
 
     start_time = time.monotonic()
@@ -25,7 +20,7 @@ def validate_implementation():
     try:
         result = subprocess.run(
             ["./mvnw", "clean", "test"],
-            cwd=WORKSPACE,
+            cwd=project,
             capture_output=True,
             text=True,
             timeout=120,

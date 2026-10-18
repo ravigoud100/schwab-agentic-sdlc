@@ -1,0 +1,56 @@
+{
+  "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "graph_checkpoint_count": 8,
+  "approved_answers": {
+    "A1": "Custom expiration timestamp"
+  },
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "plan_requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "pending_node": "approval",
+  "source_files_changed": 0,
+  "java_hashes": {
+    "url-shortener/src/main/java/url_shortener/RedirectController.java": {
+      "workspace_sha256": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+      "baseline_sha256": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+      "production_sha256": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72"
+    },
+    "url-shortener/src/main/java/url_shortener/ShortUrl.java": {
+      "workspace_sha256": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+      "baseline_sha256": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+      "production_sha256": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3"
+    },
+    "url-shortener/src/main/java/url_shortener/UrlController.java": {
+      "workspace_sha256": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+      "baseline_sha256": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+      "production_sha256": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+    },
+    "url-shortener/src/main/java/url_shortener/UrlRepository.java": {
+      "workspace_sha256": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+      "baseline_sha256": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+      "production_sha256": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de"
+    },
+    "url-shortener/src/main/java/url_shortener/UrlService.java": {
+      "workspace_sha256": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+      "baseline_sha256": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+      "production_sha256": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f"
+    },
+    "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": {
+      "workspace_sha256": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80",
+      "baseline_sha256": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80",
+      "production_sha256": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+    },
+    "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": {
+      "workspace_sha256": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+      "baseline_sha256": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+      "production_sha256": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2"
+    },
+    "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": {
+      "workspace_sha256": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+      "baseline_sha256": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+      "production_sha256": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb"
+    }
+  },
+  "maven_executed": false,
+  "live_plan_limitation": "Both live planning responses used a generic task description; selected choice appears in planning prompt and approval payload, but not task description. Distinct choice-driven task descriptions are demonstrated by deterministic regression tests, not these live responses."
+}

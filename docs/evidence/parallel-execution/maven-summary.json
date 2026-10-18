@@ -1,0 +1,106 @@
+{
+  "success": {
+    "provenance": "Controlled models and synthetic approval fixtures; genuine Maven subprocesses",
+    "live_engineering_plan_approved": false,
+    "status": "AWAITING_PARALLEL_RESULTS_REVIEW",
+    "workflow_id": "parallel-fixture-success",
+    "checkpoint_count": 8,
+    "baseline": {
+      "exit_code": 0,
+      "cases": {
+        "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+        "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+        "clean",
+        "test"
+      ]
+    },
+    "combined": {
+      "exit_code": 0,
+      "cases": {
+        "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+        "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+        "clean",
+        "test"
+      ]
+    },
+    "changed_files": [
+      "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "url-shortener/src/main/java/url_shortener/UrlService.java"
+    ],
+    "journal_statuses": [
+      "validated"
+    ],
+    "original_tests_and_build_preserved": true,
+    "negative_fixture": false,
+    "concurrency_proof": "Both provider calls rendezvoused at threading.Barrier(2)",
+    "synchronization_order_verified": true
+  },
+  "compilation-failure": {
+    "provenance": "Controlled models and synthetic approval fixtures; genuine Maven subprocesses",
+    "live_engineering_plan_approved": false,
+    "status": "STOPPED_PARALLEL_ROLLED_BACK",
+    "workflow_id": "parallel-fixture-compilation-failure",
+    "checkpoint_count": 8,
+    "baseline": {
+      "exit_code": 0,
+      "cases": {
+        "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+        "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+        "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+      },
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+        "clean",
+        "test"
+      ]
+    },
+    "combined": {
+      "exit_code": 1,
+      "cases": {},
+      "command": [
+        "./mvnw",
+        "-o",
+        "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+        "clean",
+        "test"
+      ]
+    },
+    "changed_files": [],
+    "journal_statuses": [
+      "rolled_back"
+    ],
+    "original_tests_and_build_preserved": true,
+    "negative_fixture": true,
+    "concurrency_proof": "Both provider calls rendezvoused at threading.Barrier(2)",
+    "synchronization_order_verified": true
+  }
+}

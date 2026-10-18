@@ -1,0 +1,145 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24117 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] -------------------< com.schwab.demo:url-shortener >--------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 74 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ url-shortener ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ url-shortener ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ url-shortener ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 6 source files with javac [debug parameters release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ url-shortener ---
+[INFO] skip non existing resourceDirectory /Users/ruwicc/Projects/schwab-agentic-sdlc/docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ url-shortener ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ url-shortener ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running url_shortener.UrlExpirationIntegrationTests
+21:56:58.522 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [url_shortener.UrlExpirationIntegrationTests]: UrlExpirationIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:56:58.563 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlExpirationIntegrationTests
+21:56:58.590 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [url_shortener.UrlExpirationIntegrationTests]: UrlExpirationIntegrationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:56:58.591 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlExpirationIntegrationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.8)
+
+2026-10-17T21:56:58.687-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : Starting UrlExpirationIntegrationTests using Java 21.0.12.1 with PID 84368 (started by ruwicc in /Users/ruwicc/Projects/schwab-agentic-sdlc/docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener)
+2026-10-17T21:56:58.688-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : No active profile set, falling back to 1 default profile: "default"
+2026-10-17T21:56:58.902-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-17T21:56:58.923-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18 ms. Found 1 JPA repository interface.
+2026-10-17T21:56:59.062-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-17T21:56:59.123-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:8e21b5a3-7730-4248-b4d8-048d2cd15e3d user=SA
+2026-10-17T21:56:59.124-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-17T21:56:59.135-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-17T21:56:59.158-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+2026-10-17T21:56:59.293-05:00  INFO 84368 --- [url-shortener] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-17T21:56:59.320-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:8e21b5a3-7730-4248-b4d8-048d2cd15e3d]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: 8E21B5A3-7730-4248-B4D8-048D2CD15E3D/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-17T21:56:59.578-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-17T21:56:59.589-05:00  INFO 84368 --- [url-shortener] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-17T21:56:59.613-05:00  INFO 84368 --- [url-shortener] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-17T21:56:59.701-05:00  WARN 84368 --- [url-shortener] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-17T21:56:59.863-05:00  INFO 84368 --- [url-shortener] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-10-17T21:56:59.863-05:00  INFO 84368 --- [url-shortener] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-10-17T21:56:59.865-05:00  INFO 84368 --- [url-shortener] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-10-17T21:56:59.870-05:00  INFO 84368 --- [url-shortener] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 7 ms
+2026-10-17T21:56:59.892-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlExpirationIntegrationTests          : Started UrlExpirationIntegrationTests in 1.282 seconds (process running for 1.633)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/private/tmp/schwab-test-generation/maven-cache/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.957 s -- in url_shortener.UrlExpirationIntegrationTests
+[INFO] Running url_shortener.UrlStatusIntegrationTest
+2026-10-17T21:57:00.425-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlStatusIntegrationTest]: UrlStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlStatusIntegrationTest
+2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlStatusIntegrationTest]: UrlStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlStatusIntegrationTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in url_shortener.UrlStatusIntegrationTest
+[INFO] Running url_shortener.UrlShortenerApplicationTests
+2026-10-17T21:57:00.446-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests
+2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.8)
+
+2026-10-17T21:57:00.456-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Starting UrlShortenerApplicationTests using Java 21.0.12.1 with PID 84368 (started by ruwicc in /Users/ruwicc/Projects/schwab-agentic-sdlc/docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener)
+2026-10-17T21:57:00.456-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : No active profile set, falling back to 1 default profile: "default"
+2026-10-17T21:57:00.500-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-17T21:57:00.502-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 1 ms. Found 1 JPA repository interface.
+2026-10-17T21:57:00.524-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:2ddc8527-dad4-4489-9a7a-0bd7eeae0ded user=SA
+2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-17T21:57:00.531-05:00  INFO 84368 --- [url-shortener] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-17T21:57:00.531-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:2ddc8527-dad4-4489-9a7a-0bd7eeae0ded]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: 2DDC8527-DAD4-4489-9A7A-0BD7EEAE0DED/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-17T21:57:00.539-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-17T21:57:00.540-05:00  INFO 84368 --- [url-shortener] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-17T21:57:00.551-05:00  WARN 84368 --- [url-shortener] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-17T21:57:00.586-05:00  INFO 84368 --- [url-shortener] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-10-17T21:57:00.590-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Started UrlShortenerApplicationTests in 0.14 seconds (process running for 2.332)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.146 s -- in url_shortener.UrlShortenerApplicationTests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.295 s
+[INFO] Finished at: 2026-10-17T21:57:00-05:00
+[INFO] ------------------------------------------------------------------------
+

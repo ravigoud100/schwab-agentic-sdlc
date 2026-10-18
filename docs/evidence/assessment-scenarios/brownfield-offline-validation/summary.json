@@ -1,0 +1,105 @@
+{
+  "historical_files_unchanged": true,
+  "response_hash": "09ddc4c54db20d9a5d9b603da33a96250165c865571443d1ae6e26265665d516",
+  "proposal_matches_journal": true,
+  "original": {
+    "exit_code": 1,
+    "elapsed_seconds": 1.944642624934204,
+    "tests": 0,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "cases": []
+  },
+  "corrected": {
+    "exit_code": 0,
+    "elapsed_seconds": 4.731394166010432,
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "cases": [
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "statusPreservesClicksAndRedirectCompatibility",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "expirationStatesAreReadOnly",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "unknownIs404AndServiceDeclaresReadOnly",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "redirectsActiveUrlWithFound",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "expiredUrlDoesNotIncreaseClickCount",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "rejectsPastExpiration",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "createsShortUrlWithoutExpiration",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "returnsGoneForExpiredUrl",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "createsShortUrlWithFutureExpiration",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "returnsNotFoundForUnknownShortCode",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      },
+      {
+        "class": "url_shortener.UrlShortenerApplicationTests",
+        "name": "contextLoads",
+        "failure": false,
+        "error": false,
+        "skipped": false
+      }
+    ]
+  },
+  "correction_provenance": "Assistant-authored deterministic import addition; no Ollama request or AI recovery",
+  "correction": "Add import java.time.Instant to retained controller in disposable corrected copy only",
+  "test_hash": "97e0f2ac709501709fd6f8359644a27926cf9a6d9ab809fc709054c26e5324b5",
+  "historical_budget_reset": false
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "class": "url_shortener.GeneratedExpirationBoundaryTest",
+    "method": "equalNowExpiration",
+    "type": "org.opentest4j.AssertionFailedError",
+    "message": "Expected org.springframework.web.server.ResponseStatusException to be thrown, but nothing was thrown."
+  }
+]

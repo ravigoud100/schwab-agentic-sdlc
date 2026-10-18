@@ -1,0 +1,88 @@
+{
+  "classification": "separately validated offline-assisted implementation; architecture qualification unresolved",
+  "historical_workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c",
+  "historical_outcome": "STOPPED_RETRY_EXHAUSTED",
+  "historical_results_review_reached": false,
+  "remaining_attempts": 0,
+  "historical_inventory_unchanged": true,
+  "historical_inventory_manifest_sha256": "00ba609036306efb2b000f7a44676de049616548d93ef8cd008591cdca22fba5",
+  "original_response_sha256": "09ddc4c54db20d9a5d9b603da33a96250165c865571443d1ae6e26265665d516",
+  "source_hashes": {
+    "url-shortener/src/main/java/url_shortener/UrlService.java": {
+      "original_ai_sha256": "d6337b71c3bf84f2b9250e3751722e9e3c98f6ad018c8419930e6d9ca84b03f8",
+      "corrected_sha256": "d6337b71c3bf84f2b9250e3751722e9e3c98f6ad018c8419930e6d9ca84b03f8"
+    },
+    "url-shortener/src/main/java/url_shortener/UrlController.java": {
+      "original_ai_sha256": "fa5f05a84293a3ff9d2f66197ca4bf32ed0f5b9ae9b8148d373757d32a9af3cf",
+      "corrected_sha256": "095ba4379973430d0bf7e4943553b2d27d7cb308f2370b8e2eb1e6b4e03e8774"
+    },
+    "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java": {
+      "trusted_renderer_sha256": "97e0f2ac709501709fd6f8359644a27926cf9a6d9ab809fc709054c26e5324b5"
+    }
+  },
+  "compiler_correction": "Assistant-authored addition of import java.time.Instant only",
+  "maven": {
+    "retained_real_execution": true,
+    "rerun_for_this_review": false,
+    "passed": 11,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "cases": [
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "statusPreservesClicksAndRedirectCompatibility"
+      },
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "expirationStatesAreReadOnly"
+      },
+      {
+        "class": "url_shortener.UrlStatusIntegrationTest",
+        "name": "unknownIs404AndServiceDeclaresReadOnly"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "redirectsActiveUrlWithFound"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "expiredUrlDoesNotIncreaseClickCount"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "rejectsPastExpiration"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "createsShortUrlWithoutExpiration"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "returnsGoneForExpiredUrl"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "createsShortUrlWithFutureExpiration"
+      },
+      {
+        "class": "url_shortener.UrlExpirationIntegrationTests",
+        "name": "returnsNotFoundForUnknownShortCode"
+      },
+      {
+        "class": "url_shortener.UrlShortenerApplicationTests",
+        "name": "contextLoads"
+      }
+    ]
+  },
+  "architecture": {
+    "reviewed_packet_requires_service_map": false,
+    "earlier_execution_prompt_requires_service_map": true,
+    "actual_service_return": "ShortUrl",
+    "response_construction": "UrlController",
+    "expiration_evaluation": "UrlController calling ShortUrl.isExpired(Instant.now())",
+    "strict_service_responsibility_compliance": false,
+    "decision": "Unresolved instruction/design discrepancy; no architectural waiver inferred"
+  },
+  "release_authorized": false
+}

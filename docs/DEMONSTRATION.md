@@ -19,7 +19,7 @@ This guide is designed for a technical evaluator. It uses the implementation cur
    ./mvnw clean test
    ```
 
-5. Keep the completed Java application untouched while demonstrating the orchestrator. The implementation and validation agents use `.agent-workspaces/url-expiration/`.
+5. Keep the completed Java application untouched while demonstrating the orchestrator. The implementation and validation agents use `.agent-workspaces/<workflow_id>/`.
 
 ## Demonstration 1: Requirement analysis and planning
 
@@ -96,7 +96,7 @@ After approval, show the following sequence in the console and audit database:
 4. `TASKS_COMPLETED` when the task passes.
 5. `AWAITING_FINAL_HUMAN_REVIEW` after all tasks pass.
 
-The real validation command is `./mvnw clean test` in the isolated URL-expiration worktree. The validator records pass/fail, exit code, duration, and bounded output in LangGraph state; the audit database receives metadata only.
+The real validation command is `./mvnw clean test` in the isolated workflow worktree. The validator records pass/fail, exit code, duration, and bounded output in LangGraph state; the audit database receives metadata only.
 
 ## Demonstration 5: Repair and replanning
 

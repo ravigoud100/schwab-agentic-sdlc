@@ -1,0 +1,10 @@
+{
+  "reviewed-proposal.json": "c7c96c3f9ce7c9410e9862c1073ae7f97669c89cfa193856540f03f59e0a2856",
+  "continuation-2-prompt.txt": "6d1ff6ef03efad8cdcd3321e6f272069a79b31a0a49e8004087711d179bd11da",
+  "README.md": "2011da166a7640c5c4f5b2ef20cbfc9d1ce985cb4cbdb1552a1c126c7bab4a91",
+  "review.json": "462233aefbf62949f73feab4e4f19325d388ef30dadd591acf53a58422df2d81",
+  "attempt-1-prompt.txt": "b32a6bfac6bafdefbd6a69a36eeae93d8a8caa66ea12cda5a360121b57d591f8",
+  "corrected-source/url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java": "97e0f2ac709501709fd6f8359644a27926cf9a6d9ab809fc709054c26e5324b5",
+  "corrected-source/url-shortener/src/main/java/url_shortener/UrlService.java": "d6337b71c3bf84f2b9250e3751722e9e3c98f6ad018c8419930e6d9ca84b03f8",
+  "corrected-source/url-shortener/src/main/java/url_shortener/UrlController.java": "095ba4379973430d0bf7e4943553b2d27d7cb308f2370b8e2eb1e6b4e03e8774"
+}

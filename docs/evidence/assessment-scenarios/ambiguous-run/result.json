@@ -1,0 +1,72 @@
+{
+  "workflow_id": "06a48ae8-a82f-44e2-8232-74a7383f900c",
+  "status": "PLAN_CREATED",
+  "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval.",
+  "requirement_version": 1,
+  "structured_requirements": {
+    "normalized_problem": "Enhance the existing URL shortener to include optional URL expiration.",
+    "functional_requirements": [
+      "Preserve existing links.",
+      "Return HTTP 410 for expired URLs.",
+      "Maintain existing active-link redirect behavior."
+    ],
+    "non_functional_requirements": [],
+    "acceptance_criteria": [
+      "The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.",
+      "The system should not execute any code changes until the later engineering plan approval."
+    ],
+    "ambiguities": [
+      {
+        "id": "A1",
+        "question": "Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?",
+        "options": [
+          "Fixed 24-hour TTL",
+          "Custom expiration timestamp"
+        ],
+        "default_assumption": null
+      }
+    ],
+    "risks": [],
+    "classification": "brownfield"
+  },
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "requirements_source_hash": "f31f269817f04220550b969e6996453863226a4248e0cf842444dbd69e0533e4",
+  "requirements_valid": true,
+  "clarification_answers": {
+    "A1": "Custom expiration timestamp"
+  },
+  "clarification_complete": true,
+  "clarification_history": [
+    {
+      "requirement_version": 1,
+      "answers": {
+        "A1": "Custom expiration timestamp"
+      },
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  ],
+  "analysis": "{\"clarification_answers\": {\"A1\": \"Custom expiration timestamp\"}, \"requirements\": {\"acceptance_criteria\": [\"The system should allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp.\", \"The system should not execute any code changes until the later engineering plan approval.\"], \"ambiguities\": [{\"default_assumption\": null, \"id\": \"A1\", \"options\": [\"Fixed 24-hour TTL\", \"Custom expiration timestamp\"], \"question\": \"Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?\"}], \"classification\": \"brownfield\", \"functional_requirements\": [\"Preserve existing links.\", \"Return HTTP 410 for expired URLs.\", \"Maintain existing active-link redirect behavior.\"], \"non_functional_requirements\": [], \"normalized_problem\": \"Enhance the existing URL shortener to include optional URL expiration.\", \"risks\": []}}",
+  "codebase_analysis": "{ \"architecture\": \"The application is a Spring Boot-based URL shortener. It consists of a REST API for creating and retrieving short URLs, and a controller for handling redirects. The application uses a database to store short URLs and their associated metadata, including the original URL, short code, click count, creation time, and expiration time (if applicable).\", \"endpoints\": { \"GET /{shortCode}\": \"Redirects to the original URL associated with the provided short code. If the URL has expired, returns HTTP 410 Gone. If the URL is still active, increments the click count and redirects to the original URL.\", \"POST /api/urls\": \"Creates a new short URL with the provided original URL and optional expiration time. Returns the short code and short URL. If the expiration time is provided and is not in the future, returns HTTP 400 Bad Request.\", \"GET /{shortCode}/analytics\": \"Returns analytics for the short URL, including the short code, original URL, total clicks, and creation time.\" }, \"classes\": { \"RedirectController\": \"Handles the redirect requests. It uses the UrlService to retrieve the original URL and perform the redirect.\", \"ShortUrl\": \"Represents a short URL. It includes fields for the original URL, short code, click count, creation time, and expiration time. It also includes methods for checking if the URL has expired and for incrementing the click count.\", \"UrlController\": \"Handles the API requests for creating and retrieving short URLs. It uses the UrlService to perform the operations.\", \"UrlRepository\": \"Provides data access for the ShortUrl entity. It includes methods for finding and checking the existence of short URLs.\", \"UrlService\": \"Provides business logic for creating and retrieving short URLs. It includes methods for generating short codes, creating short URLs, and retrieving the original URL and analytics for a short URL.\" }, \"files_affected\": [ \"RedirectController.java\", \"ShortUrl.java\", \"UrlController.java\", \"UrlRepository.java\", \"UrlService.java\" ], \"new_classes_or_dependencies\": [], \"risks_and_compatibility_concerns\": [ \"The new requirement introduces a new configuration decision that has not been approved yet. This could lead to delays in implementing the feature.\", \"If the expiration time is provided and is not in the future, the current implementation returns HTTP 400 Bad Request. This could be confusing for users who expect the URL to be created even if the expiration time is in the past.\" ], \"assumptions_requiring_human_approval\": [ \"Should the URL expiration be fixed at 24 hours from link creation, or should each caller provide a future UTC expiration timestamp?\" ] }",
+  "plan": "{\n  \"tasks\": [\n    {\n      \"task_id\": \"implement-requirement\",\n      \"description\": \"Implement the feature to allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp for URL shortening. Ensure that the system returns HTTP 410 for expired URLs and maintains existing active-link redirect behavior. The implementation should not execute any code changes until the later engineering plan approval.\",\n      \"dependencies\": [],\n      \"execution_type\": \"implementation\",\n      \"allowed_files\": [\n        \"url-shortener/src/main/java/url_shortener/ShortUrl.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n        \"url-shortener/src/main/java/url_shortener/RedirectController.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlRepository.java\"\n      ]\n    }\n  ]\n}",
+  "plan_requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "plan_requirement_version": 1,
+  "pending_approvals": [
+    {
+      "message": "Review the engineering plan",
+      "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval.",
+      "plan": "{\n  \"tasks\": [\n    {\n      \"task_id\": \"implement-requirement\",\n      \"description\": \"Implement the feature to allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp for URL shortening. Ensure that the system returns HTTP 410 for expired URLs and maintains existing active-link redirect behavior. The implementation should not execute any code changes until the later engineering plan approval.\",\n      \"dependencies\": [],\n      \"execution_type\": \"implementation\",\n      \"allowed_files\": [\n        \"url-shortener/src/main/java/url_shortener/ShortUrl.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n        \"url-shortener/src/main/java/url_shortener/RedirectController.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlRepository.java\"\n      ]\n    }\n  ]\n}",
+      "requirement_version": 1,
+      "clarification_answers": {
+        "A1": "Custom expiration timestamp"
+      },
+      "allowed_decisions": [
+        "approve",
+        "reject",
+        "request_changes"
+      ]
+    }
+  ],
+  "next_nodes": [
+    "approval"
+  ]
+}

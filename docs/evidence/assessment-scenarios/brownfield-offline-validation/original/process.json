@@ -1,0 +1,10 @@
+{
+  "pid": 64348,
+  "command": [
+    "./mvnw",
+    "-o",
+    "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+    "clean",
+    "test"
+  ]
+}

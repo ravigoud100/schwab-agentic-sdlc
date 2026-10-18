@@ -1,0 +1,11 @@
+[
+  {
+    "id": 13,
+    "workflow_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+    "event": "FINAL_RELEASE_REVIEW_RECORDED",
+    "details": {
+      "decision": "reject",
+      "report_hash": "b93288db54ad6d8a24d89ab028bf76b9e9085d8fb606117d5b79161578da502c"
+    }
+  }
+]

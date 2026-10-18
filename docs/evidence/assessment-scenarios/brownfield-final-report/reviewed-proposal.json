@@ -1,0 +1,47 @@
+{
+  "classification": "brownfield",
+  "requirement": "Add a read-only URL status response without changing redirect click counting.",
+  "architecture": {
+    "components": [
+      "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "url-shortener/src/main/java/url_shortener/UrlController.java"
+    ],
+    "contract": "GET status reads a URL and reports short code and expiration state without incrementing clicks.",
+    "compatibility": "Unknown codes remain 404; redirect and analytics behavior remain unchanged."
+  },
+  "plan": {
+    "tasks": [
+      {
+        "task_id": "status-service",
+        "execution_type": "implementation",
+        "dependencies": [],
+        "description": "Add a read-only status method with no click increment.",
+        "allowed_files": [
+          "url-shortener/src/main/java/url_shortener/UrlService.java"
+        ],
+        "allowed_new_files": []
+      },
+      {
+        "task_id": "status-controller",
+        "execution_type": "implementation",
+        "dependencies": [
+          "status-service"
+        ],
+        "description": "Expose the approved status response and preserve 404 behavior.",
+        "allowed_files": [
+          "url-shortener/src/main/java/url_shortener/UrlController.java"
+        ],
+        "allowed_new_files": []
+      }
+    ]
+  },
+  "recovery": "A combined Maven failure rolls back both files; a material revision needs a new plan authorization.",
+  "validation": {
+    "command": "maven clean test",
+    "assertions": [
+      "404 preserved",
+      "status is read-only",
+      "redirect clicks unchanged"
+    ]
+  }
+}

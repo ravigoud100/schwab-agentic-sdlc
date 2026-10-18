@@ -1,0 +1,303 @@
+{
+  "provenance": "Deterministic pytest approval fixture; not a real human or organizational sign-off",
+  "events": [
+    {
+      "id": 1,
+      "event": "POLICY_EXCEPTION_REVIEW_REQUESTED",
+      "details": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+        "policy_ids": [
+          "SEC-PROCESS"
+        ],
+        "decision": "requires_approval",
+        "phase": "pre_write",
+        "findings": [
+          {
+            "policy_id": "SEC-PROCESS",
+            "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+            "line": 1,
+            "evidence_sha256": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e",
+            "decision": "requires_approval"
+          }
+        ],
+        "evidence_body": {
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "phase": "pre_write",
+          "files": {
+            "url-shortener/src/main/java/url_shortener/PolicyDemo.java": {
+              "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6",
+              "proposed_hash": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e"
+            }
+          },
+          "authorized_additive_tests": [],
+          "checked_policy_ids": [
+            "COM-PII-LOG",
+            "GOV-OBFUSCATION",
+            "GOV-PROTECTED-CONFIG",
+            "GOV-UNSCANNABLE",
+            "GOV-UNSUPPORTED-CREATION",
+            "SEC-DEPENDENCY-ALLOWLIST",
+            "SEC-PROCESS",
+            "SEC-SECRETS",
+            "SEC-SQL",
+            "TEST-DISABLE",
+            "TEST-PRESERVE-ORIGINAL",
+            "TEST-UNAUTHORIZED-CREATION"
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "event": "POLICY_EXCEPTION_REVIEW_REQUESTED",
+      "details": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+        "policy_ids": [
+          "SEC-PROCESS"
+        ],
+        "decision": "requires_approval",
+        "phase": "pre_write",
+        "findings": [
+          {
+            "policy_id": "SEC-PROCESS",
+            "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+            "line": 1,
+            "evidence_sha256": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e",
+            "decision": "requires_approval"
+          }
+        ],
+        "evidence_body": {
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "phase": "pre_write",
+          "files": {
+            "url-shortener/src/main/java/url_shortener/PolicyDemo.java": {
+              "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6",
+              "proposed_hash": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e"
+            }
+          },
+          "authorized_additive_tests": [],
+          "checked_policy_ids": [
+            "COM-PII-LOG",
+            "GOV-OBFUSCATION",
+            "GOV-PROTECTED-CONFIG",
+            "GOV-UNSCANNABLE",
+            "GOV-UNSUPPORTED-CREATION",
+            "SEC-DEPENDENCY-ALLOWLIST",
+            "SEC-PROCESS",
+            "SEC-SECRETS",
+            "SEC-SQL",
+            "TEST-DISABLE",
+            "TEST-PRESERVE-ORIGINAL",
+            "TEST-UNAUTHORIZED-CREATION"
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "event": "POLICY_EXCEPTION_APPROVED",
+      "details": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+        "policy_ids": [
+          "SEC-PROCESS"
+        ],
+        "decision": "requires_approval",
+        "phase": "pre_write",
+        "findings": [
+          {
+            "policy_id": "SEC-PROCESS",
+            "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+            "line": 1,
+            "evidence_sha256": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e",
+            "decision": "requires_approval"
+          }
+        ],
+        "evidence_body": {
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "phase": "pre_write",
+          "files": {
+            "url-shortener/src/main/java/url_shortener/PolicyDemo.java": {
+              "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6",
+              "proposed_hash": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e"
+            }
+          },
+          "authorized_additive_tests": [],
+          "checked_policy_ids": [
+            "COM-PII-LOG",
+            "GOV-OBFUSCATION",
+            "GOV-PROTECTED-CONFIG",
+            "GOV-UNSCANNABLE",
+            "GOV-UNSUPPORTED-CREATION",
+            "SEC-DEPENDENCY-ALLOWLIST",
+            "SEC-PROCESS",
+            "SEC-SECRETS",
+            "SEC-SQL",
+            "TEST-DISABLE",
+            "TEST-PRESERVE-ORIGINAL",
+            "TEST-UNAUTHORIZED-CREATION"
+          ]
+        },
+        "approval_reference": {
+          "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "decision": "approve",
+          "policy_ids": [
+            "SEC-PROCESS"
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "event": "POLICY_EVALUATED",
+      "details": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+        "policy_ids": [
+          "SEC-PROCESS"
+        ],
+        "decision": "requires_approval",
+        "phase": "pre_write",
+        "findings": [
+          {
+            "policy_id": "SEC-PROCESS",
+            "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+            "line": 1,
+            "evidence_sha256": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e",
+            "decision": "requires_approval"
+          }
+        ],
+        "evidence_body": {
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "phase": "pre_write",
+          "files": {
+            "url-shortener/src/main/java/url_shortener/PolicyDemo.java": {
+              "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6",
+              "proposed_hash": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e"
+            }
+          },
+          "authorized_additive_tests": [],
+          "checked_policy_ids": [
+            "COM-PII-LOG",
+            "GOV-OBFUSCATION",
+            "GOV-PROTECTED-CONFIG",
+            "GOV-UNSCANNABLE",
+            "GOV-UNSUPPORTED-CREATION",
+            "SEC-DEPENDENCY-ALLOWLIST",
+            "SEC-PROCESS",
+            "SEC-SECRETS",
+            "SEC-SQL",
+            "TEST-DISABLE",
+            "TEST-PRESERVE-ORIGINAL",
+            "TEST-UNAUTHORIZED-CREATION"
+          ]
+        },
+        "approval_reference": null,
+        "enforced_decision": "requires_approval"
+      }
+    },
+    {
+      "id": 5,
+      "event": "POLICY_EVALUATED",
+      "details": {
+        "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+        "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+        "policy_ids": [
+          "SEC-PROCESS"
+        ],
+        "decision": "requires_approval",
+        "phase": "pre_write",
+        "findings": [
+          {
+            "policy_id": "SEC-PROCESS",
+            "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+            "line": 1,
+            "evidence_sha256": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e",
+            "decision": "requires_approval"
+          }
+        ],
+        "evidence_body": {
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "phase": "pre_write",
+          "files": {
+            "url-shortener/src/main/java/url_shortener/PolicyDemo.java": {
+              "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6",
+              "proposed_hash": "35dafce1bf49b9d94b68856f22210e451912023da058e1df7a68ada1aee9fa3e"
+            }
+          },
+          "authorized_additive_tests": [],
+          "checked_policy_ids": [
+            "COM-PII-LOG",
+            "GOV-OBFUSCATION",
+            "GOV-PROTECTED-CONFIG",
+            "GOV-UNSCANNABLE",
+            "GOV-UNSUPPORTED-CREATION",
+            "SEC-DEPENDENCY-ALLOWLIST",
+            "SEC-PROCESS",
+            "SEC-SECRETS",
+            "SEC-SQL",
+            "TEST-DISABLE",
+            "TEST-PRESERVE-ORIGINAL",
+            "TEST-UNAUTHORIZED-CREATION"
+          ]
+        },
+        "approval_reference": {
+          "evidence_hash": "9770d194998399465f9b421ac0f5f4cebfe6ddbd13e63744ef579d49c88900d0",
+          "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+          "workflow_id": "w",
+          "workspace": "/private/var/folders/0_/yk5fpx414wz9dcxvfyj2wsz00000gn/T/pytest-of-ruwicc/pytest-162/test_supported_high_risk_requi0/workspace",
+          "decision": "approve",
+          "policy_ids": [
+            "SEC-PROCESS"
+          ]
+        },
+        "enforced_decision": "allow_with_approval"
+      }
+    },
+    {
+      "id": 6,
+      "event": "FILE_CHECKPOINT_CREATED",
+      "details": {
+        "path": "url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+        "checkpoint_id": "3c6fe109-2bd4-4fed-a712-6e548a2c7046:url-shortener/src/main/java/url_shortener/PolicyDemo.java",
+        "transaction_id": "3c6fe109-2bd4-4fed-a712-6e548a2c7046",
+        "original_hash": "a5ba86b1487c9e416c323aaf28acdb8bb7983c2548057f533fcb1d28222ac9e6"
+      }
+    },
+    {
+      "id": 7,
+      "event": "TRANSACTION_APPLIED",
+      "details": {
+        "transaction_id": "3c6fe109-2bd4-4fed-a712-6e548a2c7046",
+        "paths": [
+          "url-shortener/src/main/java/url_shortener/PolicyDemo.java"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "event": "TRANSACTION_ROLLED_BACK",
+      "details": {
+        "transaction_id": "3c6fe109-2bd4-4fed-a712-6e548a2c7046",
+        "paths": [
+          "url-shortener/src/main/java/url_shortener/PolicyDemo.java"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"files": [{"path": "url-shortener/src/main/java/url_shortener/A.java", "content": "class A { int value = 2; }"}]}

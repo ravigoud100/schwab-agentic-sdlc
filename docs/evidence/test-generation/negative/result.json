@@ -1,0 +1,24 @@
+{
+  "exit_code": 1,
+  "cases": {
+    "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+    "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#futureExpiration": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#missingExpiration": "passed",
+    "url_shortener.GeneratedExpirationBoundaryTest#equalNowExpiration": "failure",
+    "url_shortener.GeneratedExpirationBoundaryTest#pastExpiration": "passed",
+    "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+  },
+  "command": [
+    "./mvnw",
+    "-o",
+    "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+    "clean",
+    "test"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "unchanged": true,
+  "sha256": {
+    "/private/tmp/schwab-integrated-sdlc-fixed/audit.db": "6d43bb6409080f59e6179c11366d4d8ff482eb4b0ad7f2f2d609353ee2bcc0a5",
+    "/private/tmp/schwab-integrated-sdlc-fixed/workflow.db": "0d9cd6e35daca8a93e5e2bd79759d6ea95f5a6e51fb2816c0f4a22a00571cb10",
+    "/private/tmp/schwab-integrated-sdlc-fixed/workflow.db-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "verified_bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5"
+}

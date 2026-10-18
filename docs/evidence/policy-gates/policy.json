@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "SEC-SECRETS",
+      "decision": "deny",
+      "pattern": "(?is)(?:password|passwd|api_?key|client_?secret|secret(?:_?key)?|(?:access_?|auth_?|bearer_?)?token|private_?key)\\s*(?:=|:)\\s*\"[^\"\\r\\n]{4,}\"|AKIA[0-9A-Z]{16}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"
+    },
+    {
+      "id": "SEC-PROCESS",
+      "decision": "deny",
+      "pattern": "(?s)\\b(?:ProcessBuilder(?=\\s*\\()|Runtime\\s*\\.\\s*getRuntime|System\\s*\\.\\s*load(?:Library)?|Class\\s*\\.\\s*forName|java\\s*\\.\\s*lang\\s*\\.\\s*reflect)\\b|\\.\\s*exec\\s*\\(|\\.\\s*(?:command|environment|redirectInput|redirectOutput|redirectError|inheritIO)\\s*\\("
+    },
+    {
+      "id": "SEC-SQL",
+      "decision": "deny",
+      "pattern": "(?is)(?:\"[^\"]*\\b(?:select|insert|update|delete|drop|where)\\b[^\"]*\"\\s*\\+|(?:executeQuery|executeUpdate|createNativeQuery|createQuery)\\s*\\([^;]*\\+|String\\s*\\.\\s*format\\s*\\(\\s*\"[^\"]*\\b(?:select|insert|update|delete|where)\\b)|(?:StringBuilder|StringBuffer)\\s*\\(\\s*\"[^\";]*\\b(?:SELECT|INSERT|UPDATE|DELETE|WHERE)\\b"
+    },
+    {
+      "id": "COM-PII-LOG",
+      "decision": "deny",
+      "pattern": "(?is)(?:\\b(?:log|logger|LOGGER)\\s*\\.\\s*(?:info|debug|warn|error|trace)|System\\s*\\.\\s*(?:out|err)\\s*\\.\\s*print(?:ln|f)?)\\s*\\([^;]*(?:email|ssn|socialSecurity|creditCard|cardNumber|phone|password|accessToken|originalUrl|requestBody|[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}|\\b\\d{3}-\\d{2}-\\d{4}\\b)"
+    },
+    {
+      "id": "TEST-DISABLE",
+      "decision": "deny",
+      "pattern": "(?is)@(?:Disabled|Ignore)\\b|\\b(?:assumeTrue|assumeFalse|abort)\\s*\\(|assertTrue\\s*\\(\\s*true\\s*\\)|assertFalse\\s*\\(\\s*false\\s*\\)|maven\\.test\\.skip|skipTests|failIfNoTests"
+    },
+    {
+      "id": "GOV-OBFUSCATION",
+      "decision": "deny",
+      "pattern": "\\\\u[0-9a-fA-F]{4}"
+    }
+  ],
+  "allowed_import_prefixes": [
+    "java.",
+    "javax.",
+    "jakarta.persistence.",
+    "jakarta.validation.",
+    "jakarta.annotation.",
+    "org.springframework.",
+    "org.junit.",
+    "org.mockito.",
+    "url_shortener.",
+    "org.hibernate.validator.constraints."
+  ],
+  "reviewable_process_argv": [
+    [
+      "/usr/bin/true"
+    ]
+  ],
+  "existing_tests": "immutable",
+  "configuration": "immutable"
+}

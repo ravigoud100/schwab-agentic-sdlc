@@ -1,0 +1,6 @@
+{
+  "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+  "initial_proposal_source": "docs/evidence/live-status-api/success-proposal.json",
+  "injection": "Change java.util.Map to nonexistent java.util.Mapp in service return type only",
+  "workspace": "/private/tmp/schwab-autonomous-recovery/snapshot/.agent-workspaces/309b0b75-72f2-4ad3-8df6-6b520c88ab52"
+}

@@ -90,3 +90,60 @@ class _raises:
         if exc_type is None or not issubclass(exc_type, self.expected):
             raise AssertionError(f"Expected {self.expected.__name__}")
         return True
+
+
+def test_parser_preserves_execution_type_and_legacy_defaults():
+    import json
+    from governance.task_orchestrator import tasks_from_plan
+
+    original = task("verify-expiration")
+    original["execution_type"] = "validate_only"
+    parsed = tasks_from_plan(json.dumps({"tasks": [original]}), "src/entity.java")
+    assert parsed[0]["execution_type"] == "validate_only"
+    del original["execution_type"]
+    parsed = tasks_from_plan(json.dumps({"tasks": [original]}), "src/entity.java")
+    assert parsed[0]["execution_type"] == "implementation"
+    assert tasks_from_plan("legacy prose", "src/entity.java")[0]["execution_type"] == "implementation"
+
+
+def test_unknown_execution_type_is_rejected_without_fallback():
+    import json
+    import pytest
+    from governance.task_orchestrator import tasks_from_plan
+
+    for value in ("shell", None, [], 1):
+        invalid = {**task("unknown"), "execution_type": value}
+        with pytest.raises(TaskPlanError):
+            validate_task_plan([invalid])
+        with pytest.raises(TaskPlanError):
+            tasks_from_plan(json.dumps({"tasks": [invalid]}), "src/entity.java")
+
+
+def test_validation_routing_requires_unchanged_human_approved_plan():
+    import json
+    import pytest
+    from main import human_approval, task_scheduler_router
+    from governance.task_orchestrator import tasks_from_plan
+
+    definition = {**task("verify-expiration"), "execution_type": "validate_only"}
+    plan = json.dumps({"tasks": [definition]})
+    state = {"requirement": "Verify expiration", "plan": plan, "approval": "approve",
+             "tasks": tasks_from_plan(plan, "src/entity.java"),
+             "active_task_ids": ["verify-expiration"], "task_plan_valid": True}
+    with pytest.raises(PermissionError):
+        task_scheduler_router(state)
+    with patch("main.interrupt", return_value="approve"):
+        state.update(human_approval(state))
+    assert task_scheduler_router(state) == "verification"
+    state["tasks"][0]["description"] = "unreviewed replacement"
+    with pytest.raises(PermissionError):
+        task_scheduler_router(state)
+
+
+def test_strict_planning_rejects_prose_and_fenced_json():
+    import pytest
+    from governance.task_orchestrator import tasks_from_plan
+    for plan in ('Implement the requirement', '```json\n{"tasks": []}\n```', '{}'):
+        with pytest.raises(TaskPlanError):
+            tasks_from_plan(plan, 'src/entity.java', strict=True)
+    assert tasks_from_plan('Legacy plan', 'src/entity.java')[0]['task_id'] == 'implementation'

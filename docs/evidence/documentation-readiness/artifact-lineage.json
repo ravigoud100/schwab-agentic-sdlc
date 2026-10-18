@@ -1,0 +1,14 @@
+{
+  "workflow_id": "11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+  "workspace": "/private/tmp/schwab-test-generation/snapshot/.agent-workspaces/11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "requirement_version": 1,
+  "approved_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+  "approved_clock_test_scope_hash": "5ee3306e14a083229c8afecae45f880fcf06eafd68dad26685fa67c10452ba24",
+  "original_baseline_hash": "a1354b1f7489e5b2d3531f0881bc8c6237caf56f594e445125cd1b49551e7848",
+  "implementation_hash": "3f1a3ef024c57d61b712cdc7d21ffadc5c8857143564643d5b9beab4106463a2",
+  "generated_test_hash": "3410e143197f0d0289e8a14e4b1e13ede7e388c1c4b7faf2094681d186b71fa9",
+  "source_transaction": "3f9d055a-99bc-4acd-9fed-bf982e6ad671",
+  "approved_implementation_plan_hash": null
+}

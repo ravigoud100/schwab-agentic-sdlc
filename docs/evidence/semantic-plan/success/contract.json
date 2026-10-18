@@ -1,0 +1,80 @@
+{
+  "decision_id": "A1",
+  "selected_answer": "Custom expiration timestamp",
+  "obligations": [
+    {
+      "id": "caller-expiration",
+      "kind": "implementation",
+      "spec": {
+        "operation": "accept_optional_input",
+        "field": "expiresAt",
+        "source": "caller",
+        "representation": "UTC_timestamp"
+      }
+    },
+    {
+      "id": "future-only",
+      "kind": "implementation",
+      "spec": {
+        "operation": "validate",
+        "field": "expiresAt",
+        "predicate": "strictly_after_now",
+        "otherwise": "rejected"
+      }
+    },
+    {
+      "id": "utc-consistency",
+      "kind": "implementation",
+      "spec": {
+        "operation": "compare_and_store",
+        "field": "expiresAt",
+        "time_basis": "UTC"
+      }
+    },
+    {
+      "id": "missing-compatibility",
+      "kind": "implementation",
+      "spec": {
+        "operation": "preserve",
+        "when": "expiresAt_missing",
+        "behavior": "no_expiration_existing_links_and_redirects"
+      }
+    },
+    {
+      "id": "test-future",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now_plus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "accepted"
+      }
+    },
+    {
+      "id": "test-past",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now_minus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      }
+    },
+    {
+      "id": "test-boundary",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": "now",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      }
+    },
+    {
+      "id": "test-missing",
+      "kind": "test",
+      "spec": {
+        "input_expiresAt": null,
+        "clock": "fixed_UTC",
+        "expected": "no_expiration"
+      }
+    }
+  ]
+}

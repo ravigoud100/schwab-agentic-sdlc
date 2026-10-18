@@ -1,0 +1,23 @@
+{
+  "summary.json": "89dddb00fe74a8b50c58627dfddc3a213656b9100a54eb7037483b2be567894b",
+  "historical-after.json": "00ba609036306efb2b000f7a44676de049616548d93ef8cd008591cdca22fba5",
+  "reproduce.py": "f782564b492fc339a976d491c850c004ab81d8bb9c438c3e04da405ae0333d82",
+  "original-proposal.diff": "1362c7967538771f6ab7b3f281afffccbd62aeba0d282e681c946c8431d659f3",
+  "compilation-correction.diff": "a01e57a6ed7f2c68e9e8f96a4b29d2e3504cc9378368b4676a2dc31c55e8cfd3",
+  "README.md": "e8aae95c6ea6e451c0460c4a7158fb378578b205365319ec4a48abd65a218d2d",
+  "corrected-proposal.diff": "b93a2fc04405ace7c16f3e94f7cea2b03bf61a80a6bbb65b9fe357299a1ec18e",
+  "historical-before.json": "00ba609036306efb2b000f7a44676de049616548d93ef8cd008591cdca22fba5",
+  "test-harness.diff": "301f5fe86572a8ad2d31e7ad7ff4dac991af9a0587fe6598aac89c61860791bc",
+  "original/maven.log": "e860ea11ba5933e5d4dc3287f74dd64b1a036373ba2d4ef405c18df5c7a74463",
+  "original/result.json": "df3c573867a4cbf48fc496f1783d03210e5aaa3d4c69c5904d78f79f8f28744f",
+  "original/process.json": "89dc0313a9dc1867739b62821c2d3b3f5b90bfcab07b4422464ecb1d0764bd31",
+  "corrected/maven.log": "1751bd1b7fc21fd67f99f78ab4e7b8b16586a3bce9c0977fdc856cca66fa185e",
+  "corrected/result.json": "781456e692df873e356e0c5fd976e10f850b3af243118a80c7c0e8fe8fa8ddcf",
+  "corrected/process.json": "c99efcc35dc8fd2fee7fc07d5a85f9c4c67d5d1c18c9b08d4a8a4e10d5298062",
+  "corrected/surefire-reports/url_shortener.UrlShortenerApplicationTests.txt": "6109ff0fa48d8a87cb80be973e66810cda72a6bff02ea5327ec0187e0e6f8137",
+  "corrected/surefire-reports/url_shortener.UrlStatusIntegrationTest.txt": "a64f88281f895d12102b7cc131ab5bfc6e0d5e1b78e295d0229c4a8ef4a6bd7d",
+  "corrected/surefire-reports/url_shortener.UrlExpirationIntegrationTests.txt": "cc83cf176a18da384e0609da4c6b60261b78805b738452a39831a01306f9fe00",
+  "corrected/surefire-reports/TEST-url_shortener.UrlStatusIntegrationTest.xml": "432f9dbbc913f743aa6b10162083ae9d3d9d4beea58a02378b2d86f869555023",
+  "corrected/surefire-reports/TEST-url_shortener.UrlExpirationIntegrationTests.xml": "6aeef189b757ac996e3da13d7bacb04069d91e5da8a90991426a81369965cb2c",
+  "corrected/surefire-reports/TEST-url_shortener.UrlShortenerApplicationTests.xml": "37f8d7f4014e592561ce51409945ec5d5c12ead182748123a303f1c6962ccc63"
+}

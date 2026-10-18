@@ -1,0 +1,46 @@
+{
+  "task_id": "b",
+  "ok": false,
+  "attempts": 3,
+  "errors": [
+    {
+      "task_id": "b",
+      "attempt": 1,
+      "error_type": "JSONDecodeError",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "evidence": {
+        "raw_response": "not json",
+        "proposal": {},
+        "original_hashes": {
+          "url-shortener/src/main/java/url_shortener/B.java": "2df4d206037782c2aef37c6828843caa9883fbb0fde55913dd6132f3497fbb6c"
+        }
+      }
+    },
+    {
+      "task_id": "b",
+      "attempt": 2,
+      "error_type": "JSONDecodeError",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "evidence": {
+        "raw_response": "not json",
+        "proposal": {},
+        "original_hashes": {
+          "url-shortener/src/main/java/url_shortener/B.java": "2df4d206037782c2aef37c6828843caa9883fbb0fde55913dd6132f3497fbb6c"
+        }
+      }
+    },
+    {
+      "task_id": "b",
+      "attempt": 3,
+      "error_type": "JSONDecodeError",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "evidence": {
+        "raw_response": "not json",
+        "proposal": {},
+        "original_hashes": {
+          "url-shortener/src/main/java/url_shortener/B.java": "2df4d206037782c2aef37c6828843caa9883fbb0fde55913dd6132f3497fbb6c"
+        }
+      }
+    }
+  ]
+}

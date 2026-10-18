@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "obligation_id": "test-future",
+      "spec": {
+        "input_expiresAt": "now_plus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "accepted"
+      }
+    },
+    {
+      "obligation_id": "test-past",
+      "spec": {
+        "input_expiresAt": "now_minus_1_hour",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      }
+    },
+    {
+      "obligation_id": "test-boundary",
+      "spec": {
+        "input_expiresAt": "now",
+        "clock": "fixed_UTC",
+        "expected": "rejected"
+      }
+    },
+    {
+      "obligation_id": "test-missing",
+      "spec": {
+        "input_expiresAt": null,
+        "clock": "fixed_UTC",
+        "expected": "no_expiration"
+      }
+    }
+  ]
+}

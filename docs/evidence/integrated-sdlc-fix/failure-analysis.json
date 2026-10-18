@@ -1,0 +1,482 @@
+[
+  {
+    "run": "failed-live",
+    "audit_db": "/private/tmp/schwab-integrated-sdlc/audit.db",
+    "authorization_precedes_all_source_application": true,
+    "all_source_transactions_rolled_back": true,
+    "transactions": [
+      {
+        "transaction_id": "dcdc73fa-d495-4e22-bf8f-7e6080fb1818",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      },
+      {
+        "transaction_id": "ab68793d-452a-4390-bd83-840164de6cbc",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      },
+      {
+        "transaction_id": "73d39edf-04d1-40d1-8696-89366b1235ff",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      },
+      {
+        "transaction_id": "876f60d1-fb2a-4b69-a932-f26fe3d1475a",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "48e86a8fd53e4685e32edb89849dd0406fb18d2c45b002b38f443ddede85dab0",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      }
+    ],
+    "compiler_diagnostics": {
+      "implementation-1": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ],
+      "implementation-2": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ],
+      "implementation-3": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ]
+    },
+    "audited_sequence": [
+      {
+        "id": 1,
+        "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED"
+      },
+      {
+        "id": 2,
+        "event": "DESIGN_APPROVED"
+      },
+      {
+        "id": 3,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 4,
+        "event": "SEMANTIC_PLAN_ACCEPTED"
+      },
+      {
+        "id": 5,
+        "event": "PLAN_CREATED"
+      },
+      {
+        "id": 6,
+        "event": "ENGINEERING_PLAN_AUTHORIZED"
+      },
+      {
+        "id": 7,
+        "event": "PLAN_APPROVED"
+      },
+      {
+        "id": 8,
+        "event": "INTEGRATED_ENTRY_PASSED"
+      },
+      {
+        "id": 9,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 10,
+        "event": "INTEGRATION_INFRASTRUCTURE_RETRY"
+      },
+      {
+        "id": 11,
+        "event": "INTEGRATED_ENTRY_PASSED"
+      },
+      {
+        "id": 12,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 13,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 14,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 15,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 16,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 17,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 18,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 19,
+        "event": "INTEGRATION_SOURCE_GATE_MIGRATION"
+      },
+      {
+        "id": 20,
+        "event": "INTEGRATED_ENTRY_PASSED"
+      },
+      {
+        "id": 21,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 22,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 23,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 24,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 25,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 26,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 27,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 28,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 29,
+        "event": "INTEGRATED_SAME_PLAN_RETRY"
+      },
+      {
+        "id": 30,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 31,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 32,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 33,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 34,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 35,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 36,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 37,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 38,
+        "event": "INTEGRATED_SAME_PLAN_RETRY"
+      },
+      {
+        "id": 39,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 40,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 41,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 42,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 43,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 44,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 45,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 46,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      }
+    ]
+  },
+  {
+    "run": "context-failed-live",
+    "audit_db": "/private/tmp/schwab-integrated-sdlc-context/audit.db",
+    "authorization_precedes_all_source_application": true,
+    "all_source_transactions_rolled_back": true,
+    "transactions": [
+      {
+        "transaction_id": "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      },
+      {
+        "transaction_id": "77b15cd3-c87d-4fa5-a58d-5a666367255e",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      },
+      {
+        "transaction_id": "02960fba-eb23-457d-a58c-4c437067b023",
+        "status": "rolled_back",
+        "original_hash": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+        "failed_hash": "7f31857ce58e5b12cf17a2fb4b77d49a46ca32caa76969047effa3278770bbb3",
+        "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "line_110": "        this.repository = repository;",
+        "creation_method_occurrences": 2,
+        "original_constructor_body_retained_as_suffix": true,
+        "observed_autowired_overload": "UrlService(UrlRepository, java.time.Clock)",
+        "approved_autowired_overload": "UrlService(UrlRepository)"
+      }
+    ],
+    "compiler_diagnostics": {
+      "implementation-1": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ],
+      "implementation-2": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ],
+      "implementation-3": [
+        "[110,9] illegal start of type",
+        "[110,13] ';' expected",
+        "[110,24] <identifier> expected",
+        "[113,12] unnamed classes are a preview feature and are disabled by default.",
+        "[192,1] class, interface, enum, or record expected",
+        "[1,1] unnamed class should not have package declaration"
+      ]
+    },
+    "audited_sequence": [
+      {
+        "id": 1,
+        "event": "APPROVED_REQUIREMENT_CONTEXT_IMPORTED"
+      },
+      {
+        "id": 2,
+        "event": "DESIGN_APPROVED"
+      },
+      {
+        "id": 3,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 4,
+        "event": "SEMANTIC_PLAN_ACCEPTED"
+      },
+      {
+        "id": 5,
+        "event": "PLAN_CREATED"
+      },
+      {
+        "id": 6,
+        "event": "ENGINEERING_PLAN_AUTHORIZED"
+      },
+      {
+        "id": 7,
+        "event": "PLAN_APPROVED"
+      },
+      {
+        "id": 8,
+        "event": "INTEGRATED_ENTRY_PASSED"
+      },
+      {
+        "id": 9,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 10,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 11,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 12,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 13,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 14,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 15,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 16,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 17,
+        "event": "INTEGRATED_SAME_PLAN_RETRY"
+      },
+      {
+        "id": 18,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 19,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 20,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 21,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 22,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 23,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 24,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 25,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 26,
+        "event": "INTEGRATED_SAME_PLAN_RETRY"
+      },
+      {
+        "id": 27,
+        "event": "MODEL_RESPONSE_RECORDED"
+      },
+      {
+        "id": 28,
+        "event": "FILE_CHECKPOINT_CREATED"
+      },
+      {
+        "id": 29,
+        "event": "TRANSACTION_APPLIED"
+      },
+      {
+        "id": 30,
+        "event": "ENGINEERING_EXECUTION_BOUND"
+      },
+      {
+        "id": 31,
+        "event": "INTEGRATED_IMPLEMENTATION_APPLIED"
+      },
+      {
+        "id": 32,
+        "event": "IMPLEMENTATION_SOURCE_GATE_FAILED"
+      },
+      {
+        "id": 33,
+        "event": "TRANSACTION_ROLLED_BACK"
+      },
+      {
+        "id": 34,
+        "event": "INTEGRATED_STAGE_STOPPED"
+      },
+      {
+        "id": 35,
+        "event": "FAILED_ACCEPTANCE_RESTORATION_VERIFIED"
+      }
+    ]
+  }
+]

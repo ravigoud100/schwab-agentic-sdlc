@@ -1,3 +1,4 @@
+from pathlib import Path
 import json
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -19,6 +20,7 @@ from main import (
 
 def _state():
     return {
+        "workspace": "/tmp/test-workflow",
         "workflow_id": "replan-test",
         "requirement": "Add expiration support",
         "plan": "Implement expiration and run Maven tests.",

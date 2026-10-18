@@ -1,0 +1,26 @@
+{
+  "documentation_run_id": "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+  "source_test_workflow_id": "11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+  "bundle_hash": "7f97aef822b9ceaeb391d9343ecd36d96ab4e33241e21549149dd69abd7c1ce8",
+  "human_test_results_review_approved": true,
+  "documentation_hash": "6331ac4dc91b020e2913d2074ac1d177e653794b97356e1bebd6c28086eccd14",
+  "release_readiness": "BLOCKED",
+  "blockers": [
+    "matching_implementation_plan_approved",
+    "release_security_and_operational_signoff"
+  ],
+  "pending_node": "final_review",
+  "checkpoints": [
+    [
+      "801cc1ad-65ab-40b6-95a0-0a5fa2218235",
+      8
+    ]
+  ],
+  "source_integrity_reverified": true,
+  "existing_project_documentation_unchanged": true,
+  "deployment_authorized": false,
+  "earlier_four_file_plan_authorized": false,
+  "documentation_provenance": "live model selected vetted fact IDs; deterministic renderer produced prose",
+  "initial_attempt": "rejected schema; no document published; original raw response was not retained",
+  "subsequent_attempt": "corrected explicit schema; generated accepted documentation on the same approved bundle"
+}

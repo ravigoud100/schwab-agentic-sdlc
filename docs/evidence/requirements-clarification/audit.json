@@ -1,0 +1,73 @@
+[
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T20:57:10.936647+00:00",
+    "agent": "clarification_demo",
+    "event": "WORKFLOW_STARTED",
+    "details": {
+      "requirement": "Enhance the existing URL shortener with optional URL expiration. Preserve existing links, HTTP 410 for expired URLs, and existing active-link redirect behavior. There is exactly one deliberately unresolved configuration decision for this demonstration: use a fixed 24-hour TTL computed from link creation, OR let each caller provide a future UTC expiration timestamp. Neither mode is approved yet. Ask the human to choose between those two modes before codebase analysis or planning. Do not select the suggested default automatically. No code changes may execute until the later engineering plan approval."
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T20:57:24.767592+00:00",
+    "agent": "requirements_agent",
+    "event": "REQUIREMENTS_VALIDATED",
+    "details": {
+      "version": 1,
+      "requirements_hash": "23bf75a1f88e614552156382cad2cf370abc89e46a80b3b1c2ec57a3908bb1c8",
+      "ambiguity_ids": [
+        "A1"
+      ]
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:00:18.571586+00:00",
+    "agent": "human_clarification",
+    "event": "CLARIFICATION_APPROVED",
+    "details": {
+      "requirement_version": 1,
+      "answers": {
+        "A1": "Custom expiration timestamp"
+      },
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:10.422073+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 1,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "10e14e610ac314c55c2d89e4ffb53582e75e17c95a478077544d06ccb710c2fa",
+      "task_definition_hash": "ab221ea93103413e8254ce3518cf0ec215335587452a9d9587d2c444bae0341a"
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:41.301762+00:00",
+    "agent": "clarification_demo",
+    "event": "UNAPPROVED_PLAN_REGENERATION_REQUESTED",
+    "details": {
+      "reason": "First plan used generic example description; require explicit approved clarification behavior",
+      "previous_plan_version": 1
+    }
+  },
+  {
+    "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+    "timestamp": "2026-10-16T21:01:58.236311+00:00",
+    "agent": "planning_agent",
+    "event": "PLAN_CREATED",
+    "details": {
+      "plan_version": 2,
+      "requirement_version": 1,
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "plan_hash": "10e14e610ac314c55c2d89e4ffb53582e75e17c95a478077544d06ccb710c2fa",
+      "task_definition_hash": "ab221ea93103413e8254ce3518cf0ec215335587452a9d9587d2c444bae0341a"
+    }
+  }
+]

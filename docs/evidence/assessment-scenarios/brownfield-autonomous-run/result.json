@@ -1,0 +1,68 @@
+{
+  "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+  "final_status": "BROWNFIELD_RESULTS_REVIEWED",
+  "attempt": 1,
+  "validation_passed": true,
+  "maven_exit_code": 0,
+  "interrupts": [
+    {
+      "type": "BROWNFIELD_RESULTS_REVIEW",
+      "validation": {
+        "passed": true,
+        "exit_code": 0,
+        "diagnostics": "er work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3\nOpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended\nWARNING: A Java agent has been loaded dynamically (/private/tmp/schwab-test-generation/maven-cache/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)\nWARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning\nWARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information\nWARNING: Dynamic loading of agents will be disallowed by default in a future release\n[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.957 s -- in url_shortener.UrlExpirationIntegrationTests\n[INFO] Running url_shortener.UrlStatusIntegrationTest\n2026-10-17T21:57:00.425-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlStatusIntegrationTest]: UrlStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.\n2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlStatusIntegrationTest\n2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlStatusIntegrationTest]: UrlStatusIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.\n2026-10-17T21:57:00.426-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlStatusIntegrationTest\n[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in url_shortener.UrlStatusIntegrationTest\n[INFO] Running url_shortener.UrlShortenerApplicationTests\n2026-10-17T21:57:00.446-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.\n2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests\n2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [url_shortener.UrlShortenerApplicationTests]: UrlShortenerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.\n2026-10-17T21:57:00.447-05:00  INFO 84368 --- [url-shortener] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration url_shortener.UrlShortenerApplication for test class url_shortener.UrlShortenerApplicationTests\n\n  .   ____          _            __ _ _\n /\\\\ / ___'_ __ _ _(_)_ __  __ _ \\ \\ \\ \\\n( ( )\\___ | '_ | '_| | '_ \\/ _` | \\ \\ \\ \\\n \\\\/  ___)| |_)| | | | | || (_| |  ) ) ) )\n  '  |____| .__|_| |_|_| |_\\__, | / / / /\n =========|_|==============|___/=/_/_/_/\n\n :: Spring Boot ::                (v4.0.8)\n\n2026-10-17T21:57:00.456-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Starting UrlShortenerApplicationTests using Java 21.0.12.1 with PID 84368 (started by ruwicc in /Users/ruwicc/Projects/schwab-agentic-sdlc/docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener)\n2026-10-17T21:57:00.456-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : No active profile set, falling back to 1 default profile: \"default\"\n2026-10-17T21:57:00.500-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.\n2026-10-17T21:57:00.502-05:00  INFO 84368 --- [url-shortener] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 1 ms. Found 1 JPA repository interface.\n2026-10-17T21:57:00.524-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...\n2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:2ddc8527-dad4-4489-9a7a-0bd7eeae0ded user=SA\n2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.\n2026-10-17T21:57:00.525-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]\n2026-10-17T21:57:00.531-05:00  INFO 84368 --- [url-shortener] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer\n2026-10-17T21:57:00.531-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:\n\tDatabase JDBC URL [jdbc:h2:mem:2ddc8527-dad4-4489-9a7a-0bd7eeae0ded]\n\tDatabase driver: H2 JDBC Driver\n\tDatabase dialect: H2Dialect\n\tDatabase version: 2.4.240\n\tDefault catalog/schema: 2DDC8527-DAD4-4489-9A7A-0BD7EEAE0DED/PUBLIC\n\tAutocommit mode: undefined/unknown\n\tIsolation level: READ_COMMITTED [default READ_COMMITTED]\n\tJDBC fetch size: 100\n\tPool: DataSourceConnectionProvider\n\tMinimum pool size: undefined/unknown\n\tMaximum pool size: undefined/unknown\n2026-10-17T21:57:00.539-05:00  INFO 84368 --- [url-shortener] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)\n2026-10-17T21:57:00.540-05:00  INFO 84368 --- [url-shortener] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'\n2026-10-17T21:57:00.551-05:00  WARN 84368 --- [url-shortener] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning\n2026-10-17T21:57:00.586-05:00  INFO 84368 --- [url-shortener] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'\n2026-10-17T21:57:00.590-05:00  INFO 84368 --- [url-shortener] [           main] u.UrlShortenerApplicationTests           : Started UrlShortenerApplicationTests in 0.14 seconds (process running for 2.332)\n[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.146 s -- in url_shortener.UrlShortenerApplicationTests\n[INFO] \n[INFO] Results:\n[INFO] \n[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0\n[INFO] \n[INFO] ------------------------------------------------------------------------\n[INFO] BUILD SUCCESS\n[INFO] ------------------------------------------------------------------------\n[INFO] Total time:  3.295 s\n[INFO] Finished at: 2026-10-17T21:57:00-05:00\n[INFO] ------------------------------------------------------------------------\n\n"
+      },
+      "attempt": 1
+    }
+  ],
+  "changed_files": [
+    "url-shortener/src/main/java/url_shortener/UrlController.java",
+    "url-shortener/src/main/java/url_shortener/UrlService.java",
+    "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java"
+  ],
+  "receipt": {
+    "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+    "plan_hash": "bcdf4c5f2b0db02293b30b00c34ac51f6e706f38de9173210f482adb82ce65ee",
+    "scope": [
+      "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java"
+    ],
+    "baseline": {
+      "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+      "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+    },
+    "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+    "contract": "UrlService.getStatus returns Map<String, Object> with shortCode and expired, @Transactional(readOnly = true), throws ResponseStatusException(HttpStatus.NOT_FOUND), never increments clicks. UrlController delegates."
+  },
+  "results_bundle_hash": "abf8d6df7637dc4f59791eed1834e62d04c59aa965c2bc2987db60693881b0bf",
+  "approval_record": {
+    "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+    "bundle_hash": "abf8d6df7637dc4f59791eed1834e62d04c59aa965c2bc2987db60693881b0bf",
+    "plan_hash": "bcdf4c5f2b0db02293b30b00c34ac51f6e706f38de9173210f482adb82ce65ee",
+    "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+    "results_bundle": {
+      "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+      "plan_hash": "bcdf4c5f2b0db02293b30b00c34ac51f6e706f38de9173210f482adb82ce65ee",
+      "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+      "attempt": 1,
+      "maven_exit_code": 0,
+      "tests_run": 11,
+      "tests_failed": 0,
+      "tests_errors": 0,
+      "tests_skipped": 0,
+      "changed_files": [
+        "url-shortener/src/main/java/url_shortener/UrlController.java",
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java"
+      ],
+      "production_hashes": {
+        "url-shortener/src/main/java/url_shortener/UrlService.java": "a6a77162f6ce7746bd6a0cec0c7b7caa9d38d32271aa27cbb88454e8d364549a",
+        "url-shortener/src/main/java/url_shortener/UrlController.java": "0f1917217a1cc97d494b1197e68e82a9095c3cb5e650d00a40daa2a6e91e3773",
+        "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java": "97e0f2ac709501709fd6f8359644a27926cf9a6d9ab809fc709054c26e5324b5"
+      }
+    },
+    "status": "BROWNFIELD_RESULTS_REVIEWED",
+    "decision_source": "explicit user decision: APPROVE BROWNFIELD RESULTS REVIEW"
+  }
+}

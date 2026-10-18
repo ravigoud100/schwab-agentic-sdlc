@@ -1,0 +1,31 @@
+{
+  "workflow_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "status": "PLAN_CREATED",
+  "requirement_version": 1,
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+  "design_version": 2,
+  "design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "approved_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "plan_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "plan": "{\n  \"tasks\": [\n    {\n      \"task_id\": \"implement-requirement\",\n      \"description\": \"Implement URL expiration functionality with a custom expiration timestamp provided by the caller. Preserve existing links, return HTTP 410 for expired URLs, and maintain existing active-link redirect behavior. Ensure that the implementation adheres to the approved obligations and test cases.\",\n      \"dependencies\": [],\n      \"execution_type\": \"implementation\",\n      \"allowed_files\": [\n        \"url-shortener/src/main/java/url_shortener/ShortUrl.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\",\n        \"url-shortener/src/main/java/url_shortener/UrlController.java\",\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    }\n  ],\n  \"coverage\": [\n    {\n      \"obligation_id\": \"caller-expiration\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"accept_optional_input\",\n        \"field\": \"expiresAt\",\n        \"source\": \"caller\",\n        \"representation\": \"UTC_timestamp\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"future-only\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"validate\",\n        \"field\": \"expiresAt\",\n        \"predicate\": \"strictly_after_now\",\n        \"otherwise\": \"rejected\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"utc-consistency\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"compare_and_store\",\n        \"field\": \"expiresAt\",\n        \"time_basis\": \"UTC\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"missing-compatibility\",\n      \"kind\": \"implementation\",\n      \"spec\": {\n        \"operation\": \"preserve\",\n        \"when\": \"expiresAt_missing\",\n        \"behavior\": \"no_expiration_existing_links_and_redirects\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/main/java/url_shortener/UrlService.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"test-future\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_plus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"accepted\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"test-past\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now_minus_1_hour\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"test-boundary\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": \"now\",\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"rejected\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    },\n    {\n      \"obligation_id\": \"test-missing\",\n      \"kind\": \"test\",\n      \"spec\": {\n        \"input_expiresAt\": null,\n        \"clock\": \"fixed_UTC\",\n        \"expected\": \"no_expiration\"\n      },\n      \"task_id\": \"implement-requirement\",\n      \"files\": [\n        \"url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java\"\n      ]\n    }\n  ]\n}",
+  "plan_requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "approved_task_hash": "",
+  "semantic_valid": true,
+  "semantic_history": [
+    {
+      "attempt": 1,
+      "error": "Plan requires a structured coverage array",
+      "proposal": "{\"tasks\": [{\"task_id\": \"generic\", \"description\": \"Implement URL expiration functionality.\", \"dependencies\": [], \"execution_type\": \"implementation\", \"allowed_files\": [\"url-shortener/src/main/java/url_shortener/ShortUrl.java\"]}]}",
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1
+    }
+  ],
+  "semantic_errors": [],
+  "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "next_nodes": [
+    "approval"
+  ],
+  "planning_calls": 1
+}

@@ -1,0 +1,7 @@
+{
+  "api_change_summary": ["api"],
+  "implementation_notes": ["source_origin", "clock", "source_hash", "test_origin"],
+  "testing_evidence": ["baseline", "positive", "negative"],
+  "limitations": ["bounded", "plan"],
+  "release_considerations": ["review", "release"]
+}

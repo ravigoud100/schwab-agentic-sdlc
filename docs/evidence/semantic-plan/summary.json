@@ -1,0 +1,78 @@
+{
+  "runs": {
+    "initial-schema-failure": {
+      "status": "STOPPED_SEMANTIC_PLAN_INVALID",
+      "attempts": [
+        {
+          "attempt": 1,
+          "origin": "deliberately_generic_fixture"
+        },
+        {
+          "attempt": 2,
+          "origin": "live_ollama"
+        },
+        {
+          "attempt": 3,
+          "origin": "live_ollama"
+        }
+      ],
+      "next_nodes": [],
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1,
+      "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+      "graph_checkpoint_count": 13,
+      "event_sequence": [
+        "SEMANTIC_ACCEPTANCE_STARTED",
+        "REQUIREMENT_CONTRACT_APPROVED",
+        "SEMANTIC_PLAN_REJECTED",
+        "SEMANTIC_PLAN_REJECTED",
+        "SEMANTIC_PLAN_REJECTED"
+      ]
+    },
+    "success": {
+      "status": "PLAN_CREATED",
+      "attempts": [
+        {
+          "attempt": 1,
+          "origin": "deliberately_generic_fixture"
+        },
+        {
+          "attempt": 2,
+          "origin": "live_ollama"
+        }
+      ],
+      "next_nodes": [
+        "approval"
+      ],
+      "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+      "approved_contract_hash": "26214f35a9e30c68f8eef03ca20cc973e696f933930519dce25b7696823432b3",
+      "requirement_version": 1,
+      "thread_id": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+      "graph_checkpoint_count": 12,
+      "event_sequence": [
+        "SEMANTIC_ACCEPTANCE_STARTED",
+        "REQUIREMENT_CONTRACT_APPROVED",
+        "SEMANTIC_PLAN_REJECTED",
+        "SEMANTIC_PLAN_ACCEPTED",
+        "PLAN_CREATED"
+      ]
+    }
+  },
+  "java_files_changed": 0,
+  "java_sha256": {
+    "url-shortener/src/test/java/url_shortener/UrlExpirationIntegrationTests.java": "43a670a89b5a762156a0a7b4b0aab3561867a569c5c8e748808410780be66ff2",
+    "url-shortener/src/test/java/url_shortener/UrlShortenerApplicationTests.java": "c7ed85767d614f691a373a07642ae9b99cd2960322076686e2dd3084698fd3cb",
+    "url-shortener/src/main/java/url_shortener/RedirectController.java": "c4a61615401d8522e66d9df459ea88e60034d186e29d774e9e450e833c1b5d72",
+    "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+    "url-shortener/src/main/java/url_shortener/ShortUrl.java": "cdd604034a66b47eebba74cb5e761c55771689012b8efd783dd9329c56d62ca3",
+    "url-shortener/src/main/java/url_shortener/UrlRepository.java": "579bf8f59d3a4829bdd09321f2e62df1bb0f9c3e8a29709ecb5999014ed4b5de",
+    "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae",
+    "url-shortener/src/main/java/url_shortener/UrlShortenerApplication.java": "be8101c168b3050243da5ed6db9e850674f03ff2c4e25c0afe01dad1f7571f80"
+  },
+  "maven_executed": false,
+  "checkpoint_source": "/private/tmp/schwab-requirements-clarification",
+  "live_model": "qwen2.5-coder:latest",
+  "controlled_first_proposal": true,
+  "note": "Separate SQLite checkpoint forks retaining the prior clarified thread and requirement hash. First run exposed conflicting prompt schema; second run used corrected schema. No edits executed."
+}

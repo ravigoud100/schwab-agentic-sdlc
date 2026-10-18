@@ -1,0 +1,13 @@
+{
+  "tasks": [
+    {
+      "task_id": "implement-requirement",
+      "description": "Add public boolean hasReachedClickLimit(long maxClicks) to the existing ShortUrl entity. Throw IllegalArgumentException when maxClicks is zero or negative. Otherwise return true when the existing click count is greater than or equal to maxClicks, false otherwise. Preserve all existing behavior.",
+      "dependencies": [],
+      "execution_type": "implementation",
+      "allowed_files": [
+        "url-shortener/src/main/java/url_shortener/ShortUrl.java"
+      ]
+    }
+  ]
+}

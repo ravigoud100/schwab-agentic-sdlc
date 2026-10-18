@@ -1,0 +1,109 @@
+[
+  {
+    "directory": "/private/tmp/schwab-live-status-api",
+    "workflow_id": "dfcbe3a6-143f-4367-8152-91c4e2c7fa43",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success",
+    "workflow_id": "3d013f80-36bf-45bc-bccd-8f16fabbcb9f",
+    "status": "STOPPED_IMPLEMENTATION_BLOCKED",
+    "maven_ran": false,
+    "implementation_block": {
+      "error_type": "ValueError"
+    },
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-2",
+    "workflow_id": "24324731-9308-4538-ba78-9c8b0371901b",
+    "status": "STOPPED_IMPLEMENTATION_BLOCKED",
+    "maven_ran": false,
+    "implementation_block": {
+      "error_type": "ValueError",
+      "error": "Duplicate proposed edit path"
+    },
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-3",
+    "workflow_id": "80c0e672-87d1-422c-93ab-ce21146f963e",
+    "status": "STOPPED_IMPLEMENTATION_BLOCKED",
+    "maven_ran": false,
+    "implementation_block": {
+      "error_type": "ValueError",
+      "error": "Expected source text must occur exactly once"
+    },
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-4",
+    "workflow_id": "46dbc4b4-71f1-4fac-9ea9-20970551a39c",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-5",
+    "workflow_id": "d7655427-3445-4b2c-a02a-85e1aae6933d",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-6",
+    "workflow_id": "4a3bdfb4-af2e-4f46-a686-0a40a5c32ddb",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-7",
+    "workflow_id": "655b1731-9fa0-41ac-90c3-33317966e439",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-8",
+    "workflow_id": "8d2bdda1-d345-4fd0-b35f-3ab96d8c41b0",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-9",
+    "workflow_id": "2309b50a-2214-466d-858b-b2e28386bdbf",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-10",
+    "workflow_id": "cfba6727-3ac7-4771-b66f-e27cbb5b9435",
+    "status": "STOPPED_ROLLED_BACK",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": []
+  },
+  {
+    "directory": "/private/tmp/schwab-live-status-api-success-11",
+    "workflow_id": "b9866229-4f35-408c-872c-d7c4a6c5e338",
+    "status": "AWAITING_FINAL_HUMAN_REVIEW",
+    "maven_ran": true,
+    "implementation_block": null,
+    "changed_files": [
+      "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "url-shortener/src/main/java/url_shortener/UrlService.java"
+    ]
+  }
+]

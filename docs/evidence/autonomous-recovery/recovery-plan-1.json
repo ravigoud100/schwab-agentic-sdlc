@@ -1,0 +1,13 @@
+{
+  "tasks": [
+    {
+      "execution_type": "implementation",
+      "task_id": "implement-requirement",
+      "description": "Add a new GET endpoint /api/urls/{shortCode}/status to the existing URL API. Return HTTP 200 with JSON fields shortCode (string) and expired (boolean). An unset or future expiration means expired=false; a past expiration means true. Unknown codes must return HTTP 404. Reading status must never increment clicks. Add public java.util.Map<String,Object> getStatus(String shortCode) to UrlService using a read-only transaction, the existing repository lookup, existing 404 behavior, and Instant.now() to evaluate expiration. Add the annotated controller endpoint to UrlController, delegating to urlService.getStatus(shortCode). Preserve existing endpoints and behavior.",
+      "dependencies": [],
+      "allowed_files": ["url-shortener/src/main/java/url_shortener/UrlService.java", "url-shortener/src/main/java/url_shortener/UrlController.java"]
+    }
+  ],
+  "change_summary": "The failure evidence indicates a compilation error due to the use of 'Mapp' instead of 'Map' in the UrlService.java file. The correction strategy involves replacing 'Mapp' with 'Map' in the specified files.",
+  "correction_strategy": "Replace 'Mapp' with 'Map' in the following files:\n- url-shortener/src/main/java/url_shortener/UrlService.java\n- url-shortener/src/main/java/url_shortener/UrlController.java"
+}

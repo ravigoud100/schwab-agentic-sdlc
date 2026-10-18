@@ -1,0 +1,38 @@
+{
+  "classification": "greenfield",
+  "requirement": "Add a new URL health component that reports a stable ready status.",
+  "architecture": {
+    "component": "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+    "contract": "UrlHealthComponent.status() returns the literal ready status.",
+    "compatibility": "A Spring component with no external I/O; no controller, dependency, configuration or existing test change."
+  },
+  "plan": {
+    "tasks": [
+      {
+        "task_id": "add-url-health-component",
+        "execution_type": "implementation",
+        "description": "Create only UrlHealthComponent as an injectable Spring component with a deterministic ready status.",
+        "dependencies": [],
+        "allowed_files": [],
+        "allowed_new_files": [
+          "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java"
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "command": "maven clean test",
+    "assertions": [
+      "Spring context starts",
+      "existing tests remain executable"
+    ]
+  },
+  "documentation": {
+    "required": [
+      "new component contract",
+      "source diff",
+      "Maven evidence",
+      "known limits"
+    ]
+  }
+}

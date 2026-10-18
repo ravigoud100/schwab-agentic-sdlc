@@ -1,0 +1,45 @@
+--- a/url-shortener/src/main/java/url_shortener/UrlService.java
++++ b/url-shortener/src/main/java/url_shortener/UrlService.java
+@@ -3,6 +3,7 @@
+ import org.springframework.stereotype.Service;
+ import java.security.SecureRandom;
+ import java.time.Instant;
++import java.util.Map;
+ 
+ @Service
+ public class UrlService {
+@@ -97,4 +98,21 @@
+                     )
+             );
+ }
++
++  @org.springframework.transaction.annotation.Transactional(readOnly = true)
++public java.util.Map<String, Object> getStatus(String shortCode) {
++
++    ShortUrl shortUrl = repository.findByShortCode(shortCode)
++            .orElseThrow(() ->
++                    new org.springframework.web.server.ResponseStatusException(
++                            org.springframework.http.HttpStatus.NOT_FOUND,
++                            "Short URL not found"
++                    )
++            );
++
++    return Map.of(
++            "shortCode", shortUrl.getShortCode(),
++            "expired", shortUrl.isExpired(Instant.now())
++    );
+ }
++}
+--- a/url-shortener/src/main/java/url_shortener/UrlController.java
++++ b/url-shortener/src/main/java/url_shortener/UrlController.java
+@@ -59,4 +59,10 @@
+             "createdAt", shortUrl.getCreatedAt().toString()
+     );
+ }
++
++  @GetMapping("/{shortCode}/status")
++public java.util.Map<String, Object> getStatus(@PathVariable String shortCode) {
++
++    return urlService.getStatus(shortCode);
+ }
++}

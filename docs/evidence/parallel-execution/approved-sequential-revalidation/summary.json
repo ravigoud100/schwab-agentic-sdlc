@@ -1,0 +1,57 @@
+{
+  "failed_run": {
+    "exit_code": 1,
+    "cases": {
+      "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+      "url_shortener.GeneratedExpirationBoundaryTest#futureExpiration": "error",
+      "url_shortener.GeneratedExpirationBoundaryTest#missingExpiration": "error",
+      "url_shortener.GeneratedExpirationBoundaryTest#equalNowExpiration": "error",
+      "url_shortener.GeneratedExpirationBoundaryTest#pastExpiration": "error",
+      "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+    },
+    "command": [
+      "./mvnw",
+      "-o",
+      "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+      "clean",
+      "test"
+    ]
+  },
+  "successful_environment_retry": {
+    "exit_code": 0,
+    "cases": {
+      "url_shortener.UrlExpirationIntegrationTests#redirectsActiveUrlWithFound": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#expiredUrlDoesNotIncreaseClickCount": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#rejectsPastExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithoutExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#returnsGoneForExpiredUrl": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#createsShortUrlWithFutureExpiration": "passed",
+      "url_shortener.UrlExpirationIntegrationTests#returnsNotFoundForUnknownShortCode": "passed",
+      "url_shortener.GeneratedExpirationBoundaryTest#futureExpiration": "passed",
+      "url_shortener.GeneratedExpirationBoundaryTest#missingExpiration": "passed",
+      "url_shortener.GeneratedExpirationBoundaryTest#equalNowExpiration": "passed",
+      "url_shortener.GeneratedExpirationBoundaryTest#pastExpiration": "passed",
+      "url_shortener.UrlShortenerApplicationTests#contextLoads": "passed"
+    },
+    "command": [
+      "./mvnw",
+      "-o",
+      "-Dmaven.repo.local=/private/tmp/schwab-test-generation/maven-cache",
+      "clean",
+      "test"
+    ]
+  },
+  "same_command": true,
+  "source_tests_build_byte_identical": true,
+  "historical_bundle_sha256": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+  "sequential_final_status": "STOPPED_RELEASE_BLOCKED",
+  "release_authorized": false,
+  "deployment_authorized": false,
+  "diagnostic": "Mockito Byte Buddy inline mock maker could not self-attach; identical Maven command passed outside sandbox"
+}

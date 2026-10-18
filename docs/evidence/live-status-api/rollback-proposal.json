@@ -1,0 +1,14 @@
+{
+  "edits": [
+    {
+      "path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "old_text": "    public UrlService(UrlRepository repository) {",
+      "new_text": "    @org.springframework.transaction.annotation.Transactional(readOnly = true)\n    public java.util.Map<String, Object> getStatus(String shortCode) {\n        java.util.Optional<ShortUrl> shortUrlOptional = repository.findByShortCode(shortCode);\n        if (shortUrlOptional.isEmpty()) {\n            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, \"Short URL not found\");\n        }\n        ShortUrl shortUrl = shortUrlOptional.get();\n        boolean expired = shortUrl.isExpired(java.time.Instant.now());\n        return java.util.Map.of(\"shortCode\", shortCode, \"expired\", expired);\n    }\n\n    public UrlService(UrlRepository repository) {"
+    },
+    {
+      "path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "old_text": "    public UrlController(UrlService urlService) {",
+      "new_text": "@GetMapping(\"/{shortCode}/status\")\n    public java.util.Map<String, Object> getStatus(@PathVariable String shortCode) {\n        return urlService.getStatus(shortCode);\n    }\n\n    public UrlController(UrlService urlService) {"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "tasks": [
+    {
+      "task_id": "implement-requirement",
+      "description": "Implement the feature to allow users to choose between a fixed 24-hour TTL and a custom expiration timestamp for URL shortening. Ensure that the system returns HTTP 410 for expired URLs and maintains existing active-link redirect behavior. The implementation should not execute any code changes until the later engineering plan approval.",
+      "dependencies": [],
+      "execution_type": "implementation",
+      "allowed_files": [
+        "url-shortener/src/main/java/url_shortener/ShortUrl.java",
+        "url-shortener/src/main/java/url_shortener/UrlService.java",
+        "url-shortener/src/main/java/url_shortener/UrlController.java",
+        "url-shortener/src/main/java/url_shortener/RedirectController.java",
+        "url-shortener/src/main/java/url_shortener/UrlRepository.java"
+      ]
+    }
+  ]
+}

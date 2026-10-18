@@ -1,0 +1,56 @@
+{
+  "workflow_id": "11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+  "thread_id": "11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+  "checkpoint_rows": [
+    [
+      "11e9ef18-a360-43dc-a455-069ba1f7a8d4",
+      4
+    ]
+  ],
+  "parent_requirement_thread": "d3ea55e8-4661-4a8d-a370-2c14ad42f5ac",
+  "requirements_hash": "1de7e94476528dfd37493b75a48cc91b60b085cf152d34b710f7387139705b2d",
+  "approved_parent_design_hash": "4b956c37bad924eb54b1e563ebae1f4f49e5e0f64eef1bd4d108d85f3ea572cf",
+  "approved_clock_and_test_scope_hash": "5ee3306e14a083229c8afecae45f880fcf06eafd68dad26685fa67c10452ba24",
+  "stage_status": "AWAITING_TEST_RESULTS_REVIEW",
+  "phases": {
+    "baseline": {
+      "exit_code": 0,
+      "tests": 8,
+      "passed": 8,
+      "failures": []
+    },
+    "negative": {
+      "exit_code": 1,
+      "tests": 12,
+      "passed": 11,
+      "failures": [
+        {
+          "class": "url_shortener.GeneratedExpirationBoundaryTest",
+          "method": "equalNowExpiration",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "Expected org.springframework.web.server.ResponseStatusException to be thrown, but nothing was thrown."
+        }
+      ]
+    },
+    "positive": {
+      "exit_code": 0,
+      "tests": 12,
+      "passed": 12,
+      "failures": []
+    }
+  },
+  "original_tests_byte_identical": true,
+  "build_and_unrelated_files_byte_identical_within_isolated_runs": true,
+  "production_java_and_tests_unchanged": true,
+  "isolated_source_changes": [
+    "url-shortener/src/main/java/url_shortener/UrlService.java"
+  ],
+  "isolated_new_test_files": [
+    "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"
+  ],
+  "negative_mutation_restored": true,
+  "generated_java_origin": "trusted deterministic renderer; live model supplies constrained approved-case JSON",
+  "clock_implementation_origin": "exact human-reviewed patch; not live AI source generation",
+  "integration_scope": "separately approval-gated LangGraph subworkflow; original engineering plan remains unapproved",
+  "snapshot_note": "Temporary Git snapshots normalize Windows mvnw.cmd line endings; Java/tests/pom match the unchanged production baseline."
+}

@@ -1,0 +1,1506 @@
+{
+  "schema_version": 1,
+  "scope": "Selected retained database branches; not a production reliability estimate",
+  "definitions": {
+    "success_rate": "Latest observed engineering outcome; unknown outcomes excluded with coverage counts. Not release success.",
+    "mttr": "First engineering failure in an incident through next passing required engineering validation; includes review/idle time. Unresolved incidents excluded and listed.",
+    "latency": "WORKFLOW_STARTED through terminal audit/checkpoint completion only. Imported/open workflows unavailable.",
+    "execution_time": "Union of explicitly paired agent start/end wall intervals, not CPU time; parallel intervals not double-counted.",
+    "human_wait": "Review-ready audit/checkpoint to decision wall time, including scheduling/resume overhead; partial coverage only.",
+    "rollback": "Unique transaction IDs; duplicate wrapper events are not additional rollbacks.",
+    "provenance": "Caller-supplied cohort labels; copied/forked databases are branch observations, not independent production samples."
+  },
+  "cohorts": {
+    "controlled_failure_live_recovery": {
+      "selected_workflows": 1,
+      "engineering_evaluable_workflows": 1,
+      "engineering_passed_workflows": 1,
+      "engineering_success_rate": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "engineering_unknown_workflows": 0,
+      "workflows_with_observed_automatic_retry": 1,
+      "observed_retry_workflow_frequency": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "workflows_with_rollback": 1,
+      "observed_rollback_workflow_frequency": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "mttr_seconds": {
+        "value": 72.414036,
+        "unavailable_reason": null
+      },
+      "latency_samples": 0,
+      "mean_end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "No complete workflow start/terminal pairs"
+      },
+      "released_workflows": 0,
+      "release_blocked_workflows": 0
+    },
+    "controlled_validation_failure_live_model": {
+      "selected_workflows": 1,
+      "engineering_evaluable_workflows": 1,
+      "engineering_passed_workflows": 0,
+      "engineering_success_rate": {
+        "value": 0.0,
+        "unavailable_reason": null
+      },
+      "engineering_unknown_workflows": 0,
+      "workflows_with_observed_automatic_retry": 0,
+      "observed_retry_workflow_frequency": {
+        "value": 0.0,
+        "unavailable_reason": null
+      },
+      "workflows_with_rollback": 1,
+      "observed_rollback_workflow_frequency": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No complete recovery samples"
+      },
+      "latency_samples": 1,
+      "mean_end_to_end_latency_seconds": {
+        "value": 29.458694,
+        "unavailable_reason": null
+      },
+      "released_workflows": 0,
+      "release_blocked_workflows": 0
+    },
+    "deterministic_parallel_fixture": {
+      "selected_workflows": 2,
+      "engineering_evaluable_workflows": 2,
+      "engineering_passed_workflows": 1,
+      "engineering_success_rate": {
+        "value": 0.5,
+        "unavailable_reason": null
+      },
+      "engineering_unknown_workflows": 0,
+      "workflows_with_observed_automatic_retry": 0,
+      "observed_retry_workflow_frequency": {
+        "value": 0.0,
+        "unavailable_reason": null
+      },
+      "workflows_with_rollback": 1,
+      "observed_rollback_workflow_frequency": {
+        "value": 0.5,
+        "unavailable_reason": null
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No complete recovery samples"
+      },
+      "latency_samples": 0,
+      "mean_end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "No complete workflow start/terminal pairs"
+      },
+      "released_workflows": 0,
+      "release_blocked_workflows": 0
+    },
+    "retained_live_integrated": {
+      "selected_workflows": 3,
+      "engineering_evaluable_workflows": 3,
+      "engineering_passed_workflows": 1,
+      "engineering_success_rate": {
+        "value": 0.3333333333333333,
+        "unavailable_reason": null
+      },
+      "engineering_unknown_workflows": 0,
+      "workflows_with_observed_automatic_retry": 3,
+      "observed_retry_workflow_frequency": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "workflows_with_rollback": 3,
+      "observed_rollback_workflow_frequency": {
+        "value": 1.0,
+        "unavailable_reason": null
+      },
+      "mttr_seconds": {
+        "value": 1211.328118,
+        "unavailable_reason": null
+      },
+      "latency_samples": 0,
+      "mean_end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "No complete workflow start/terminal pairs"
+      },
+      "released_workflows": 0,
+      "release_blocked_workflows": 1
+    }
+  },
+  "workflows": [
+    {
+      "status": "STOPPED_INTEGRATED_STAGE",
+      "terminal": true,
+      "engineering_validation": "failed",
+      "engineering_evidence_event_id": 46,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 2,
+        "event_ids": [
+          29,
+          38
+        ],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {
+          "planning": 1,
+          "implementation": 4
+        },
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 3
+        },
+        "exhausted": true,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Explicit event or terminal failure at supplied policy bound"
+      },
+      "rollback": {
+        "applied_transaction_count": 4,
+        "rolled_back_transaction_count": 4,
+        "rolled_back_transaction_ids": [
+          "73d39edf-04d1-40d1-8696-89366b1235ff",
+          "876f60d1-fb2a-4b69-a932-f26fe3d1475a",
+          "ab68793d-452a-4390-bd83-840164de6cbc",
+          "dcdc73fa-d495-4e22-bf8f-7e6080fb1818"
+        ],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 1.0,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No completed failure-to-engineering-validation recovery interval"
+      },
+      "recovery_intervals": [],
+      "unrecovered_failure_event_id": 9,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 429.829204,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": 7.64145,
+          "unavailable_reason": null,
+          "samples": 3,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": 4.201788,
+          "unavailable_reason": null
+        },
+        "human_wait_intervals": [
+          {
+            "stage": "plan",
+            "start": 1792195847.740894,
+            "end": 1792195851.942682,
+            "start_ref": "audit:5",
+            "end_ref": "audit:7",
+            "seconds": 4.201788
+          }
+        ],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [
+          "audit:2"
+        ],
+        "agent_execution_wall_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete explicit agent start/end pairs"
+        },
+        "agent_stage_intervals": [],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 1.765231,
+            "start_ref": "audit:25",
+            "end_ref": "audit:26"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 4.409182,
+            "start_ref": "audit:34",
+            "end_ref": "audit:35"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 1.467037,
+            "start_ref": "audit:43",
+            "end_ref": "audit:44"
+          }
+        ],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 46,
+      "checkpoint_count": 26,
+      "workflow_id": "a78de73a-00cd-4e60-b3fa-5c00a01ae650",
+      "audit_db": "/private/tmp/schwab-integrated-sdlc/audit.db",
+      "workflow_db": "/private/tmp/schwab-integrated-sdlc/workflow.db",
+      "cohort": "retained_live_integrated",
+      "provenance": "Live model with manually orchestrated environment/prompt corrections; historical failed branch",
+      "audit_snapshot_sha256": "e78faaf7aa7efe34b5219301d5b68920430e40504f0e9315096b4e4de5b88604",
+      "checkpoint_projection_sha256": "b2cc86e89b86de513608ba1bc2fcb39cc6095abc8de76cbb3aab30d052f1d1e9"
+    },
+    {
+      "status": "STOPPED_INTEGRATED_STAGE",
+      "terminal": true,
+      "engineering_validation": "failed",
+      "engineering_evidence_event_id": 34,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 2,
+        "event_ids": [
+          17,
+          26
+        ],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {
+          "planning": 1,
+          "implementation": 3
+        },
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 3
+        },
+        "exhausted": true,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Explicit event or terminal failure at supplied policy bound"
+      },
+      "rollback": {
+        "applied_transaction_count": 3,
+        "rolled_back_transaction_count": 3,
+        "rolled_back_transaction_ids": [
+          "02960fba-eb23-457d-a58c-4c437067b023",
+          "056fc7ca-469b-4909-83f1-8b54536dcd5a",
+          "77b15cd3-c87d-4fa5-a58d-5a666367255e"
+        ],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 1.0,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No completed failure-to-engineering-validation recovery interval"
+      },
+      "recovery_intervals": [],
+      "unrecovered_failure_event_id": 14,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 212.677321,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": 4.933646,
+          "unavailable_reason": null,
+          "samples": 3,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": 41.136304,
+          "unavailable_reason": null
+        },
+        "human_wait_intervals": [
+          {
+            "stage": "design",
+            "start": 1792196621.584761,
+            "end": 1792196654.618322,
+            "start_ref": "checkpoint:1f1c9c10-17a1-6f3c-8000-4f92df8c7e3a",
+            "end_ref": "audit:2",
+            "seconds": 33.033561
+          },
+          {
+            "stage": "plan",
+            "start": 1792196654.621415,
+            "end": 1792196662.724158,
+            "start_ref": "audit:5",
+            "end_ref": "audit:7",
+            "seconds": 8.102743
+          }
+        ],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [],
+        "agent_execution_wall_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete explicit agent start/end pairs"
+        },
+        "agent_stage_intervals": [],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 1.572134,
+            "start_ref": "audit:13",
+            "end_ref": "audit:14"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 1.593476,
+            "start_ref": "audit:22",
+            "end_ref": "audit:23"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 1.768036,
+            "start_ref": "audit:31",
+            "end_ref": "audit:32"
+          }
+        ],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 35,
+      "checkpoint_count": 15,
+      "workflow_id": "1a500baf-88e5-4f73-92ed-6c1e478d6641",
+      "audit_db": "/private/tmp/schwab-integrated-sdlc-context/audit.db",
+      "workflow_db": "/private/tmp/schwab-integrated-sdlc-context/workflow.db",
+      "cohort": "retained_live_integrated",
+      "provenance": "Live model; bounded compilation failure; assistant-authored plan fixture",
+      "audit_snapshot_sha256": "dcb20901f5a928837956ae01d2d65ee348d04a31a3a3b731169595f332d19f4b",
+      "checkpoint_projection_sha256": "47d69a8855e47f6186edf89dca26bf154509559e0ca857ac49c0afa338134a4e"
+    },
+    {
+      "status": "STOPPED_RELEASE_BLOCKED",
+      "terminal": true,
+      "engineering_validation": "passed",
+      "engineering_evidence_event_id": 50,
+      "release": {
+        "blocked": true,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 2,
+        "event_ids": [
+          17,
+          57
+        ],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {
+          "planning": 1,
+          "implementation": 3,
+          "test_generation": 2,
+          "documentation": 2
+        },
+        "human_source_corrections": 1,
+        "exact_source_replays": 1,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 3
+        },
+        "exhausted": false,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Not evidenced; absence does not establish remaining budget"
+      },
+      "rollback": {
+        "applied_transaction_count": 4,
+        "rolled_back_transaction_count": 3,
+        "rolled_back_transaction_ids": [
+          "482a54dd-f8e5-4761-8ce7-c1bc03009cc8",
+          "5d12a471-d8da-499e-b371-3e0756086e58",
+          "e7239cfe-60dd-418a-ad1b-986fcb56b471"
+        ],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 0.75,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": 1211.328118,
+        "unavailable_reason": null
+      },
+      "recovery_intervals": [
+        {
+          "failure_event_id": 14,
+          "recovered_event_id": 50,
+          "value": 1211.328118,
+          "unavailable_reason": null
+        }
+      ],
+      "unrecovered_failure_event_id": null,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 2096.581449,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": 14.566747,
+          "unavailable_reason": null,
+          "samples": 3,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": 16.776433,
+          "unavailable_reason": null,
+          "samples": 1,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": 4.896287,
+          "unavailable_reason": null,
+          "samples": 1,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": 99.273587,
+          "unavailable_reason": null,
+          "samples": 1,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": 0.022094,
+          "unavailable_reason": null,
+          "samples": 1,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": 1537.25175,
+          "unavailable_reason": null
+        },
+        "human_wait_intervals": [
+          {
+            "stage": "design",
+            "start": 1792197095.086696,
+            "end": 1792197135.20852,
+            "start_ref": "checkpoint:1f1c9c21-bb4c-6892-8000-91cfb4987ceb",
+            "end_ref": "audit:2",
+            "seconds": 40.121824
+          },
+          {
+            "stage": "plan",
+            "start": 1792197135.211342,
+            "end": 1792197140.895069,
+            "start_ref": "audit:5",
+            "end_ref": "audit:7",
+            "seconds": 5.683727
+          },
+          {
+            "stage": "test_scope",
+            "start": 1792197231.699514,
+            "end": 1792197884.946191,
+            "start_ref": "audit:24",
+            "end_ref": "audit:27",
+            "seconds": 653.246677
+          },
+          {
+            "stage": "test_scope",
+            "start": 1792197941.776666,
+            "end": 1792198089.216971,
+            "start_ref": "audit:36",
+            "end_ref": "audit:38",
+            "seconds": 147.440305
+          },
+          {
+            "stage": "test_results",
+            "start": 1792198401.599003,
+            "end": 1792198930.05624,
+            "start_ref": "checkpoint:1f1c9c52-672b-6e30-8004-1e363df3f149",
+            "end_ref": "audit:54",
+            "seconds": 528.457237
+          },
+          {
+            "stage": "final_review",
+            "start": 1792199029.352508,
+            "end": 1792199191.654488,
+            "start_ref": "checkpoint:1f1c9c69-c9e5-629e-8008-426eb0702a8b",
+            "end_ref": "audit:60",
+            "seconds": 162.30198
+          }
+        ],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [
+          "audit:47"
+        ],
+        "agent_execution_wall_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete explicit agent start/end pairs"
+        },
+        "agent_stage_intervals": [],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 4.848103,
+            "start_ref": "audit:13",
+            "end_ref": "audit:14"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 4.961832,
+            "start_ref": "audit:22",
+            "end_ref": "audit:23"
+          },
+          {
+            "stage": "source_validation_boundary",
+            "seconds": 4.756812,
+            "start_ref": "audit:34",
+            "end_ref": "audit:35"
+          },
+          {
+            "stage": "documentation_boundary",
+            "seconds": 99.273587,
+            "start_ref": "audit:54",
+            "end_ref": "audit:58"
+          },
+          {
+            "stage": "test_generation_boundary",
+            "seconds": 16.776433,
+            "start_ref": "audit:47",
+            "end_ref": "audit:49"
+          },
+          {
+            "stage": "combined_validation_boundary",
+            "seconds": 4.896287,
+            "start_ref": "audit:49",
+            "end_ref": "audit:50"
+          },
+          {
+            "stage": "readiness_boundary",
+            "seconds": 0.022094,
+            "start_ref": "audit:58",
+            "end_ref": "audit:59"
+          }
+        ],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 60,
+      "checkpoint_count": 34,
+      "workflow_id": "e43f07a6-4824-4f49-865f-69ae19899ca1",
+      "audit_db": "/private/tmp/schwab-integrated-sdlc-fixed/audit.db",
+      "workflow_db": "/private/tmp/schwab-integrated-sdlc-fixed/workflow.db",
+      "cohort": "retained_live_integrated",
+      "provenance": "Live model implementation with human-directed correction and exact replay; assistant-authored plan fixture",
+      "audit_snapshot_sha256": "b6ccd8e8f665fbabc7218a2af825df7b54950de97ae4eb0f3096173a78c63e37",
+      "checkpoint_projection_sha256": "fae8a10905711c3dfbe76eb743b33aeb63725e86ca7f12c42340da67a28c9550"
+    },
+    {
+      "status": "AWAITING_FINAL_HUMAN_REVIEW",
+      "terminal": false,
+      "engineering_validation": "passed",
+      "engineering_evidence_event_id": 27,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 1,
+        "event_ids": [
+          19
+        ],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {},
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 2
+        },
+        "exhausted": false,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Not evidenced; absence does not establish remaining budget"
+      },
+      "rollback": {
+        "applied_transaction_count": 2,
+        "rolled_back_transaction_count": 1,
+        "rolled_back_transaction_ids": [
+          "dd3524e3-d0dc-4fc2-8e66-181b4f2abc93"
+        ],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 0.5,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": 72.414036,
+        "unavailable_reason": null
+      },
+      "recovery_intervals": [
+        {
+          "failure_event_id": 11,
+          "recovered_event_id": 27,
+          "value": 72.414036,
+          "unavailable_reason": null
+        }
+      ],
+      "unrecovered_failure_event_id": null,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 103.894202,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": 33.176574,
+          "unavailable_reason": null,
+          "samples": 2,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete reliable review-ready/decision pairs"
+        },
+        "human_wait_intervals": [],
+        "unclosed_review_stages": [
+          "final_review"
+        ],
+        "decisions_without_request_timestamp": [
+          "audit:2"
+        ],
+        "agent_execution_wall_seconds": {
+          "value": 33.176574,
+          "unavailable_reason": null
+        },
+        "agent_stage_intervals": [
+          {
+            "stage": "implementation",
+            "start": 1792183481.007455,
+            "end": 1792183481.011323,
+            "start_ref": "audit:5",
+            "end_ref": "audit:10",
+            "seconds": 0.003868
+          },
+          {
+            "stage": "implementation",
+            "start": 1792183512.999403,
+            "end": 1792183546.172109,
+            "start_ref": "audit:21",
+            "end_ref": "audit:26",
+            "seconds": 33.172706
+          }
+        ],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 30,
+      "checkpoint_count": 13,
+      "workflow_id": "309b0b75-72f2-4ad3-8df6-6b520c88ab52",
+      "audit_db": "/private/tmp/schwab-autonomous-recovery/audit.db",
+      "workflow_db": "/private/tmp/schwab-autonomous-recovery/workflow.db",
+      "cohort": "controlled_failure_live_recovery",
+      "provenance": "Seeded compilation defect; live recovery model and real Maven",
+      "audit_snapshot_sha256": "0030ac800d1a9a2d88503e83b0d75468ce22b4a66a544c4879539912cd56ee07",
+      "checkpoint_projection_sha256": "28e7574c513912bd2aab26967ff6eee77e92b0a0aca370f78f10526a024b0374"
+    },
+    {
+      "status": "STOPPED_ROLLED_BACK",
+      "terminal": true,
+      "engineering_validation": "failed",
+      "engineering_evidence_event_id": 10,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 0,
+        "event_ids": [],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {},
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": null,
+          "unavailable_reason": "No supplied policy bound or observed attempt ordinal"
+        },
+        "exhausted": false,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Not evidenced; absence does not establish remaining budget"
+      },
+      "rollback": {
+        "applied_transaction_count": 1,
+        "rolled_back_transaction_count": 1,
+        "rolled_back_transaction_ids": [
+          "b92599db-d9ef-4802-95f5-c629d9583d8b"
+        ],
+        "unidentified_event_ids": [
+          13
+        ],
+        "rollback_frequency_per_applied_transaction": {
+          "value": null,
+          "unavailable_reason": "Missing application IDs or rollback transaction identity"
+        }
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No completed failure-to-engineering-validation recovery interval"
+      },
+      "recovery_intervals": [],
+      "unrecovered_failure_event_id": 10,
+      "end_to_end_latency_seconds": {
+        "value": 29.458694,
+        "unavailable_reason": null
+      },
+      "observed_window_seconds": {
+        "value": 29.458694,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete reliable review-ready/decision pairs"
+        },
+        "human_wait_intervals": [],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [
+          "audit:3"
+        ],
+        "agent_execution_wall_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete explicit agent start/end pairs"
+        },
+        "agent_stage_intervals": [],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 14,
+      "checkpoint_count": 7,
+      "workflow_id": "f9bafc7d-7f6b-4889-9090-439e559eb79c",
+      "audit_db": "/private/tmp/schwab-live-status-api-rollback-final/audit.db",
+      "workflow_db": "/private/tmp/schwab-live-status-api-rollback-final/workflow.db",
+      "cohort": "controlled_validation_failure_live_model",
+      "provenance": "Live model; deliberate Maven assertion failure",
+      "audit_snapshot_sha256": "c0e5b043a233905b0a57c642bc94d01a5bfcae370bc40bff3ead3b46c663da82",
+      "checkpoint_projection_sha256": "e0c769324c565608f14c05fd9d107e1d6c2b4f1ae1583ebe32df6320c4676c6a"
+    },
+    {
+      "status": "AWAITING_PARALLEL_RESULTS_REVIEW",
+      "terminal": false,
+      "engineering_validation": "passed",
+      "engineering_evidence_event_id": 15,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 0,
+        "event_ids": [],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {},
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 1
+        },
+        "exhausted": false,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Not evidenced; absence does not establish remaining budget"
+      },
+      "rollback": {
+        "applied_transaction_count": 1,
+        "rolled_back_transaction_count": 0,
+        "rolled_back_transaction_ids": [],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 0.0,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No completed failure-to-engineering-validation recovery interval"
+      },
+      "recovery_intervals": [],
+      "unrecovered_failure_event_id": null,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 50.751671,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": 0.008135,
+          "unavailable_reason": null,
+          "samples": 2,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": 24.998046,
+          "unavailable_reason": null,
+          "samples": 1,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete reliable review-ready/decision pairs"
+        },
+        "human_wait_intervals": [],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [],
+        "agent_execution_wall_seconds": {
+          "value": 25.006181,
+          "unavailable_reason": null
+        },
+        "agent_stage_intervals": [
+          {
+            "stage": "parallel_proposal",
+            "start": 1792199447.683671,
+            "end": 1792199447.691698,
+            "start_ref": "audit:6",
+            "end_ref": "audit:7",
+            "seconds": 0.008027
+          },
+          {
+            "stage": "parallel_proposal",
+            "start": 1792199447.683636,
+            "end": 1792199447.691771,
+            "start_ref": "audit:5",
+            "end_ref": "audit:8",
+            "seconds": 0.008135
+          },
+          {
+            "stage": "parallel_validation",
+            "start": 1792199447.705756,
+            "end": 1792199472.703802,
+            "start_ref": "audit:14",
+            "end_ref": "audit:15",
+            "seconds": 24.998046
+          }
+        ],
+        "incomplete_agent_intervals": 0,
+        "derived_stage_boundary_durations": [],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 15,
+      "checkpoint_count": 8,
+      "workflow_id": "parallel-fixture-success",
+      "audit_db": "/private/tmp/schwab-parallel-execution/success/audit.db",
+      "workflow_db": "/private/tmp/schwab-parallel-execution/success/workflow.db",
+      "cohort": "deterministic_parallel_fixture",
+      "provenance": "Deterministic model and synthetic approvals; real Maven",
+      "audit_snapshot_sha256": "a2605bedc8420c2d8f0d9214988201802bbe00d3b1cc1429989455ca59d53035",
+      "checkpoint_projection_sha256": "957d1b95a14b10e09748dbcc0ee9cb81ca30fddf4532abdcc05df2ac3fdebec5"
+    },
+    {
+      "status": "STOPPED_PARALLEL_ROLLED_BACK",
+      "terminal": true,
+      "engineering_validation": "failed",
+      "engineering_evidence_event_id": 17,
+      "release": {
+        "blocked": false,
+        "authorization_evidenced": false,
+        "released": false,
+        "reason": "Requires matching explicit release authorization and completion events; validation is insufficient"
+      },
+      "retry": {
+        "observed_automatic_retry_count": 0,
+        "event_ids": [],
+        "count_scope": "Known explicit retry vocabulary; lower bound when attempt events are absent",
+        "model_response_counts_by_stage": {},
+        "human_source_corrections": 0,
+        "exact_source_replays": 0,
+        "bound_check": {
+          "value": true,
+          "unavailable_reason": null,
+          "configured_max_attempts": 3,
+          "observed_max_attempt": 1
+        },
+        "exhausted": false,
+        "explicit_exhaustion_event_ids": [],
+        "exhaustion_basis": "Not evidenced; absence does not establish remaining budget"
+      },
+      "rollback": {
+        "applied_transaction_count": 1,
+        "rolled_back_transaction_count": 1,
+        "rolled_back_transaction_ids": [
+          "1fcf526c-2635-427c-9125-512d86a9076d"
+        ],
+        "unidentified_event_ids": [],
+        "rollback_frequency_per_applied_transaction": {
+          "value": 1.0,
+          "unavailable_reason": null
+        }
+      },
+      "mttr_seconds": {
+        "value": null,
+        "unavailable_reason": "No completed failure-to-engineering-validation recovery interval"
+      },
+      "recovery_intervals": [],
+      "unrecovered_failure_event_id": 17,
+      "end_to_end_latency_seconds": {
+        "value": null,
+        "unavailable_reason": "Exact workflow start or terminal completion missing; pending review is not completion"
+      },
+      "observed_window_seconds": {
+        "value": 26.484041,
+        "unavailable_reason": null
+      },
+      "stage_durations_seconds": {
+        "requirements": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "codebase": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "planning": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "design": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "implementation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_proposal": {
+          "value": 0.008506,
+          "unavailable_reason": null,
+          "samples": 2,
+          "kind": "explicit execution wall time"
+        },
+        "parallel_validation": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "explicit execution wall time"
+        },
+        "source_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "test_generation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "combined_validation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "documentation_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        },
+        "readiness_boundary": {
+          "value": null,
+          "unavailable_reason": "No reliable matching stage boundaries",
+          "samples": 0,
+          "kind": "derived boundary wall time"
+        }
+      },
+      "timing": {
+        "human_review_ready_to_decision_seconds": {
+          "value": null,
+          "unavailable_reason": "No complete reliable review-ready/decision pairs"
+        },
+        "human_wait_intervals": [],
+        "unclosed_review_stages": [],
+        "decisions_without_request_timestamp": [],
+        "agent_execution_wall_seconds": {
+          "value": 0.008506,
+          "unavailable_reason": null
+        },
+        "agent_stage_intervals": [
+          {
+            "stage": "parallel_proposal",
+            "start": 1792199497.722049,
+            "end": 1792199497.728646,
+            "start_ref": "audit:6",
+            "end_ref": "audit:7",
+            "seconds": 0.006597
+          },
+          {
+            "stage": "parallel_proposal",
+            "start": 1792199497.720303,
+            "end": 1792199497.728809,
+            "start_ref": "audit:5",
+            "end_ref": "audit:8",
+            "seconds": 0.008506
+          }
+        ],
+        "incomplete_agent_intervals": 1,
+        "derived_stage_boundary_durations": [],
+        "unattributed_time": "Not reported as agent time; manual pauses, scheduling and missing instrumentation remain unclassified",
+        "quality": "partial"
+      },
+      "issues": [],
+      "event_count": 17,
+      "checkpoint_count": 8,
+      "workflow_id": "parallel-fixture-compilation-failure",
+      "audit_db": "/private/tmp/schwab-parallel-execution/compilation-failure/audit.db",
+      "workflow_db": "/private/tmp/schwab-parallel-execution/compilation-failure/workflow.db",
+      "cohort": "deterministic_parallel_fixture",
+      "provenance": "Deterministic model and synthetic approvals; deliberately uncompilable source; real Maven",
+      "audit_snapshot_sha256": "0a6223ed5ae33a8f52e1a2ea9e7190dade16f2b224ef625e93e7969a7628c67e",
+      "checkpoint_projection_sha256": "e481c37fd1c465a9f71a5b844fdde79e81ce04e815c8eb8a6bfdf5e288500c1a"
+    }
+  ]
+}

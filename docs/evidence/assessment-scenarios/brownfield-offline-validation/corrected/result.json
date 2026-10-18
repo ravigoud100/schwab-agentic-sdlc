@@ -1,0 +1,87 @@
+{
+  "exit_code": 0,
+  "elapsed_seconds": 4.731394166010432,
+  "tests": 11,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "cases": [
+    {
+      "class": "url_shortener.UrlStatusIntegrationTest",
+      "name": "statusPreservesClicksAndRedirectCompatibility",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlStatusIntegrationTest",
+      "name": "expirationStatesAreReadOnly",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlStatusIntegrationTest",
+      "name": "unknownIs404AndServiceDeclaresReadOnly",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "redirectsActiveUrlWithFound",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "expiredUrlDoesNotIncreaseClickCount",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "rejectsPastExpiration",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "createsShortUrlWithoutExpiration",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "returnsGoneForExpiredUrl",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "createsShortUrlWithFutureExpiration",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlExpirationIntegrationTests",
+      "name": "returnsNotFoundForUnknownShortCode",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    },
+    {
+      "class": "url_shortener.UrlShortenerApplicationTests",
+      "name": "contextLoads",
+      "failure": false,
+      "error": false,
+      "skipped": false
+    }
+  ]
+}

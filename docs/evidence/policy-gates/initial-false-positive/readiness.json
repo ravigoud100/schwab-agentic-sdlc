@@ -1,0 +1,34 @@
+{
+  "status": "BLOCKED",
+  "bundle_hash": "8f270e4214621ce73f8031dec89d475ad1cc64dd4671c5f317d498cf682654f5",
+  "checks": {
+    "artifact_lineage_and_source_integrity": true,
+    "requirements_and_design_approved": true,
+    "test_generation_scope_approved": true,
+    "original_and_generated_tests_verified": true,
+    "genuine_maven_evidence": true,
+    "matching_implementation_plan_approved": true,
+    "human_test_results_review": true,
+    "documentation_verified": true,
+    "static_security_compliance_controls": false,
+    "protected_inventory_and_tests": false,
+    "operational_validation_evidence": false,
+    "human_security_signoff": false,
+    "human_operational_signoff": false,
+    "release_security_and_operational_signoff": false
+  },
+  "blockers": [
+    "static_security_compliance_controls",
+    "protected_inventory_and_tests",
+    "operational_validation_evidence",
+    "human_security_signoff",
+    "human_operational_signoff",
+    "release_security_and_operational_signoff"
+  ],
+  "errors": [
+    "Policy gate: deny (SEC-DEPENDENCY-ALLOWLIST)"
+  ],
+  "policy_evidence": {},
+  "deployment_authorized": false,
+  "earlier_four_file_plan_authorized": false
+}

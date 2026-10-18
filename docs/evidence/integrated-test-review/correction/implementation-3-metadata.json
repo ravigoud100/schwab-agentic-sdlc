@@ -1,0 +1,15 @@
+{
+  "model": "qwen2.5-coder:latest",
+  "created_at": "2026-10-17T00:45:36.993444Z",
+  "done": true,
+  "done_reason": "stop",
+  "total_duration": 43704143833,
+  "load_duration": 3100776083,
+  "prompt_eval_count": 4985,
+  "prompt_eval_duration": 10238359000,
+  "eval_count": 735,
+  "eval_duration": 30328861000,
+  "logprobs": null,
+  "model_name": "qwen2.5-coder:latest",
+  "model_provider": "ollama"
+}
