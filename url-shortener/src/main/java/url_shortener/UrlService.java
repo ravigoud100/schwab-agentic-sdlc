@@ -3,6 +3,7 @@ package url_shortener;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Map;
 
 @Service
 public class UrlService {
@@ -96,5 +97,22 @@ public ShortUrl getAnalytics(String shortCode) {
                             "Short URL not found"
                     )
             );
+}
+
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+public java.util.Map<String, Object> getStatus(String shortCode) {
+
+    ShortUrl shortUrl = repository.findByShortCode(shortCode)
+            .orElseThrow(() ->
+                    new org.springframework.web.server.ResponseStatusException(
+                            org.springframework.http.HttpStatus.NOT_FOUND,
+                            "Short URL not found"
+                    )
+            );
+
+    return Map.of(
+            "shortCode", shortUrl.getShortCode(),
+            "expired", shortUrl.isExpired(Instant.now())
+    );
 }
 }

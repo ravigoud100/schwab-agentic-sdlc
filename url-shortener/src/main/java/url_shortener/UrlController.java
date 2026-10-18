@@ -59,4 +59,10 @@ public Map<String, Object> getAnalytics(
             "createdAt", shortUrl.getCreatedAt().toString()
     );
 }
+
+  @GetMapping("/{shortCode}/status")
+public java.util.Map<String, Object> getStatus(@PathVariable String shortCode) {
+
+    return urlService.getStatus(shortCode);
+}
 }

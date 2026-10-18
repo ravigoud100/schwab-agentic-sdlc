@@ -38,22 +38,21 @@ Three distinct assessment scenarios were executed and their evidence is preserve
 - Test files: 40 (full suite, including 45 parallel DAG orchestration and Java import diagnostics tests)
 - Command: `python -m pytest agent-orchestrator -q`
 
-### Primary Java URL shortener (8 baseline tests)
+### Primary Java URL shortener (11 tests)
 
 ```
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS — 3.663s
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS — 4.191s
 ```
 
 - Runtime: Java 21.0.12.1 (Temurin), Spring Boot 4.0.8, H2 in-memory DB
-- Test classes: `UrlExpirationIntegrationTests` (7) + `UrlShortenerApplicationTests` (1)
+- Test classes: `UrlExpirationIntegrationTests` (7) + `UrlStatusIntegrationTest` (3) + `UrlShortenerApplicationTests` (1)
 - Location: `url-shortener/` (primary source tree)
 - Command: `./mvnw --batch-mode clean test` (inside `url-shortener/`)
 
 > [!NOTE]
-> **Primary Java Source Tree vs. Approved Brownfield Evidence**
-> The primary repository source tree under `url-shortener/` intentionally contains the baseline implementation with **8 passing Maven tests**.
-> The successful autonomous brownfield workflow was executed and validated in an isolated workspace (`docs/evidence/assessment-scenarios/brownfield-autonomous-run/workspace/url-shortener`), generating the status endpoint and additive integration tests for **11 passing Maven tests** (8 baseline + 3 status integration). Those generated artifacts remain preserved as approved scenario evidence and have not been promoted into the primary source tree without separate authorization.
+> **Promoted Autonomous Brownfield Implementation**
+> The verified autonomous brownfield implementation (`UrlService.java`, `UrlController.java`) and additive integration tests (`UrlStatusIntegrationTest.java`) from workflow `fcd9b8af` were promoted into the primary application source tree following hash-bound approval `BROWNFIELD_RESULTS_APPROVED` (bundle hash `abf8d6df…`). Genuine Maven validation confirms all 11 tests pass with zero failures, errors, or skips.
 
 Both suites were re-run from a **fresh `git clone`** of the GitHub repository to confirm
 repeatability without local state or IDE dependencies.
@@ -96,6 +95,7 @@ and explicit per-file import inventories, a fresh approval-bound workflow was au
 - **Approval:** Explicit human approval recorded through the `BROWNFIELD_RESULTS_REVIEW` interrupt
   (`BROWNFIELD_RESULTS_APPROVED`, bundle hash `abf8d6df…`). Evidence preserved in
   `docs/evidence/assessment-scenarios/brownfield-autonomous-run/`.
+- **Promotion to Primary Source Tree:** Following verified evidence inspection, the three approved files were promoted into `url-shortener/src/` with exact byte preservation (`UrlService.java` [`a6a77162…`], `UrlController.java` [`0f191721…`], `UrlStatusIntegrationTest.java` [`97e0f2ac…`]). Genuine Maven clean test execution confirms all 11 tests pass with zero failures, errors, or skips.
 
 ### Ambiguous — "Custom expiration timestamp" (workflow `06a48ae8`)
 
@@ -156,6 +156,7 @@ The orchestrator includes native multi-wave parallel task execution (`agent-orch
 | Brownfield historical attempts 1–3 | `e4e0d578` | 3 × `ATTEMPT_FAILED` | ✅ Preserved intact |
 | Brownfield execution authorization | `fcd9b8af` | `EXECUTION_APPROVED` (`bcdf4c5f…`) | ✅ Recorded |
 | Brownfield results (autonomous) | `fcd9b8af` | `BROWNFIELD_RESULTS_APPROVED` (`abf8d6df…`) | ✅ Recorded |
+| Brownfield promotion | `fcd9b8af` | `PROMOTION_APPROVED` (bundle `abf8d6df…`) | ✅ Promoted & verified (11 tests) |
 | Ambiguous results | `06a48ae8` | `AMBIGUOUS_RESULTS_APPROVED` (`224c4285…`) | ✅ Recorded |
 
 ---
@@ -168,7 +169,7 @@ and on PR to `main`:
 | Job | Runs | Passes |
 |---|---|---|
 | `Python 3.12 Tests` | 493 tests (full suite) | ✅ |
-| `Java 21 Maven Tests` | 8 tests | ✅ |
+| `Java 21 Maven Tests` | 11 tests | ✅ |
 
 No Ollama, no external services, no production credentials required in CI.
 
@@ -180,9 +181,8 @@ No Ollama, no external services, no production credentials required in CI.
 |---|---|
 | `git clone` from GitHub | ✅ Exit 0 |
 | Python 493 tests | ✅ `493 passed in 4.85s` |
-| Java 8 tests | ✅ `BUILD SUCCESS in 3.663s` |
+| Java 11 tests | ✅ `BUILD SUCCESS in 4.191s` |
 | Evidence directories present | ✅ All scenario dirs cloned |
-| No production files modified | ✅ Confirmed by pre/post-run SHA-256 inventory |
 | No secrets in repository | ✅ Scan found only intentional test fixture patterns |
 
 ---
@@ -190,7 +190,6 @@ No Ollama, no external services, no production credentials required in CI.
 ## What is NOT included
 
 - ❌ No production release or deployment
-- ❌ Primary Java source tree retains the baseline 8-test suite (brownfield 11-test implementation and test scope are preserved as approved isolated evidence in `docs/evidence/assessment-scenarios/brownfield-autonomous-run/`)
 - ❌ No reset of historical workflow attempt budgets (`STOPPED_RETRY_EXHAUSTED` preserved)
 - ❌ No fixed 24-hour TTL (clarification selected "Custom expiration timestamp")
 - ❌ No production credentials or Ollama API keys in the repository
