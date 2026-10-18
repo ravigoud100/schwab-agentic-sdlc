@@ -87,7 +87,7 @@ def test_workers_run_concurrently_and_join_before_application_and_validation(tmp
     assert (root/'url-shortener/pom.xml').read_text() == 'original build'
 
 
-@pytest.mark.parametrize('kind', ['overlap', 'traversal', 'symlink', 'hardlink', 'test', 'build', 'dependent', 'validate_only', 'unapproved', 'stale', 'sequential_receipt'])
+@pytest.mark.parametrize('kind', ['overlap', 'traversal', 'symlink', 'hardlink', 'test', 'build', 'circular', 'validate_only', 'unapproved', 'stale', 'sequential_receipt'])
 def test_conflicts_and_unapproved_scopes_fail_before_model_or_maven(tmp_path, monkeypatch, kind):
     state = setup(tmp_path, monkeypatch); c = state['context']; tasks = c['tasks']; root = Path(c['workspace'])
     if kind == 'overlap':tasks[1]['allowed_files'] = [A]
@@ -96,12 +96,12 @@ def test_conflicts_and_unapproved_scopes_fail_before_model_or_maven(tmp_path, mo
     elif kind == 'hardlink':(root/B).unlink(); (root/B).hardlink_to(root/A)
     elif kind == 'test':tasks[1]['allowed_files'] = [TEST]
     elif kind == 'build':tasks[1]['allowed_files'] = ['url-shortener/pom.xml']
-    elif kind == 'dependent':tasks[1]['dependencies'] = ['a']
+    elif kind == 'circular':tasks[0]['dependencies'] = ['b']; tasks[1]['dependencies'] = ['a']
     elif kind == 'validate_only':tasks[1]['execution_type'] = 'validate_only'
     elif kind == 'unapproved':c['approval'] = 'reject'
     elif kind == 'stale':tasks[1]['description'] = 'unreviewed'
     elif kind == 'sequential_receipt':c['plan_lineage_required'] = True
-    if kind not in {'stale', 'traversal'}:c['approved_task_hash'] = task_definition_hash(tasks)
+    if kind not in {'stale', 'traversal', 'circular'}:c['approved_task_hash'] = task_definition_hash(tasks)
     model = Mock(); gate = Mock()
     result = build_workflow(model, validator=gate).compile().invoke(state)
     assert result['status'] == 'STOPPED_PARALLEL_ENTRY'
@@ -318,3 +318,241 @@ def test_main_parallel_wrapper_keeps_nested_task_approvals_and_shared_thread(tmp
     assert len(result['parallel_result']['task_checkpoints']) == 2
     assert len(model.calls) == 2
     assert sum(e == 'TRANSACTION_APPLIED' for e, _ in audit()) == 1
+
+
+C = 'url-shortener/src/main/java/url_shortener/C.java'
+
+
+def setup_two_wave(tmp_path, monkeypatch):
+    root = tmp_path / 'workspace'
+    for p, text in [
+        (A, 'class A { int value = 1; }'),
+        (B, 'class B { int value = 1; }'),
+        (C, 'class C { int value = 1; }'),
+        (TEST, 'original assertions'),
+        ('url-shortener/pom.xml', 'original build'),
+    ]:
+        target = root / p
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+    tasks = [
+        {'task_id': 'a', 'description': 'Increase a', 'dependencies': [], 'status': 'PENDING',
+         'execution_type': 'implementation', 'allowed_files': [A]},
+        {'task_id': 'b', 'description': 'Increase b', 'dependencies': [], 'status': 'PENDING',
+         'execution_type': 'implementation', 'allowed_files': [B]},
+        {'task_id': 'c', 'description': 'Increase c using a and b', 'dependencies': ['a', 'b'], 'status': 'PENDING',
+         'execution_type': 'implementation', 'allowed_files': [C]},
+    ]
+    context = {
+        'workflow_id': 'two-wave-test', 'workspace': str(root), 'requirement': 'Multi-wave counters',
+        'approval': 'approve', 'tasks': tasks, 'approved_task_hash': task_definition_hash(tasks),
+        'plan': json.dumps({'tasks': tasks}),
+    }
+    monkeypatch.setattr(audit_logger, 'DB_PATH', tmp_path / 'audit.db')
+    return {'context': context, 'evidence': str(tmp_path / 'evidence'), 'cache': str(tmp_path / 'cache')}
+
+
+def approve_n(app, state, config, n=3):
+    result = app.invoke(state, config)
+    for _ in range(n):
+        assert app.get_state(config).next == ('review',)
+        result = app.invoke(Command(resume='approve'), config)
+    return result
+
+
+class WaveProvider(Provider):
+    def invoke(self, prompt, **kwargs):
+        task = json.loads(prompt.split('APPROVED TASK (filtered production scope):\n')[1].split('\nORIGINAL COMPLETE SOURCES')[0])
+        path = task['allowed_files'][0]
+        with self.lock:
+            self.calls.append(path)
+        if self.barrier and path in (A, B):
+            self.barrier.wait(timeout=5)
+        if self.fail == path:
+            return ModelResponse('not json')
+        return ModelResponse(json.dumps({'files': [{'path': path, 'content': 'class ' + Path(path).stem + ' { int value = 2; }'}]}))
+
+
+def test_two_wave_dag_executes_concurrently_then_synchronizes_dependent_wave(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    barrier = threading.Barrier(2)
+    model = WaveProvider(barrier=barrier)
+    calls = []
+    root = Path(state['context']['workspace'])
+
+    def gate(ws, evidence, label, cache):
+        calls.append(label)
+        events = [e for e, _ in audit()]
+        if label == 'baseline':
+            assert not model.calls
+        elif label == 'wave-0':
+            assert events.count('PARALLEL_TASK_PREPARED') == 2
+            assert (root / A).read_text() == 'class A { int value = 2; }'
+            assert (root / B).read_text() == 'class B { int value = 2; }'
+            assert (root / C).read_text() == 'class C { int value = 1; }'
+        elif label == 'wave-1':
+            assert events.count('PARALLEL_TASK_PREPARED') == 3
+            assert (root / C).read_text() == 'class C { int value = 2; }'
+        return validator(ws, evidence, label, cache)
+
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(model, validator=gate).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'two-wave-success'}}
+        result = approve_n(app, state, config, n=3)
+        assert not app.get_state(config).next
+
+    assert result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW'
+    assert calls == ['baseline', 'wave-0', 'wave-1']
+    assert set(result['task_checkpoints']) == {'a', 'b', 'c'}
+    assert len(result['transactions']) == 2
+    assert sum(e == 'TRANSACTION_APPLIED' for e, _ in audit()) == 2
+    assert (root / TEST).read_text() == 'original assertions'
+    assert (root / 'url-shortener/pom.xml').read_text() == 'original build'
+
+
+def test_dependent_task_receives_verified_predecessor_outputs(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    root = Path(state['context']['workspace'])
+    predecessor_states_seen = []
+
+    class DependentVerifyingProvider(Provider):
+        def invoke(self, prompt, **kwargs):
+            if '"task_id": "c"' in prompt:
+                a_content = (root / A).read_text()
+                b_content = (root / B).read_text()
+                predecessor_states_seen.append((a_content, b_content))
+                assert 'value = 2' in a_content
+                assert 'value = 2' in b_content
+                assert 'dependencies' in prompt and '"a"' in prompt and '"b"' in prompt
+            return super().invoke(prompt, **kwargs)
+
+    model = DependentVerifyingProvider()
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'predecessor-verification'}}
+        result = approve_n(app, state, config, n=3)
+
+    assert result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW'
+    assert len(predecessor_states_seen) == 1
+    assert 'value = 2' in predecessor_states_seen[0][0]
+    assert 'value = 2' in predecessor_states_seen[0][1]
+
+
+def test_failure_in_later_wave_restores_complete_original_workspace(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    root = Path(state['context']['workspace'])
+
+    def failing_gate(ws, evidence, label, cache):
+        if label == 'wave-1':
+            return {'exit_code': 1, 'cases': {'OriginalTest#behavior': 'failed'}, 'command': ['synthetic']}
+        return validator(ws, evidence, label, cache)
+
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(Provider(), validator=failing_gate).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'wave1-fail'}}
+        result = approve_n(app, state, config, n=3)
+
+    assert result['status'] == 'STOPPED_PARALLEL_ROLLED_BACK'
+    assert (root / A).read_text() == 'class A { int value = 1; }'
+    assert (root / B).read_text() == 'class B { int value = 1; }'
+    assert (root / C).read_text() == 'class C { int value = 1; }'
+    rollback_events = [d for e, d in audit() if e == 'PARALLEL_ROLLED_BACK']
+    assert len(rollback_events) == 2
+
+
+def test_worker_failure_in_later_wave_rolls_back_preceding_waves(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    root = Path(state['context']['workspace'])
+    model = Provider(fail=C)
+
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'worker-wave1-fail'}}
+        result = approve_n(app, state, config, n=3)
+
+    assert result['status'] == 'STOPPED_PARALLEL_WORKER_FAILED'
+    assert model.calls.count(C) == MAX_ATTEMPTS
+    assert (root / A).read_text() == 'class A { int value = 1; }'
+    assert (root / B).read_text() == 'class B { int value = 1; }'
+    assert (root / C).read_text() == 'class C { int value = 1; }'
+    rollback_events = [d for e, d in audit() if e == 'PARALLEL_ROLLED_BACK']
+    assert len(rollback_events) == 1
+
+
+def test_rejected_task_in_two_wave_plan_halts_before_execution(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    model = Mock(); gate = Mock()
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(model, validator=gate).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'reject-third'}}
+        app.invoke(state, config)
+        app.invoke(Command(resume='approve'), config)
+        app.invoke(Command(resume='approve'), config)
+        result = app.invoke(Command(resume='reject'), config)
+
+    assert result['status'] == 'STOPPED_PARALLEL_REJECTED'
+    model.invoke.assert_not_called()
+    gate.assert_not_called()
+
+
+def test_two_wave_dag_checkpoint_recovery_resumes_without_reexecuting_wave_zero(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    db = str(tmp_path / 'workflow.db')
+    config = {'configurable': {'thread_id': 'resume-two-wave'}}
+    model = Provider()
+
+    with SqliteSaver.from_conn_string(db) as saver:
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver)
+        result = approve_n(app, state, config, n=3)
+
+    assert result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW'
+    assert len(model.calls) == 3
+
+    with SqliteSaver.from_conn_string(db) as saver:
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver)
+        res = app.invoke(None, config)
+    assert res['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW'
+    assert len(model.calls) == 3
+
+
+def test_external_tamper_of_wave_zero_during_wave_one_triggers_recovery_required(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    root = Path(state['context']['workspace'])
+
+    def gate(ws, evidence, label, cache):
+        if label == 'wave-1':
+            (root / A).write_text('external process tamper')
+            return {'exit_code': 1, 'cases': {'OriginalTest#behavior': 'failed'}, 'command': ['synthetic']}
+        return validator(ws, evidence, label, cache)
+
+    with SqliteSaver.from_conn_string(str(tmp_path / 'workflow.db')) as saver:
+        app = build_workflow(Provider(), validator=gate).compile(checkpointer=saver)
+        config = {'configurable': {'thread_id': 'tamper-wave0'}}
+        result = approve_n(app, state, config, n=3)
+
+    assert result['status'] == 'STOPPED_PARALLEL_RECOVERY_REQUIRED'
+    assert (root / A).read_text() == 'external process tamper'
+    assert any(e == 'PARALLEL_ROLLBACK_BLOCKED' for e, _ in audit())
+
+
+def test_interrupted_after_wave_zero_validation_resumes_without_reapplying_wave_zero(tmp_path, monkeypatch):
+    state = setup_two_wave(tmp_path, monkeypatch)
+    db = str(tmp_path / 'workflow.db')
+    config = {'configurable': {'thread_id': 'interrupt-between-waves'}}
+    model = Provider()
+
+    with SqliteSaver.from_conn_string(db) as saver:
+        # Interrupt before worker runs
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver, interrupt_before=['worker'])
+        result = approve_n(app, state, config, n=3)
+        assert 'worker' in app.get_state(config).next
+
+    # Resume to completion
+    with SqliteSaver.from_conn_string(db) as saver:
+        app = build_workflow(model, validator=validator).compile(checkpointer=saver)
+        result = app.invoke(None, config)
+
+    assert result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW'
+    assert len(model.calls) == 3
+    # Exactly 2 transactions applied (1 per wave, never duplicated)
+    assert sum(e == 'TRANSACTION_APPLIED' for e, _ in audit()) == 2

@@ -123,6 +123,41 @@ def independent_ready_batches(tasks: list[dict]) -> list[list[str]]:
     return batches
 
 
+def topological_execution_waves(tasks: list[dict]) -> list[list[str]]:
+    """Partition tasks into sequential waves of concurrent, file-disjoint tasks.
+
+    Each wave contains tasks whose dependencies were satisfied in earlier waves.
+    Within each wave, tasks are mutually independent and have disjoint allowed_files.
+    """
+    validate_task_plan(tasks)
+    by_id = {task["task_id"]: task for task in tasks}
+    completed = set()
+    remaining = set(by_id.keys())
+    waves = []
+
+    while remaining:
+        ready = [
+            t_id for t_id in sorted(remaining)
+            if all(dep in completed for dep in by_id[t_id]["dependencies"])
+        ]
+        if not ready:
+            raise TaskPlanError("Circular or unresolvable task dependencies detected")
+
+        wave = []
+        wave_files = set()
+        for t_id in ready:
+            files = set(by_id[t_id]["allowed_files"])
+            if wave_files.isdisjoint(files):
+                wave.append(t_id)
+                wave_files.update(files)
+
+        waves.append(wave)
+        completed.update(wave)
+        remaining.difference_update(wave)
+
+    return waves
+
+
 def schedule_tasks(tasks: list[dict]) -> tuple[list[dict], list[str], list[list[str]]]:
     scheduled = deepcopy(tasks)
     validate_task_plan(scheduled)
@@ -218,11 +253,12 @@ def tasks_from_plan(plan: str, allowed_file: str, *, strict: bool = False) -> li
     ]
 
 
-def task_definition_hash(tasks: list[dict]) -> str:
+def task_definition_hash(tasks: list[dict], *, validate: bool = True) -> str:
     """Bind approval to task definitions while allowing scheduler status changes."""
     import hashlib
     import json
-    validate_task_plan(tasks)
+    if validate:
+        validate_task_plan(tasks)
     definitions = [
         {**{key: value for key, value in task.items() if key != "status"},
          "execution_type": task.get("execution_type", "implementation")}

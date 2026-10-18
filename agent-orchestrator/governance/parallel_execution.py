@@ -1,8 +1,8 @@
-"""Opt-in, approval-bound parallel proposal execution and transactional fan-in.
+"""Opt-in, approval-bound parallel proposal execution and multi-wave DAG orchestration.
 
-Workers never write source. LangGraph's superstep barrier precedes one whole-set
-transaction and one Maven gate. This bounded version supports 2..4 independent
-production-only tasks, not concurrent filesystem writers or dependent DAG waves.
+Workers never write source. LangGraph's superstep barrier precedes whole-set
+transactions and per-wave Maven validation gates. Independent tasks in each wave
+execute concurrently, with level-by-level synchronization before dependent waves.
 """
 import base64
 import json
@@ -19,7 +19,7 @@ from governance.file_transaction import apply_transaction, finish_transaction, e
 from governance.requirements import assert_plan_current
 from governance.semantic_plan import digest
 from governance.source_policy import authorized_java_target
-from governance.task_orchestrator import task_definition_hash, validate_task_plan
+from governance.task_orchestrator import task_definition_hash, validate_task_plan, topological_execution_waves
 from governance.test_safety import preserve, load_baseline, assert_integrity, sha
 from governance.test_stage import maven
 
@@ -39,7 +39,12 @@ class ParallelState(TypedDict, total=False):
     baseline_validation: dict
     validation: dict
     transaction: dict
+    transactions: list
     task_checkpoints: dict
+    waves: list
+    current_wave_index: int
+    applied_changes: dict
+    current_wave_proposals: dict
 
 
 def event(state, name, details):
@@ -66,13 +71,14 @@ def check_context(context):
     # The older sequential receipt deliberately cannot authorize this execution.
     if context.get('plan_lineage_required') or context.get('integrated_sdlc'):
         raise PermissionError('Sequential authorization cannot be adopted by parallel execution')
-    if not 2 <= len(tasks) <= 4:
-        raise ValueError('Parallel execution supports two to four independent tasks')
+    if not 2 <= len(tasks) <= 6:
+        raise ValueError('Parallel execution supports two to six tasks')
     root = Path(context['workspace']); seen = set()
+    waves = topological_execution_waves(tasks)
     for task in tasks:
-        if (task['dependencies'] or task['status'] not in {'PENDING', 'READY'}
+        if (task['status'] not in {'PENDING', 'READY'}
                 or task.get('execution_type', 'implementation') != 'implementation'):
-            raise PermissionError('Only unstarted independent implementation tasks are supported')
+            raise PermissionError('Only unstarted implementation tasks are supported')
         if not task['allowed_files'] or len(set(task['allowed_files'])) != len(task['allowed_files']):
             raise PermissionError('Unique nonempty production scope required')
         for path in task['allowed_files']:
@@ -84,11 +90,12 @@ def check_context(context):
             if key in seen or stat.st_nlink != 1:
                 raise PermissionError('Parallel file scopes overlap or alias')
             seen.add(key)
+    return waves
 
 
 def entry(state):
     try:
-        check_context(state['context'])
+        waves = check_context(state['context'])
         root = Path(state['context']['workspace']); ensure_workspace_ready(root)
         evidence = Path(state['evidence']).resolve()
         if evidence.is_relative_to(root.resolve()):
@@ -97,8 +104,10 @@ def entry(state):
         baseline_hash = preserve(root, evidence/'originals')
         result = {**state, 'baseline_hash': baseline_hash,
                   'binding': binding(state['context'], baseline_hash), 'outcomes': [], 'receipts': {},
+                  'waves': waves, 'current_wave_index': 0, 'transactions': [],
+                  'applied_changes': {}, 'task_checkpoints': {},
                   'status': 'PARALLEL_REVIEW_REQUIRED'}
-        event(result, 'PARALLEL_ENTRY_PASSED', result['binding'])
+        event(result, 'PARALLEL_ENTRY_PASSED', {**result['binding'], 'waves': waves})
         return result
     except Exception as error:
         event(state, 'PARALLEL_ENTRY_REJECTED', {'error': str(error)})
@@ -110,13 +119,14 @@ def recheck(state, *, applied=None):
     if binding(state['context'], state['baseline_hash']) != state['binding']:
         raise PermissionError('Parallel requirement/design/plan/baseline binding changed')
     baseline = load_baseline(Path(state['evidence'])/'originals', state['baseline_hash'])
-    assert_integrity(Path(state['context']['workspace']), baseline, applied)
+    cumulative_applied = {**state.get('applied_changes', {}), **(applied or {})}
+    assert_integrity(Path(state['context']['workspace']), baseline, cumulative_applied)
     return baseline
 
 
 def task_receipt(state, task):
     return {'binding_hash': digest(state['binding']), 'task_id': task['task_id'],
-            'task_hash': task_definition_hash([task])}
+            'task_hash': task_definition_hash([task], validate=False)}
 
 
 def receipt_exists(state, receipt):
@@ -172,13 +182,17 @@ def build_workflow(provider, *, validator=maven):
             recheck(state)
             if not successful(record): raise RuntimeError('Original Maven tests must all execute and pass')
             event(state, 'PARALLEL_BASELINE_PASSED', record)
-            return {'baseline_validation': record, 'status': 'PARALLEL_READY'}
+            return {'baseline_validation': record, 'status': 'PARALLEL_READY',
+                    'current_wave_index': 0, 'transactions': [], 'applied_changes': {}}
         except Exception as error:
             event(state, 'PARALLEL_BASELINE_REJECTED', {'error': str(error)})
             return {'status': 'STOPPED_PARALLEL_BASELINE', 'error': str(error)}
 
     def dispatch(state):
-        return [Send('worker', {**state, 'task_id': task['task_id']}) for task in state['context']['tasks']]
+        waves = state['waves']
+        wave_index = state.get('current_wave_index', 0)
+        current_wave = waves[wave_index]
+        return [Send('worker', {**state, 'task_id': task_id}) for task_id in current_wave]
 
     def worker(state):
         task = next(t for t in state['context']['tasks'] if t['task_id'] == state['task_id'])
@@ -192,11 +206,41 @@ def build_workflow(provider, *, validator=maven):
             return {'outcomes': [{'task_id': task['task_id'], 'ok': False,
                                  'attempts': 0, 'error': 'Existing worker evidence requires review'}]}
         attempts = []
+        wave_index = state.get('current_wave_index', 0)
+        current_wave = set(state['waves'][wave_index])
         for attempt in range(1, MAX_ATTEMPTS + 1):
             try:
                 recheck(state); assert_receipts(state)
-                context = {**state['context'], 'tasks': [{**t, 'status': 'READY'} for t in state['context']['tasks']],
-                           'active_task_ids': [task['task_id']], 'implementation_response_format': 'complete_files'}
+                completed_so_far = set()
+                for i in range(wave_index):
+                    completed_so_far.update(state['waves'][i])
+                task_statuses = []
+                for t in state['context']['tasks']:
+                    if t['task_id'] in completed_so_far:
+                        task_statuses.append({**t, 'status': 'COMPLETED'})
+                    elif t['task_id'] in current_wave:
+                        task_statuses.append({**t, 'status': 'READY'})
+                    else:
+                        task_statuses.append({**t, 'status': 'PENDING'})
+
+                context = {
+                    **state['context'],
+                    'tasks': task_statuses,
+                    'active_task_ids': [task['task_id']],
+                    'implementation_response_format': 'complete_files',
+                }
+                predecessors = {}
+                for dep_id in task.get('dependencies', []):
+                    dep_task = next((t for t in state['context']['tasks'] if t['task_id'] == dep_id), None)
+                    if dep_task:
+                        predecessors[dep_id] = {
+                            'task_id': dep_id,
+                            'description': dep_task.get('description', ''),
+                            'allowed_files': dep_task.get('allowed_files', []),
+                        }
+                if predecessors:
+                    context['predecessor_outputs'] = predecessors
+
                 selected = next(t for t in context['tasks'] if t['task_id'] == task['task_id'])
                 if attempts:
                     context['failure_context'] = {'category': 'model_output', 'previous_attempts': attempts}
@@ -206,7 +250,7 @@ def build_workflow(provider, *, validator=maven):
                         response = provider.invoke(prompt, **kwargs)
                         (directory/f'{attempt}-response.txt').write_text(response.text)
                         return response
-                event(state, 'PARALLEL_ATTEMPT_STARTED', {'task_id': task['task_id'], 'attempt': attempt})
+                event(state, 'PARALLEL_ATTEMPT_STARTED', {'task_id': task['task_id'], 'attempt': attempt, 'wave_index': wave_index})
                 result = implement_task(selected, Path(context['workspace']), context, provider=Recorded(), prepare_only=True)
                 recheck(state)
                 encoded = {k: {p: base64.b64encode(v).decode() for p, v in result[k].items()} for k in ('proposals', 'originals')}
@@ -231,17 +275,27 @@ def build_workflow(provider, *, validator=maven):
         return {'outcomes': [outcome]}
 
     def join(state):
+        wave_index = state.get('current_wave_index', 0)
+        current_wave = state['waves'][wave_index]
+        all_task_ids = {t['task_id']: t for t in state['context']['tasks']}
+        outcomes = state.get('outcomes', [])
+        expected_total = sum(len(state['waves'][i]) for i in range(wave_index + 1))
         transaction = None
         try:
             baseline_files = recheck(state); assert_receipts(state)
-            outcomes = state['outcomes']; expected = {t['task_id']: t for t in state['context']['tasks']}
-            if len(outcomes) != len(expected) or {o['task_id'] for o in outcomes} != set(expected):
+            if (len(outcomes) != expected_total
+                    or any(o['task_id'] not in all_task_ids for o in outcomes)
+                    or len({o['task_id'] for o in outcomes}) != len(outcomes)):
                 raise PermissionError('Incomplete or duplicate parallel outcomes')
-            event(state, 'PARALLEL_SYNCHRONIZED', {'task_ids': sorted(expected), 'outcome_hash': digest(outcomes)})
-            if not all(o['ok'] for o in outcomes):
-                return {'status': 'STOPPED_PARALLEL_WORKER_FAILED'}
+            expected = {t_id: all_task_ids[t_id] for t_id in current_wave}
+            wave_outcomes = [o for o in outcomes if o['task_id'] in expected]
+            if len(wave_outcomes) != len(expected) or {o['task_id'] for o in wave_outcomes} != set(expected):
+                raise PermissionError('Incomplete or duplicate parallel outcomes')
+            event(state, 'PARALLEL_SYNCHRONIZED', {'wave_index': wave_index, 'task_ids': sorted(expected), 'outcome_hash': digest(wave_outcomes)})
+            if not all(o['ok'] for o in wave_outcomes):
+                return stop_all(state, RuntimeError('Worker failed in wave'), status='STOPPED_PARALLEL_WORKER_FAILED')
             proposals = {}; originals = {}; checkpoints = {}
-            for outcome in outcomes:
+            for outcome in wave_outcomes:
                 task = expected[outcome['task_id']]
                 if outcome['receipt'] != task_receipt(state, task): raise PermissionError('Outcome approval changed')
                 if set(outcome['proposals']) != set(task['allowed_files']) or set(outcome['originals']) != set(task['allowed_files']):
@@ -250,7 +304,8 @@ def build_workflow(provider, *, validator=maven):
                     if path in proposals: raise PermissionError('Overlapping worker proposals')
                     original = base64.b64decode(outcome['originals'][path], validate=True)
                     proposed = base64.b64decode(data, validate=True)
-                    if original != baseline_files[path] or proposed == original:
+                    current_file_bytes = (Path(state['context']['workspace'])/path).read_bytes()
+                    if original != current_file_bytes or proposed == original:
                         raise PermissionError('Worker source baseline changed or unchanged proposal')
                     proposals[path] = proposed; originals[path] = original
             transaction = apply_transaction(proposals, originals, Path(state['context']['workspace']), list(proposals), state['context']['workflow_id'])
@@ -258,30 +313,41 @@ def build_workflow(provider, *, validator=maven):
                 checkpoints[task_id] = {'receipt': state['receipts'][task_id], 'transaction_id': transaction['transaction_id'],
                     'checkpoints': [transaction['transaction_id'] + ':' + p for p in task['allowed_files']]}
             event(state, 'PARALLEL_TASK_CHECKPOINTS_BOUND', checkpoints)
-            return {'transaction': transaction, 'task_checkpoints': checkpoints, 'status': 'PARALLEL_APPLIED'}
+            all_txs = list(state.get('transactions', [])) + [transaction]
+            all_checkpoints = {**state.get('task_checkpoints', {}), **checkpoints}
+            return {'transaction': transaction, 'transactions': all_txs,
+                    'task_checkpoints': all_checkpoints,
+                    'current_wave_proposals': proposals,
+                    'status': 'PARALLEL_APPLIED'}
         except Exception as error:
-            return stop(state, transaction, error)
+            return stop_all(state, error, transaction=transaction)
 
-    def stop(state, transaction, error):
-        status = 'STOPPED_PARALLEL_FAILED'
-        if transaction:
+    def stop_all(state, error, *, transaction=None, status=None):
+        final_status = status or 'STOPPED_PARALLEL_FAILED'
+        root = Path(state['context']['workspace'])
+        txs = list(state.get('transactions', []))
+        if transaction and not any(t['transaction_id'] == transaction['transaction_id'] for t in txs):
+            txs.append(transaction)
+        if txs:
             try:
-                finish_transaction(transaction['transaction_id'], Path(state['context']['workspace']), transaction['paths'], passed=False)
-                event(state, 'PARALLEL_ROLLED_BACK', {'transaction_id': transaction['transaction_id']})
-                status = 'STOPPED_PARALLEL_ROLLED_BACK'
+                for tx in reversed(txs):
+                    finish_transaction(tx['transaction_id'], root, tx['paths'], passed=False)
+                    event(state, 'PARALLEL_ROLLED_BACK', {'transaction_id': tx['transaction_id']})
+                if not status:
+                    final_status = 'STOPPED_PARALLEL_ROLLED_BACK'
             except Exception as recovery_error:
-                status = 'STOPPED_PARALLEL_RECOVERY_REQUIRED'
-                event(state, 'PARALLEL_ROLLBACK_BLOCKED', {'error': str(recovery_error), 'transaction_id': transaction['transaction_id']})
-        event(state, 'PARALLEL_FAILED', {'error': str(error), 'status': status})
-        return {'status': status, 'error': str(error)}
+                final_status = 'STOPPED_PARALLEL_RECOVERY_REQUIRED'
+                event(state, 'PARALLEL_ROLLBACK_BLOCKED', {'error': str(recovery_error), 'transaction_id': tx['transaction_id']})
+        event(state, 'PARALLEL_FAILED', {'error': str(error), 'status': final_status})
+        return {'status': final_status, 'error': str(error)}
 
     def validation(state):
         tx = state['transaction']; root = Path(state['context']['workspace'])
+        wave_index = state.get('current_wave_index', 0)
         try:
             from governance.plan_lineage import source_journal
             journal = source_journal(root, tx['transaction_id'])
-            changes = {p: base64.b64decode(data, validate=True)
-                       for outcome in state['outcomes'] for p, data in outcome['proposals'].items()}
+            changes = state['current_wave_proposals']
             baseline_files = load_baseline(Path(state['evidence'])/'originals', state['baseline_hash'])
             if (journal['status'] != 'applied' or journal['workflow_id'] != state['context']['workflow_id']
                     or len(journal['files']) != len(changes)
@@ -295,21 +361,44 @@ def build_workflow(provider, *, validator=maven):
                         or base64.b64decode(entry['original_content'], validate=True) != baseline_files[path]
                         or entry['original_hash'] != sha(baseline_files[path])):
                     raise PermissionError('Joined transaction checkpoint/hash changed')
-            recheck(state, applied=changes); assert_receipts(state)
-            event(state, 'PARALLEL_VALIDATION_STARTED', {'transaction_id': tx['transaction_id'], 'tasks': sorted(state['task_checkpoints'])})
-            record = validator(root, Path(state['evidence']), 'combined', state['cache'])
-            recheck(state, applied=changes); assert_receipts(state)
+
+            cumulative_applied = {**state.get('applied_changes', {}), **changes}
+            recheck(state, applied=cumulative_applied); assert_receipts(state)
+
+            event(state, 'PARALLEL_VALIDATION_STARTED', {'wave_index': wave_index, 'transaction_id': tx['transaction_id'], 'tasks': sorted(state['waves'][wave_index])})
+            label = 'combined' if len(state['waves']) == 1 else f'wave-{wave_index}'
+            record = validator(root, Path(state['evidence']), label, state['cache'])
+            recheck(state, applied=cumulative_applied); assert_receipts(state)
             if not successful(record, state['baseline_validation']['cases']):
-                result = stop(state, tx, RuntimeError('Combined Maven validation failed or original tests missing/skipped'))
+                result = stop_all(state, RuntimeError('Combined Maven validation failed or original tests missing/skipped'))
                 return {**result, 'validation': record}
+
+            event(state, 'PARALLEL_WAVE_VALIDATED', {'wave_index': wave_index, 'transaction_id': tx['transaction_id'], 'validation': record})
             finish_transaction(tx['transaction_id'], root, tx['paths'], passed=True)
-            event(state, 'PARALLEL_VALIDATION_PASSED', {'transaction_id': tx['transaction_id'], 'validation': record})
-            return {'validation': record, 'status': 'AWAITING_PARALLEL_RESULTS_REVIEW'}
+
+            # Check if there are more waves
+            if wave_index + 1 < len(state['waves']):
+                return {
+                    'applied_changes': cumulative_applied,
+                    'current_wave_index': wave_index + 1,
+                    'status': 'WAVE_CONTINUE',
+                }
+
+            event(state, 'PARALLEL_VALIDATION_PASSED', {'transactions': [t['transaction_id'] for t in state.get('transactions', [])], 'validation': record})
+            return {'applied_changes': cumulative_applied, 'validation': record, 'status': 'AWAITING_PARALLEL_RESULTS_REVIEW'}
         except Exception as error:
-            return stop(state, tx, error)
+            return stop_all(state, error)
+
+    def route_validation(s):
+        if s['status'].startswith('STOPPED'):
+            return END
+        if s['status'] == 'WAVE_CONTINUE':
+            return dispatch(s)
+        return END
 
     graph = StateGraph(ParallelState)
-    for name, node in [('entry', entry), ('review', review), ('baseline', baseline), ('worker', worker), ('join', join), ('validation', validation)]:
+    for name, node in [('entry', entry), ('review', review), ('baseline', baseline),
+                       ('worker', worker), ('join', join), ('validation', validation)]:
         graph.add_node(name, node)
     graph.add_edge(START, 'entry')
     graph.add_conditional_edges('entry', lambda s: END if s['status'].startswith('STOPPED') else 'review')
@@ -317,5 +406,5 @@ def build_workflow(provider, *, validator=maven):
     graph.add_conditional_edges('baseline', lambda s: END if s['status'].startswith('STOPPED') else dispatch(s))
     graph.add_edge('worker', 'join')  # LangGraph fan-in waits for the entire worker superstep.
     graph.add_conditional_edges('join', lambda s: 'validation' if s['status'] == 'PARALLEL_APPLIED' else END)
-    graph.add_edge('validation', END)
+    graph.add_conditional_edges('validation', route_validation)
     return graph
