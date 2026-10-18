@@ -57,9 +57,17 @@ def build(executor, validator):
    rollback_test(state['test_transaction'],Path(state['workspace']))
    finish_transaction(state['source_transaction']['transaction_id'],Path(state['workspace']),state['production_paths'],passed=False)
   except Exception as error:return {**state,'status':'STOPPED_RECOVERY_BLOCKED','recovery_error':str(error),'validation':result}
+  from governance.java_import_diagnostics import diagnose_sources_imports
+  import_diag = ""
+  if state.get('proposals'):
+   props_str = {p: b.decode('utf-8', errors='replace') for p, b in state['proposals'].items() if p.endswith('.java')}
+   id_res = diagnose_sources_imports(props_str)
+   if not id_res.get('valid'):
+    import_diag = id_res.get('summary', '')
   return {**state,'status':'RECOVERY_REQUIRED' if state['attempt']<MAX_ATTEMPTS else 'STOPPED_RETRY_EXHAUSTED','validation':result,
           'failed_proposal':state.get('proposal'),'failed_sources':state.get('proposals'),
-          'compiler_diagnostics':result.get('diagnostics','')}
+          'compiler_diagnostics':result.get('diagnostics',''),
+          'import_diagnostics':import_diag}
  def review(state):
   d=interrupt({'type':'BROWNFIELD_RESULTS_REVIEW','validation':state['validation'],'attempt':state['attempt']})
   return {**state,'status':'BROWNFIELD_RESULTS_REVIEWED' if d=='approve' else 'STOPPED_RESULTS_REJECTED'}

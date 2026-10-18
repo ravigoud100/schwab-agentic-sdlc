@@ -25,7 +25,27 @@ def complete_source_prompt(task, sources, context):
         'approved_plan':context.get('plan',''),
         'plan_authorization_hash':context.get('plan_authorization',{}).get('authorization_hash'),
     }
-    diagnostics=context.get('previous_validation_result',{})
+    diagnostics = context.get('previous_validation_result', {})
+    from governance.java_import_diagnostics import extract_declared_imports
+    import_inventories = {path: extract_declared_imports(src) for path, src in sources.items() if path.endswith('.java')}
+    import_rules = [
+        "- Every referenced type MUST be resolved: either explicitly imported in that file's import header or fully qualified at the point of use.",
+        "- Do NOT assume an import exists in one file just because it exists in another file in the project.",
+    ]
+    for path in sources:
+        if path.endswith("UrlController.java") and "java.time.Instant" not in import_inventories.get(path, []):
+            import_rules.append(
+                f"- NOTICE: {path} does NOT currently import java.time.Instant. If your implementation uses Instant "
+                "(such as Instant.now()), you MUST add `import java.time.Instant;` to that file's imports or write `java.time.Instant.now()`."
+            )
+        if path.endswith("UrlService.java") and "java.util.Map" not in import_inventories.get(path, []):
+            import_rules.append(
+                f"- NOTICE: {path} does NOT currently import java.util.Map. If your implementation uses Map "
+                "(such as Map<String, Object> or Map.of), you MUST add `import java.util.Map;` to that file's imports or write `java.util.Map`."
+            )
+    import_rules_text = "\n".join(import_rules)
+    structured_import_diag = context.get('import_diagnostics') or context.get('recovery_import_diagnostics', '')
+
     return f'''Implement the approved task by returning COMPLETE replacement Java files.
 Return ONLY JSON: {{"files":[{{"path":"<authorized path>","content":"<complete Java source>"}}]}}.
 Every authorized production path must appear exactly once. No other paths or fields.
@@ -50,10 +70,18 @@ APPROVED TASK (filtered production scope):
 ORIGINAL COMPLETE SOURCES, restored before this attempt:
 {json.dumps(sources)}
 
+DECLARED IMPORTS PER FILE:
+{json.dumps(import_inventories, indent=2)}
+
+TYPE RESOLUTION AND IMPORT OBLIGATIONS:
+{import_rules_text}
+
 PREVIOUS MATERIALIZED SOURCES (compiler diagnostics or architecture review refer to these, NOT the restored originals):
 {json.dumps(failed)}
 ACTUAL PREVIOUS MAVEN DIAGNOSTICS:
 {diagnostics.get('output','')}
+STRUCTURED IMPORT DIAGNOSTICS:
+{structured_import_diag}
 STRUCTURED FAILURE EVIDENCE:
 {json.dumps(evidence)}
 HUMAN-APPROVED CORRECTION STRATEGY (when supplied):

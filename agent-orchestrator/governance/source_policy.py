@@ -1,5 +1,10 @@
-"""Policy for existing Java source edits; excludes build files and commands."""
 from pathlib import Path
+from governance.java_import_diagnostics import (
+    diagnose_java_imports,
+    diagnose_sources_imports,
+    extract_declared_imports,
+    strip_comments_and_strings,
+)
 
 
 def authorized_java_target(relative_path: str, workspace: Path, allowed_files) -> Path:

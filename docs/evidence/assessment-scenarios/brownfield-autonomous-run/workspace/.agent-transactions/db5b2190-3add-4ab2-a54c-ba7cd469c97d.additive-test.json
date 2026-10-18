@@ -1,0 +1,7 @@
+{
+  "transaction_id": "db5b2190-3add-4ab2-a54c-ba7cd469c97d",
+  "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+  "status": "validated",
+  "path": "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java",
+  "created_hash": "97e0f2ac709501709fd6f8359644a27926cf9a6d9ab809fc709054c26e5324b5"
+}

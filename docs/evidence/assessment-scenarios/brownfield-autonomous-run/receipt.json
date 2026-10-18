@@ -1,0 +1,15 @@
+{
+  "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+  "plan_hash": "bcdf4c5f2b0db02293b30b00c34ac51f6e706f38de9173210f482adb82ce65ee",
+  "scope": [
+    "url-shortener/src/main/java/url_shortener/UrlService.java",
+    "url-shortener/src/main/java/url_shortener/UrlController.java",
+    "url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java"
+  ],
+  "baseline": {
+    "url-shortener/src/main/java/url_shortener/UrlService.java": "98e42b3e450a123d9b8545c6698cba069f4690bf289c84f31eb16298c8b11f1f",
+    "url-shortener/src/main/java/url_shortener/UrlController.java": "85480f3c741232cbd94423046e586c119bbdbc177d6a68500accbe0141b122ae"
+  },
+  "policy_hash": "44fbe715aa936848519ca742f5682c21e2c63962ad89e3c9f9dff474667c645d",
+  "contract": "UrlService.getStatus returns Map<String, Object> with shortCode and expired, @Transactional(readOnly = true), throws ResponseStatusException(HttpStatus.NOT_FOUND), never increments clicks. UrlController delegates."
+}

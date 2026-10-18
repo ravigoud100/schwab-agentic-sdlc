@@ -1,0 +1,37 @@
+{
+  "valid": true,
+  "by_file": {
+    "url-shortener/src/main/java/url_shortener/UrlService.java": {
+      "valid": true,
+      "file_path": "url-shortener/src/main/java/url_shortener/UrlService.java",
+      "declared_imports": [
+        "org.springframework.stereotype.Service",
+        "java.security.SecureRandom",
+        "java.time.Instant",
+        "java.util.Map"
+      ],
+      "unresolved_symbols": [],
+      "diagnostics": []
+    },
+    "url-shortener/src/main/java/url_shortener/UrlController.java": {
+      "valid": true,
+      "file_path": "url-shortener/src/main/java/url_shortener/UrlController.java",
+      "declared_imports": [
+        "jakarta.validation.Valid",
+        "jakarta.validation.constraints.NotBlank",
+        "jakarta.validation.constraints.Size",
+        "org.hibernate.validator.constraints.URL",
+        "org.springframework.http.HttpStatus",
+        "org.springframework.web.bind.annotation.*",
+        "org.springframework.web.server.ResponseStatusException",
+        "java.net.URI",
+        "java.util.Map"
+      ],
+      "unresolved_symbols": [],
+      "diagnostics": []
+    }
+  },
+  "unresolved_symbols": [],
+  "diagnostics": [],
+  "summary": "All common imports resolved."
+}

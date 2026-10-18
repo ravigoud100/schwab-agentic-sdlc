@@ -2,7 +2,7 @@
   "workflow_id": "assessment-scenarios-2026-10-16",
   "catalog_hash": "4f5e85d1863ff6b442c73435193a08c5f87764e4d3dd76556048cde5f1d86c75",
   "status": "ALL_SCENARIOS_COMPLETE",
-  "live_generation": false,
+  "live_generation": true,
   "source_writes": 0,
   "release_authorized": false,
   "scenarios": {
@@ -14,13 +14,28 @@
       "maven_tests": 9,
       "evidence": "docs/evidence/assessment-scenarios/greenfield-execution/"
     },
-    "brownfield": {
+    "brownfield_historical": {
       "proposal_hash": "37159ec6198899542756efd74b502926a2d27d89a744875634a2ebaed7947848",
       "workflow_id": "e4e0d578-28db-40a3-944c-32a60be1722c",
       "status": "STOPPED_RETRY_EXHAUSTED",
-      "resolution": "Option A — offline-assisted 11-test pass with documented architecture gap",
-      "architecture_compliance": "unresolved",
+      "resolution": "Option A — historical retry exhaustion preserved; offline-assisted 11-test validation with documented architecture gap",
+      "architecture_compliance": "unresolved in historical run",
       "evidence": "docs/evidence/assessment-scenarios/brownfield-final-report/"
+    },
+    "brownfield_autonomous": {
+      "plan_hash": "bcdf4c5f2b0db02293b30b00c34ac51f6e706f38de9173210f482adb82ce65ee",
+      "workflow_id": "fcd9b8af-6e3d-4806-9893-85e4ec4facb0",
+      "status": "BROWNFIELD_RESULTS_APPROVED",
+      "bundle_hash": "abf8d6df7637dc4f59791eed1834e62d04c59aa965c2bc2987db60693881b0bf",
+      "model": "qwen2.5-coder:latest",
+      "attempt": 1,
+      "maven_tests": 11,
+      "tests_failed": 0,
+      "tests_errors": 0,
+      "tests_skipped": 0,
+      "architecture_compliance": "verified — UrlService.getStatus returns Map<String, Object> with shortCode and expired, annotated @Transactional(readOnly = true), throws ResponseStatusException 404, click count unaffected; UrlController delegates",
+      "import_diagnostics": "clean — pre-Maven import diagnostics verified all common types resolved",
+      "evidence": "docs/evidence/assessment-scenarios/brownfield-autonomous-run/"
     },
     "ambiguous": {
       "proposal_hash": "39fd551b8a940f630a162074bb8ccaca1e03a3632a6a918a62b99b2bf4e4c53c",
