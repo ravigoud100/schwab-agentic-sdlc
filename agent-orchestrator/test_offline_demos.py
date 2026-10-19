@@ -75,6 +75,7 @@ def test_brownfield_demo_isolated_baseline_and_preserves_primary(tmp_path, monke
     svc_before = _sha256(primary_svc.read_bytes())
     ctrl_before = _sha256(primary_ctrl.read_bytes())
     test_before = _sha256(primary_test.read_bytes())
+    status_before = set(subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, check=True, capture_output=True, text=True).stdout.splitlines())
 
     # 2. Run brownfield demo in isolated baseline
     res = run_brownfield_demo(workflow_id="test-brownfield-demo")
@@ -97,11 +98,10 @@ def test_brownfield_demo_isolated_baseline_and_preserves_primary(tmp_path, monke
     assert ctrl_before == ctrl_after, "Primary UrlController was modified by demo!"
     assert test_before == test_after, "Primary UrlStatusIntegrationTest was modified by demo!"
 
-    # 4. Confirm working tree remains clean
-    status = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, check=True, capture_output=True, text=True)
-    # The only untracked files should be the newly created test files or ignored files
-    for line in status.stdout.splitlines():
-        assert "url-shortener" not in line, f"url-shortener was unexpectedly touched: {line}"
+    # 4. Confirm demo did not modify or create working tree files in url-shortener
+    status_after = set(subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, check=True, capture_output=True, text=True).stdout.splitlines())
+    for line in (status_after - status_before):
+        assert "url-shortener" not in line, f"url-shortener was unexpectedly touched by demo: {line}"
 
 
 def test_ambiguous_demo_clarification_without_default_ttl(tmp_path, monkeypatch):

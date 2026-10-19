@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.net.URI;
+import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -16,9 +16,19 @@ import java.util.Map;
 public class UrlController {
 
     private final UrlService urlService;
+    private final String baseUrl;
 
     public UrlController(UrlService urlService) {
+        this(urlService, "http://localhost:8080/");
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public UrlController(
+            UrlService urlService,
+            @Value("${app.short-url.base-url:http://localhost:8080/}") String baseUrl
+    ) {
         this.urlService = urlService;
+        this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     }
 
     public record CreateUrlRequest(
@@ -26,12 +36,30 @@ public class UrlController {
             @Size(max = 2048)
             @URL(protocol = "https")
             String originalUrl,
-            java.time.Instant expiresAt
+            Instant expiresAt
+    ) {}
+
+    public record CreateUrlResponse(
+            String originalUrl,
+            String shortCode,
+            String shortUrl
+    ) {}
+
+    public record UrlAnalyticsResponse(
+            String shortCode,
+            String originalUrl,
+            Long totalClicks,
+            String createdAt
+    ) {}
+
+    public record UrlStatusResponse(
+            String shortCode,
+            boolean expired
     ) {}
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String> createShortUrl(
+    public CreateUrlResponse createShortUrl(
             @Valid @RequestBody CreateUrlRequest request) {
 
         ShortUrl shortUrl = urlService.createShortUrl(
@@ -39,30 +67,35 @@ public class UrlController {
                 request.expiresAt()
         );
 
-        return Map.of(
-                "originalUrl", shortUrl.getOriginalUrl(),
-                "shortCode", shortUrl.getShortCode(),
-                "shortUrl", "http://localhost:8080/" + shortUrl.getShortCode()
+        return new CreateUrlResponse(
+                shortUrl.getOriginalUrl(),
+                shortUrl.getShortCode(),
+                this.baseUrl + shortUrl.getShortCode()
         );
     }
-    
+
     @GetMapping("/{shortCode}/analytics")
-public Map<String, Object> getAnalytics(
-        @PathVariable String shortCode) {
+    public UrlAnalyticsResponse getAnalytics(
+            @PathVariable String shortCode) {
 
-    ShortUrl shortUrl = urlService.getAnalytics(shortCode);
+        ShortUrl shortUrl = urlService.getAnalytics(shortCode);
 
-    return Map.of(
-            "shortCode", shortUrl.getShortCode(),
-            "originalUrl", shortUrl.getOriginalUrl(),
-            "totalClicks", shortUrl.getClickCount(),
-            "createdAt", shortUrl.getCreatedAt().toString()
-    );
-}
+        return new UrlAnalyticsResponse(
+                shortUrl.getShortCode(),
+                shortUrl.getOriginalUrl(),
+                shortUrl.getClickCount(),
+                shortUrl.getCreatedAt().toString()
+        );
+    }
 
-  @GetMapping("/{shortCode}/status")
-public java.util.Map<String, Object> getStatus(@PathVariable String shortCode) {
+    @GetMapping("/{shortCode}/status")
+    public UrlStatusResponse getStatus(@PathVariable String shortCode) {
 
-    return urlService.getStatus(shortCode);
-}
+        Map<String, Object> status = urlService.getStatus(shortCode);
+
+        return new UrlStatusResponse(
+                (String) status.get("shortCode"),
+                (Boolean) status.get("expired")
+        );
+    }
 }
