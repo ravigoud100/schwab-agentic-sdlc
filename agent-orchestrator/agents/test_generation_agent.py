@@ -68,7 +68,7 @@ class GeneratedExpirationBoundaryTest {
     UrlService service;
     @BeforeEach void setup() {
         repository = mock(UrlRepository.class);
-        when(repository.save(any(ShortUrl.class))).thenAnswer(call -> call.getArgument(0));
+        when(repository.saveAndFlush(any(ShortUrl.class))).thenAnswer(call -> call.getArgument(0));
         service = new UrlService(repository, Clock.fixed(NOW, ZoneOffset.UTC));
     }
     @Test void futureExpiration() {
@@ -76,7 +76,7 @@ class GeneratedExpirationBoundaryTest {
         ShortUrl url = service.createShortUrl("https://example.com/future", future);
         assertEquals(future, url.getExpiresAt());
         assertFalse(url.isExpired(NOW));
-        verify(repository).save(url);
+        verify(repository).saveAndFlush(url);
     }
     @Test void pastExpiration() { reject(NOW.minusSeconds(3600)); }
     @Test void equalNowExpiration() { reject(NOW); }
@@ -84,13 +84,13 @@ class GeneratedExpirationBoundaryTest {
         ResponseStatusException failure = assertThrows(ResponseStatusException.class,
             () -> service.createShortUrl("https://example.com/reject", value));
         assertEquals(HttpStatus.BAD_REQUEST, failure.getStatusCode());
-        verify(repository, never()).save(any(ShortUrl.class));
+        verify(repository, never()).saveAndFlush(any(ShortUrl.class));
     }
     @Test void missingExpiration() {
         ShortUrl url = service.createShortUrl("https://example.com/missing", null);
         assertNull(url.getExpiresAt());
         assertFalse(url.isExpired(NOW.plusSeconds(315360000)));
-        verify(repository).save(url);
+        verify(repository).saveAndFlush(url);
     }
 }
 '''.encode()

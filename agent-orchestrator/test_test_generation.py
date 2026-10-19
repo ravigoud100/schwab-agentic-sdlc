@@ -64,7 +64,7 @@ def test_generator_receives_authoritative_context_and_renderer_owns_assertions()
     for value in ('approved choice','approved design','Clock seam approved','strictly_after_now'):assert value in prompt
     assert model.invoke.call_args.kwargs['stage']=='test_generation'
     source=render(payload,context['obligation_contract']).decode()
-    for value in ('Clock.fixed','assertThrows','assertNull','never()).save','BAD_REQUEST','equalNowExpiration'):
+    for value in ('Clock.fixed','assertThrows','assertNull','never()).saveAndFlush','saveAndFlush','BAD_REQUEST','equalNowExpiration'):
         assert value in source
 
 
