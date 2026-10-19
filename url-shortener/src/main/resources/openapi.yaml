@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  title: URL Shortener Service API
+  description: >
+    Enterprise-grade URL Shortener service built with Spring Boot 4 and Java 21.
+    Provides short URL generation with optional custom expiration timestamps,
+    atomic click-count tracking, deterministic expiration validation, and
+    RFC 7807 ProblemDetail error responses.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /api/urls:
+    post:
+      summary: Create Short URL
+      description: >
+        Creates a shortened URL for an original HTTPS URL. Supports optional caller-specified
+        UTC expiration timestamps. If provided, expiration must be strictly in the future.
+        If omitted, the URL never expires (no default 24h TTL).
+      operationId: createShortUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUrlRequest'
+            example:
+              originalUrl: "https://example.com/long/path/document"
+              expiresAt: "2026-12-31T23:59:59Z"
+      responses:
+        '201':
+          description: Short URL successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUrlResponse'
+              example:
+                originalUrl: "https://example.com/long/path/document"
+                shortCode: "aB3dE1z"
+                shortUrl: "http://localhost:8080/aB3dE1z"
+        '400':
+          description: Bad request (invalid payload or past/equal expiration timestamp)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: "about:blank"
+                title: "Bad Request"
+                status: 400
+                detail: "Expiration must be in the future"
+        '503':
+          description: Short-code collision retry exhaustion
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: "about:blank"
+                title: "Service Unavailable"
+                status: 503
+                detail: "Unable to generate unique short URL"
+
+  /{shortCode}:
+    get:
+      summary: Redirect to Original URL
+      description: >
+        Redirects to the original URL if active. Atomically increments the click count
+        in the database. Returns 404 if not found, or 410 Gone if expired.
+        Expired and missing URLs are never incremented.
+      operationId: redirectToOriginalUrl
+      parameters:
+        - name: shortCode
+          in: path
+          required: true
+          description: 7-character alphanumeric short code
+          schema:
+            type: string
+            pattern: '^[A-Za-z0-9]{7}$'
+          example: "aB3dE1z"
+      responses:
+        '302':
+          description: Temporary redirect to original URL
+          headers:
+            Location:
+              description: Target redirect URL
+              schema:
+                type: string
+                format: uri
+              example: "https://example.com/long/path/document"
+        '404':
+          description: Short URL not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: "about:blank"
+                title: "Not Found"
+                status: 404
+                detail: "Short URL not found"
+        '410':
+          description: Short URL has expired
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: "about:blank"
+                title: "Gone"
+                status: 410
+                detail: "Short URL has expired"
+
+  /api/urls/{shortCode}/analytics:
+    get:
+      summary: Retrieve URL Analytics
+      description: Returns click count and creation timestamp for a short URL.
+      operationId: getAnalytics
+      parameters:
+        - name: shortCode
+          in: path
+          required: true
+          description: 7-character alphanumeric short code
+          schema:
+            type: string
+          example: "aB3dE1z"
+      responses:
+        '200':
+          description: Analytics details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlAnalyticsResponse'
+              example:
+                shortCode: "aB3dE1z"
+                originalUrl: "https://example.com/long/path/document"
+                totalClicks: 42
+                createdAt: "2026-10-18T12:00:00"
+        '404':
+          description: Short URL not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+
+  /api/urls/{shortCode}/status:
+    get:
+      summary: Read-Only Expiration Status
+      description: >
+        Checks whether a short URL is expired without incrementing the click counter.
+        Executed under @Transactional(readOnly = true).
+      operationId: getStatus
+      parameters:
+        - name: shortCode
+          in: path
+          required: true
+          description: 7-character alphanumeric short code
+          schema:
+            type: string
+          example: "aB3dE1z"
+      responses:
+        '200':
+          description: Status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlStatusResponse'
+              example:
+                shortCode: "aB3dE1z"
+                expired: false
+        '404':
+          description: Short URL not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+
+components:
+  schemas:
+    CreateUrlRequest:
+      type: object
+      required:
+        - originalUrl
+      properties:
+        originalUrl:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: Valid HTTPS URL
+          example: "https://example.com/target"
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Strict future UTC ISO-8601 expiration timestamp. Null means no expiration.
+          example: "2026-12-31T23:59:59Z"
+
+    CreateUrlResponse:
+      type: object
+      required:
+        - originalUrl
+        - shortCode
+        - shortUrl
+      properties:
+        originalUrl:
+          type: string
+          format: uri
+          example: "https://example.com/target"
+        shortCode:
+          type: string
+          example: "aB3dE1z"
+        shortUrl:
+          type: string
+          format: uri
+          example: "http://localhost:8080/aB3dE1z"
+
+    UrlAnalyticsResponse:
+      type: object
+      required:
+        - shortCode
+        - originalUrl
+        - totalClicks
+        - createdAt
+      properties:
+        shortCode:
+          type: string
+          example: "aB3dE1z"
+        originalUrl:
+          type: string
+          format: uri
+          example: "https://example.com/target"
+        totalClicks:
+          type: integer
+          format: int64
+          example: 42
+        createdAt:
+          type: string
+          example: "2026-10-18T12:00:00"
+
+    UrlStatusResponse:
+      type: object
+      required:
+        - shortCode
+        - expired
+      properties:
+        shortCode:
+          type: string
+          example: "aB3dE1z"
+        expired:
+          type: boolean
+          example: false
+
+    ProblemDetail:
+      type: object
+      required:
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          format: uri
+          default: "about:blank"
+        title:
+          type: string
+          example: "Not Found"
+        status:
+          type: integer
+          example: 404
+        detail:
+          type: string
+          example: "Short URL not found"
+        instance:
+          type: string
+          format: uri
+          example: "/api/urls/missing/status"

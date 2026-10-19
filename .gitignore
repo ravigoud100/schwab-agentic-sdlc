@@ -50,3 +50,8 @@ agent-orchestrator/artifacts/url-shortener/.jdk-25/
 *.worktree-backup
 *.orig
 agent-orchestrator/backups/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/

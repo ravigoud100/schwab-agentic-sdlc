@@ -113,4 +113,32 @@ class UrlApiContractIntegrationTest {
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.detail").value("Expiration must be in the future"));
     }
+
+    @Test
+    void validationErrorReturnsRFC7807ProblemDetailStructure() throws Exception {
+        mockMvc.perform(post("/api/urls")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "originalUrl": "not-a-valid-url"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.detail").value("Invalid request content."));
+    }
+
+    @Test
+    void exceptionHandlerDirectCoverage() {
+        GlobalExceptionHandler handler = new GlobalExceptionHandler();
+        var resp1 = handler.handleIllegalStateException(new IllegalStateException("Service error"));
+        org.junit.jupiter.api.Assertions.assertEquals(503, resp1.getStatusCode().value());
+        org.junit.jupiter.api.Assertions.assertEquals("Service error", resp1.getBody().getDetail());
+
+        var resp2 = handler.handleResponseStatusException(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND, "Not found reason"));
+        org.junit.jupiter.api.Assertions.assertEquals(404, resp2.getStatusCode().value());
+        org.junit.jupiter.api.Assertions.assertEquals("Not found reason", resp2.getBody().getDetail());
+    }
 }
