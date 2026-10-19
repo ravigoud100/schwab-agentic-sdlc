@@ -115,7 +115,7 @@ def test_graph_persists_all_checkpoints_and_validates_or_restores_set(tmp_path, 
     analysis = Mock(invoke=Mock(side_effect=[requirements_response('API requirement'), ModelResponse(plan)]))
     edit_model = Mock(invoke=Mock(return_value=ModelResponse(json.dumps({'edits': edits}))))
     state = {'workflow_id': 'multifile-graph', 'workspace': str(tmp_path), 'requirement': 'Coordinated API',
-             'implementation_changed': False, 'repair_applied': False}
+             'implementation_changed': False, 'repair_applied': False, 'legacy': True}
     config = {'configurable': {'thread_id': 'multifile-graph'}}
     result = {'passed': passed is True, 'exit_code': 0 if passed is True else 1, 'duration_seconds': 0.1, 'output': 'Maven result'}
     with patch('main.model', analysis), patch('main.analyze_codebase', return_value='Service and controller'), patch.object(

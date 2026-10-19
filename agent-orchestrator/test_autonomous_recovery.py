@@ -52,7 +52,7 @@ def test_single_workflow_recovers_with_evidence_and_required_approval(tmp_path, 
     implementation = Mock(invoke=Mock(side_effect=[ModelResponse(json.dumps(bad)), ModelResponse(json.dumps(good))]))
     config = {'configurable': {'thread_id': 'recovery-test'}}
     initial = {'workflow_id': 'recovery-test', 'workspace': str(tmp_path), 'requirement': 'Coordinated API enhancement',
-               'implementation_changed': False, 'repair_applied': False, 'retry_count': 0}
+               'implementation_changed': False, 'repair_applied': False, 'retry_count': 0, 'legacy': True}
     with patch('main.model', model), patch('main.analyze_codebase', return_value='Actual code'), patch.object(
         implementation_agent, 'model', implementation
     ), patch('main.validate_implementation', side_effect=[validation(False), validation(True)]) as validate, patch.object(
@@ -113,7 +113,7 @@ def test_invalid_json_is_diagnosed_and_corrected_before_any_maven_failure(tmp_pa
         'main.log_event'),patch('governance.file_transaction.log_event'),SqliteSaver.from_conn_string(str(tmp_path/'workflow.db')) as saver:
         app=main.workflow.compile(checkpointer=saver)
         config={'configurable':{'thread_id':'invalid-json'}}
-        app.invoke({'workflow_id':'invalid-json','workspace':str(tmp_path),'requirement':'API'},config=config)
+        app.invoke({'workflow_id':'invalid-json','workspace':str(tmp_path),'requirement':'API','legacy':True},config=config)
         result=app.invoke(Command(resume='approve'),config=config)
     assert result['status']=='AWAITING_FINAL_HUMAN_REVIEW'
     assert result['failure_context']['category']=='model_output'
@@ -131,7 +131,7 @@ def test_retry_exhaustion_restores_every_attempt_and_stops(tmp_path):
         'main.log_event'),patch('governance.file_transaction.log_event'),SqliteSaver.from_conn_string(str(tmp_path/'workflow.db')) as saver:
         app=main.workflow.compile(checkpointer=saver)
         config={'configurable':{'thread_id':'exhaustion'}}
-        app.invoke({'workflow_id':'exhaustion','workspace':str(tmp_path),'requirement':'API'},config=config)
+        app.invoke({'workflow_id':'exhaustion','workspace':str(tmp_path),'requirement':'API','legacy':True},config=config)
         result=app.invoke(Command(resume='approve'),config=config)
     assert result['status']=='STOPPED_ROLLED_BACK'
     assert result['recovery_stop_reason']=='RETRY_LIMIT_EXHAUSTED'
@@ -164,7 +164,7 @@ def test_infrastructure_failure_restores_files_without_replanning(tmp_path):
         'governance.file_transaction.log_event'),SqliteSaver.from_conn_string(str(tmp_path/'workflow.db')) as saver:
         app=main.workflow.compile(checkpointer=saver)
         config={'configurable':{'thread_id':'infrastructure'}}
-        app.invoke({'workflow_id':'infrastructure','workspace':str(tmp_path),'requirement':'API'},config=config)
+        app.invoke({'workflow_id':'infrastructure','workspace':str(tmp_path),'requirement':'API','legacy':True},config=config)
         result=app.invoke(Command(resume='approve'),config=config)
     assert result['status']=='STOPPED_ROLLED_BACK'
     assert result['failure_context']['category']=='infrastructure'
@@ -185,7 +185,7 @@ def test_unexpected_source_hash_blocks_rollback_and_all_corrections(tmp_path):
         'main.log_event'),patch('governance.file_transaction.log_event'),SqliteSaver.from_conn_string(str(tmp_path/'workflow.db')) as saver:
         app=main.workflow.compile(checkpointer=saver)
         config={'configurable':{'thread_id':'conflict'}}
-        app.invoke({'workflow_id':'conflict','workspace':str(tmp_path),'requirement':'API'},config=config)
+        app.invoke({'workflow_id':'conflict','workspace':str(tmp_path),'requirement':'API','legacy':True},config=config)
         result=app.invoke(Command(resume='approve'),config=config)
     assert result['status']=='STOPPED_ROLLBACK_REQUIRES_REVIEW'
     assert result['recovery_stop_reason']=='ROLLBACK_BLOCKED'
@@ -207,7 +207,7 @@ def test_recovery_plan_cannot_bypass_generation_via_execution_type(tmp_path):
         'governance.file_transaction.log_event'),SqliteSaver.from_conn_string(str(tmp_path/'workflow.db')) as saver:
         app=main.workflow.compile(checkpointer=saver)
         config={'configurable':{'thread_id':'invalid-plan'}}
-        app.invoke({'workflow_id':'invalid-plan','workspace':str(tmp_path),'requirement':'API'},config=config)
+        app.invoke({'workflow_id':'invalid-plan','workspace':str(tmp_path),'requirement':'API','legacy':True},config=config)
         result=app.invoke(Command(resume='approve'),config=config)
     assert result['status']=='STOPPED_INVALID_RECOVERY_PLAN'
     for path,original in originals.items(): assert (tmp_path/path).read_bytes()==original

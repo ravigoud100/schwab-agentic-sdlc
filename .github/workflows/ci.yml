@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -22,12 +24,18 @@ jobs:
           cache: pip
           cache-dependency-path: agent-orchestrator/requirements.txt
 
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r agent-orchestrator/requirements.txt
 
-      - name: Run offline Python tests (full suite — 476 tests)
+      - name: Run offline Python regression test suite
         working-directory: agent-orchestrator
         env:
           LLM_PROVIDER: mock
@@ -42,6 +50,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java 21
         uses: actions/setup-java@v4

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import uuid
 from pathlib import Path
@@ -20,7 +21,8 @@ from governance.failure_context import collect_failure
 from governance.source_policy import authorized_java_target
 from governance.file_transaction import finish_transaction, RecoveryRequired
 from governance.workspace_manager import initialize_workspace
-from governance.audit_logger import log_event
+from governance.audit_logger import log_event, DB_PATH as AUDIT_DB_PATH
+from governance import audit_logger
 from agents.implementation_agent import implement_task
 from agents.repair_agent import parse_repair_proposal, propose_repair
 from agents.validation_agent import validate_implementation
@@ -38,10 +40,11 @@ from governance.task_orchestrator import (
     start_tasks,
     tasks_from_plan,
     validate_task_plan,
+    is_parallel_eligible,
 )
 
 from dotenv import load_dotenv
-from llm.provider import get_model
+from llm.provider import get_model, ModelUnavailableError
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import interrupt, Command
@@ -63,6 +66,13 @@ model = get_model()
 
 # Information shared between agents
 class EngineeringState(TypedDict):
+    engineering_accepted: bool
+    production_release_authorized: bool
+    final_review_decision: str
+    final_review_bundle_hash: str
+    final_review_artifact_hashes: dict
+    final_human_review_required: bool
+    final_review_error: str
     integrated_test_replay_state: dict
     integrated_correction_state: dict
     implementation_response_format: str
@@ -176,6 +186,9 @@ class EngineeringState(TypedDict):
     active_task_ids: list
     task_plan_valid: bool
     task_parallel_batches: list
+    auto_orchestration: bool
+    full_sdlc: bool
+    legacy: bool
 
 
 # Agent 1: Analyze requirements
@@ -203,6 +216,12 @@ User requirement:
     try:
         raw = _response_text(model.invoke(prompt, stage='requirements'))
         requirements = parse_requirements(raw)
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='requirements_agent', event='MODEL_UNAVAILABLE',
+                  details={'version':version,'error_type':type(error).__name__,'error':str(error),'stage':'requirements'})
+        return {'requirements_valid':False,'requirements_error':str(error),'requirements_raw_response':'',
+                'structured_requirements':{},'clarification_complete':False,
+                'status':'STOPPED_MODEL_UNAVAILABLE'}
     except Exception as error:
         log_event(workflow_id=state['workflow_id'], agent='requirements_agent', event='REQUIREMENTS_INVALID',
                   details={'version':version,'error_type':type(error).__name__,'error':str(error)})
@@ -222,6 +241,8 @@ User requirement:
 
 
 def requirements_router(state):
+    if state.get('status') == 'STOPPED_MODEL_UNAVAILABLE':
+        return 'stop'
     if not state.get('requirements_valid'):
         return 'stop'
     return 'clarify' if not state.get('clarification_complete') else 'codebase'
@@ -340,6 +361,11 @@ Previous rejected artifact (correct the precise reference errors rather than rep
         validate_design(artifact,state)
         if state.get('design_feedback') and artifact==state.get('design_revision_base_artifact'):
             raise ValueError('Requested design correction returned an unchanged artifact')
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='design_node', event='MODEL_UNAVAILABLE',
+                  details={'stage': 'design', 'error_type': type(error).__name__, 'error': str(error)})
+        return {'design_valid': False, 'design_hash': '', 'approved_design_hash': '', 'design_artifact': {},
+                'design_errors': [str(error)], 'status': 'STOPPED_MODEL_UNAVAILABLE'}
     except Exception as error:
         attempt=state.get('design_attempts',0)+1
         evidence={'attempt':attempt,'error':str(error),'raw_response':raw,
@@ -510,8 +536,9 @@ def planning_agent(state: EngineeringState):
         coverage_schema += ', "test_stage": {"allowed_new_test_files":["url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"], "protected_existing_test_files":["<existing test paths referenced by tasks>"]}'
     print("\n[3] PLANNING AGENT")
 
-    response = model.invoke(
-        f"""
+    try:
+        response = model.invoke(
+            f"""
         You are a senior Java software architect.
 
         Original requirement:
@@ -571,8 +598,12 @@ def planning_agent(state: EngineeringState):
         answers supersede unresolved alternatives in the original requirement or
         stale codebase analysis. Do not offer both runtime expiration modes.
         """,
-        stage="planning",
-    )
+            stage="planning",
+        )
+    except ModelUnavailableError as error:
+        log_event(workflow_id=state['workflow_id'], agent='planning_agent', event='MODEL_UNAVAILABLE',
+                  details={'stage': 'planning', 'error_type': type(error).__name__, 'error': str(error)})
+        return {'status': 'STOPPED_MODEL_UNAVAILABLE', 'task_plan_valid': False}
 
     plan = response.text
     try:
@@ -1005,7 +1036,13 @@ def verification_node(state: EngineeringState):
         workflow_id=state["workflow_id"],
         agent="task_scheduler",
         event="VERIFICATION_STARTED",
-        details={"task_ids": state["active_task_ids"], "source_changes": False, "source_files_changed": 0},
+        details={
+            "task_ids": state["active_task_ids"],
+            "source_changes": False,
+            "source_files_changed": 0,
+            "skipped_stages": ["source_generation", "test_generation", "repair", "documentation", "readiness"],
+            "skip_reason": "Validation-only plan asserts existing implementation satisfies requirements without modification",
+        },
     )
     return {
         "tasks": running_tasks,
@@ -1063,6 +1100,14 @@ def implementation_node(state: EngineeringState):
             task=approved_task, workspace=Path(state["workspace"]), context=state,
         )
     except Exception as error:
+        if isinstance(error, ModelUnavailableError) or getattr(error, 'status', None) == 'STOPPED_MODEL_UNAVAILABLE':
+            log_event(
+                workflow_id=state["workflow_id"], agent="implementation_agent",
+                event="MODEL_UNAVAILABLE", details={"stage": "implementation", "error_type": type(error).__name__, "error": str(error)},
+            )
+            return {"implementation_error": str(error),
+                    "implementation_error_type": type(error).__name__,
+                    "status": "STOPPED_MODEL_UNAVAILABLE"}
         log_event(
             workflow_id=state["workflow_id"], agent="implementation_agent",
             event="IMPLEMENTATION_BLOCKED", details={"error_type": type(error).__name__, "error": str(error)},
@@ -1544,9 +1589,233 @@ def success_node(state: EngineeringState):
         if state.get("validation_only") else {},
     )
 
-    return {
+    updates = {
         "status": "AWAITING_FINAL_HUMAN_REVIEW"
     }
+    if state.get("final_human_review_required"):
+        bundle = compute_final_review_bundle(state)
+        updates["final_review_bundle_hash"] = bundle["bundle_hash"]
+        updates["final_review_artifact_hashes"] = bundle["source_hashes"]
+    return updates
+
+
+def compute_final_review_bundle(state: EngineeringState) -> dict:
+    workspace = Path(state['workspace'])
+    source_hashes = _java_source_hashes(workspace) if (workspace / "url-shortener/src").exists() else {}
+    for doc_candidate in [workspace / "engineering-notes.md", workspace / "docs"]:
+        if doc_candidate.is_file():
+            source_hashes[doc_candidate.relative_to(workspace).as_posix()] = file_hash(doc_candidate.read_bytes())
+        elif doc_candidate.is_dir():
+            for doc_file in sorted(doc_candidate.rglob("*.md")):
+                source_hashes[doc_file.relative_to(workspace).as_posix()] = file_hash(doc_file.read_bytes())
+    plan_version = state.get('plan_version', 1)
+    approved_task_hash = state.get('approved_task_hash', '')
+    validation_exit_code = state.get('validation_result', {}).get('exit_code', 0)
+    bundle_data = {
+        'workflow_id': state['workflow_id'],
+        'plan_version': plan_version,
+        'approved_task_hash': approved_task_hash,
+        'source_hashes': source_hashes,
+        'validation_exit_code': validation_exit_code,
+    }
+    bundle_hash = hashlib.sha256(json.dumps(bundle_data, sort_keys=True).encode()).hexdigest()
+    return {
+        'source_hashes': source_hashes,
+        'bundle_hash': bundle_hash,
+        'plan_version': plan_version,
+    }
+
+
+def final_human_review_node(state: EngineeringState):
+    initial_bundle_hash = state.get("final_review_bundle_hash")
+    initial_artifact_hashes = state.get("final_review_artifact_hashes")
+    if not initial_bundle_hash or initial_artifact_hashes is None:
+        bundle = compute_final_review_bundle(state)
+        initial_bundle_hash = bundle["bundle_hash"]
+        initial_artifact_hashes = bundle["source_hashes"]
+
+    plan_version = state.get("plan_version", 1)
+
+    is_parallel = bool(state.get("parallel_result"))
+    has_test_gen = bool(state.get("test_hash") or state.get("integrated_result", {}).get("test_hash"))
+    has_docs = bool(state.get("integrated_result", {}).get("documentation_hash"))
+    has_readiness = bool(state.get("integrated_result", {}).get("readiness_report"))
+    complete_sdlc = has_test_gen and has_docs and has_readiness
+    is_val_only = state.get("validation_only") or any(t.get("execution_type") == "validate_only" for t in state.get("tasks", []))
+
+    summary = {
+        "requirement": state.get("requirement", ""),
+        "validation_passed": state.get("validation_result", {}).get("passed", True),
+        "maven_exit_code": state.get("validation_result", {}).get("exit_code", 0),
+        "source_files_changed": state.get("source_files_changed", 0),
+    }
+    details_extra = {}
+    if is_parallel and not complete_sdlc:
+        summary["complete_sdlc"] = False
+        summary["sdlc_scope"] = "parallel_implementation_and_validation"
+        summary["unexecuted_stages"] = ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"]
+        details_extra = {
+            "complete_sdlc": False,
+            "sdlc_scope": "parallel_implementation_and_validation",
+            "unexecuted_stages": ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"],
+            "parallel_reporting_notice": (
+                "Parallel execution covers concurrent task implementation and joined Maven validation. "
+                "It is NOT a complete SDLC workflow: additive test generation, documentation, and readiness were not executed."
+            ),
+        }
+    elif is_val_only:
+        summary["validation_only"] = True
+        summary["skipped_stages"] = ["source_generation", "test_generation", "repair", "documentation", "readiness"]
+        summary["skip_reason"] = "Validation-only plan asserts existing implementation satisfies requirements without modification"
+        details_extra = {
+            "validation_only": True,
+            "skipped_stages": ["source_generation", "test_generation", "repair", "documentation", "readiness"],
+            "skip_reason": "Validation-only plan asserts existing implementation satisfies requirements without modification",
+        }
+
+    log_event(
+        workflow_id=state["workflow_id"],
+        agent="final_human_review",
+        event="FINAL_REVIEW_REQUESTED",
+        details={
+            "workflow_id": state["workflow_id"],
+            "plan_version": plan_version,
+            "bundle_hash": initial_bundle_hash,
+            "source_hashes": initial_artifact_hashes,
+            "source_files_changed": state.get("source_files_changed", 0),
+            "disclaimer": (
+                "Engineering approval records acceptance that the implementation satisfies requirements "
+                "and passes all validation gates. It does NOT authorize production release or deployment."
+            ),
+            **details_extra,
+        }
+    )
+    interrupt_payload = {
+        "type": "FINAL_HUMAN_REVIEW",
+        "workflow_id": state["workflow_id"],
+        "plan_version": plan_version,
+        "bundle_hash": initial_bundle_hash,
+        "source_hashes": initial_artifact_hashes,
+        "summary": summary,
+        "disclaimer": (
+            "Engineering approval records acceptance that the implementation satisfies requirements "
+            "and passes all validation gates. It does NOT authorize production release or deployment."
+        ),
+    }
+    if is_parallel and not complete_sdlc:
+        interrupt_payload["complete_sdlc"] = False
+        interrupt_payload["sdlc_scope"] = "parallel_implementation_and_validation"
+        interrupt_payload["unexecuted_stages"] = ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"]
+    elif is_val_only:
+        interrupt_payload["validation_only"] = True
+        interrupt_payload["skipped_stages"] = ["source_generation", "test_generation", "repair", "documentation", "readiness"]
+
+    decision = interrupt(interrupt_payload)
+
+    current_bundle = compute_final_review_bundle(state)
+    if current_bundle["source_hashes"] != initial_artifact_hashes or current_bundle["bundle_hash"] != initial_bundle_hash:
+        print("\n[FINAL HUMAN REVIEW] STALE APPROVAL DETECTED — Artifacts changed after review was requested.")
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_REJECTED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "reject",
+                "reason": "stale_artifact_hash",
+                "original_bundle_hash": initial_bundle_hash,
+                "current_bundle_hash": current_bundle["bundle_hash"],
+                "engineering_accepted": False,
+                "production_release_authorized": False,
+            }
+        )
+        return {
+            "status": "STOPPED_FINAL_REVIEW_REJECTED",
+            "final_review_decision": "reject",
+            "engineering_accepted": False,
+            "production_release_authorized": False,
+            "final_review_error": "Stale review: underlying artifacts changed after review request",
+            "final_review_bundle_hash": current_bundle["bundle_hash"],
+            "final_review_artifact_hashes": current_bundle["source_hashes"],
+        }
+
+    if decision == "approve":
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_APPROVED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "approve",
+                "plan_version": plan_version,
+                "bundle_hash": initial_bundle_hash,
+                "source_hashes": initial_artifact_hashes,
+                "engineering_accepted": True,
+                "production_release_authorized": False,
+                **details_extra,
+            }
+        )
+        return {
+            "status": "ENGINEERING_ACCEPTED",
+            "final_review_decision": "approve",
+            "engineering_accepted": True,
+            "production_release_authorized": False,
+            "final_review_bundle_hash": initial_bundle_hash,
+            "final_review_artifact_hashes": initial_artifact_hashes,
+        }
+    else:
+        log_event(
+            workflow_id=state["workflow_id"],
+            agent="final_human_review",
+            event="FINAL_REVIEW_REJECTED",
+            details={
+                "workflow_id": state["workflow_id"],
+                "decision": "reject",
+                "plan_version": plan_version,
+                "bundle_hash": initial_bundle_hash,
+                "engineering_accepted": False,
+                "production_release_authorized": False,
+            }
+        )
+        return {
+            "status": "STOPPED_FINAL_REVIEW_REJECTED",
+            "final_review_decision": "reject",
+            "engineering_accepted": False,
+            "production_release_authorized": False,
+            "final_review_bundle_hash": initial_bundle_hash,
+            "final_review_artifact_hashes": initial_artifact_hashes,
+        }
+
+
+def final_review_router(state: EngineeringState):
+    if state.get("status") == "ENGINEERING_ACCEPTED":
+        return "accepted"
+    return "rejected"
+
+
+def final_review_accepted_node(state: EngineeringState):
+    print("\n[FINAL HUMAN REVIEW] Approved — Engineering Acceptance Recorded")
+    print("NOTE: Production release authorization is NOT granted.")
+    return {
+        "status": "ENGINEERING_ACCEPTED",
+        "engineering_accepted": True,
+        "production_release_authorized": False,
+    }
+
+
+def final_review_rejected_node(state: EngineeringState):
+    print("\n[FINAL HUMAN REVIEW] Rejected — Workflow Stopped")
+    return {
+        "status": "STOPPED_FINAL_REVIEW_REJECTED",
+        "engineering_accepted": False,
+        "production_release_authorized": False,
+    }
+
+
+def success_router(state: EngineeringState):
+    if state.get("final_human_review_required"):
+        return "final_human_review"
+    return "end"
 
 
 def failure_node(state: EngineeringState):
@@ -1620,18 +1889,29 @@ def rejected_node(state: EngineeringState):
 
 def parallel_node(state):
     from governance.parallel_execution import build_workflow
+    evidence_dir = state.get('parallel_evidence')
+    if not evidence_dir:
+        evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-parallel-evidence")
+        Path(evidence_dir).mkdir(parents=True, exist_ok=True)
     result = build_workflow(model).compile().invoke({
-        'context': dict(state), 'evidence': state['parallel_evidence'],
-        'cache': state['integration_cache']})
+        'context': dict(state), 'evidence': evidence_dir,
+        'cache': state.get('integration_cache', '')})
     return {'parallel_result': result, 'status': result['status'],
+            'complete_sdlc': False,
+            'sdlc_scope': 'parallel_implementation_and_validation',
+            'unexecuted_stages': ['additive_test_generation', 'documentation_generation', 'release_readiness_evaluation'],
             'source_files_changed': len(result.get('transaction', {}).get('paths', []))
                 if result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW' else 0}
 
 
 def integrated_node(state):
     from governance.integrated_sdlc import build_workflow
+    evidence_dir = state.get('integration_evidence')
+    if not evidence_dir:
+        evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-integrated-evidence")
+        Path(evidence_dir).mkdir(parents=True, exist_ok=True)
     context={**state,'implementation_response_format':state.get('implementation_response_format','complete_files')}
-    initial={'context':context,'evidence':state['integration_evidence'],'cache':state['integration_cache']}
+    initial={'context':context,'evidence':evidence_dir,'cache':state.get('integration_cache', '')}
     if state.get('integrated_correction_state'):
         # Validate inside the checkpointed correction_entry node, once. This
         # wrapper replays when nested human interrupts resume, after source writes.
@@ -1646,6 +1926,53 @@ def integrated_node(state):
     return {'integrated_result':result,'status':result['status'],
             'source_files_changed':len(result.get('transaction',{}).get('paths',[]))
                 if result.get('recovery')!='rolled_back' else 0}
+
+
+def execution_strategy_router(state: EngineeringState):
+    tasks = state.get('tasks', [])
+    is_val_only = state.get('validation_only') or any(t.get('execution_type') == 'validate_only' for t in tasks)
+
+    # 1. Validation-only plans bypass source modification and route to verification/validation
+    if is_val_only:
+        print("\n[ORCHESTRATION] Validation-only task plan detected -> Verification & Validation Selected (Source & Test Generation Skipped)")
+        log_event(
+            workflow_id=state.get('workflow_id', ''),
+            agent='orchestrator',
+            event='VALIDATION_ONLY_STAGES_SKIPPED',
+            details={
+                'strategy': 'validation_only',
+                'skipped_stages': ['source_generation', 'test_generation', 'repair', 'documentation', 'readiness'],
+                'reason': 'Validation-only plan asserts existing implementation satisfies requirements without modification',
+            }
+        )
+        return 'legacy'
+
+    # 2. Explicit legacy option keeps legacy task scheduler accessible
+    if state.get('legacy'):
+        print("\n[ORCHESTRATION] Explicit --legacy execution requested -> Legacy Task Scheduler Selected")
+        return 'legacy'
+
+    # 3. Explicit flags take precedence if supplied
+    if state.get('parallel_evidence'):
+        return 'parallel'
+    if state.get('integrated_sdlc'):
+        return 'integrated'
+
+    # 4. Auto orchestration:
+    # If parallel eligible -> parallel execution
+    # Otherwise, for ordinary sequential source-changing workflows -> integrated_sdlc is default!
+    if state.get('auto_orchestration', True):
+        eligible, reason = is_parallel_eligible(tasks)
+        if eligible:
+            print(f"\n[ORCHESTRATION] {reason} -> Multi-Wave Parallel Execution Selected")
+            return 'parallel'
+        else:
+            print(f"\n[ORCHESTRATION] {reason} -> Defaulting to Integrated SDLC (Sequential Full Lifecycle)")
+            return 'integrated'
+
+    # 5. If auto_orchestration is disabled and no explicit legacy option given:
+    # Ordinary sequential source-changing workflows still default to integrated_sdlc
+    return 'integrated'
 
 
 # Build LangGraph workflow
@@ -1681,6 +2008,9 @@ workflow.add_node("repair_executor", repair_executor_node)
 workflow.add_node("repair_stopped", repair_stopped_node)
 workflow.add_node("success", success_node)
 workflow.add_node("failure", failure_node)
+workflow.add_node("final_human_review", final_human_review_node)
+workflow.add_node("final_review_accepted", final_review_accepted_node)
+workflow.add_node("final_review_rejected", final_review_rejected_node)
 
 workflow.add_edge(START, "requirements")
 workflow.add_conditional_edges('requirements', requirements_router,
@@ -1697,7 +2027,8 @@ workflow.add_conditional_edges('contract_review',
                   else 'design' if state.get('design_required') else 'plan',
     {'stop':END, 'plan':'planning','design':'design'})
 workflow.add_conditional_edges('design',
-    lambda state:'retry' if state.get('status')=='DESIGN_RETRY' else
+    lambda state:'stop' if state.get('status') in {'STOPPED_DESIGN_INVALID', 'STOPPED_MODEL_UNAVAILABLE'} else
+                 'retry' if state.get('status')=='DESIGN_RETRY' else
                  'review' if state.get('design_valid') else 'stop',
     {'retry':'design','review':'design_review','stop':END})
 workflow.add_conditional_edges('design_review',
@@ -1707,7 +2038,7 @@ workflow.add_conditional_edges('design_review',
     {'plan':'planning','correct':'design','review':'design_review','stop':END})
 workflow.add_conditional_edges('planning',
     lambda state: 'retry' if state.get('status') == 'SEMANTIC_PLAN_RETRY' else
-                  'stop' if state.get('status') == 'STOPPED_SEMANTIC_PLAN_INVALID' else 'approve',
+                  'stop' if state.get('status') in {'STOPPED_MODEL_UNAVAILABLE', 'STOPPED_SEMANTIC_PLAN_INVALID'} else 'approve',
     {'retry':'planning','stop':END,'approve':'approval'})
 
 workflow.add_conditional_edges(
@@ -1721,10 +2052,22 @@ workflow.add_conditional_edges(
     }
 )
 
-workflow.add_conditional_edges('approved',lambda s:'parallel' if s.get('parallel_evidence') else 'integrated' if s.get('integrated_sdlc') else 'legacy',
-                               {'parallel':'parallel_execution','integrated':'integrated_sdlc','legacy':'task_scheduler'})
-workflow.add_edge('parallel_execution', END)
-workflow.add_edge('integrated_sdlc',END)
+def route_parallel_outcome(state: EngineeringState):
+    if state.get('status') == 'AWAITING_PARALLEL_RESULTS_REVIEW' and state.get('final_human_review_required', True):
+        return 'final_human_review'
+    return 'end'
+
+def route_integrated_outcome(state: EngineeringState):
+    if state.get('status') == 'AWAITING_FINAL_HUMAN_REVIEW' and state.get('final_human_review_required', True):
+        return 'final_human_review'
+    return 'end'
+
+workflow.add_conditional_edges('approved', execution_strategy_router,
+                               {'parallel': 'parallel_execution', 'integrated': 'integrated_sdlc', 'legacy': 'task_scheduler'})
+workflow.add_conditional_edges('parallel_execution', route_parallel_outcome,
+                               {'final_human_review': 'final_human_review', 'end': END})
+workflow.add_conditional_edges('integrated_sdlc', route_integrated_outcome,
+                               {'final_human_review': 'final_human_review', 'end': END})
 workflow.add_conditional_edges(
     "task_scheduler",
     task_scheduler_router,
@@ -1759,7 +2102,18 @@ workflow.add_conditional_edges('recovery_review', lambda state: 'retry' if state
 workflow.add_conditional_edges('recovery_retry', lambda state: 'run' if state.get('recovery_ready') else 'stop',
                                {'run': 'implementation', 'stop': END})
 
-workflow.add_edge("success", END)
+workflow.add_conditional_edges(
+    "success",
+    success_router,
+    {"final_human_review": "final_human_review", "end": END}
+)
+workflow.add_conditional_edges(
+    "final_human_review",
+    final_review_router,
+    {"accepted": "final_review_accepted", "rejected": "final_review_rejected"}
+)
+workflow.add_edge("final_review_accepted", END)
+workflow.add_edge("final_review_rejected", END)
 workflow.add_edge("failure", END)
 workflow.add_edge("replanning", "replan_review")
 workflow.add_conditional_edges(
@@ -1782,7 +2136,8 @@ workflow.add_edge("repair_stopped", END)
 
 
 def main(obligation_contract=None, design_required=False, plan_lineage_required=False,
-         integration_evidence=None, integration_cache=None, parallel_evidence=None):
+         integration_evidence=None, integration_cache=None, parallel_evidence=None,
+         final_review_required=False, auto_orchestration=True, full_sdlc=False, legacy=False):
     if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
         raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
     if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
@@ -1819,10 +2174,20 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
         app = workflow.compile(checkpointer=checkpointer)
 
         initial_state = {
+            'engineering_accepted': False,
+            'production_release_authorized': False,
+            'final_review_decision': '',
+            'final_review_bundle_hash': '',
+            'final_review_artifact_hashes': {},
+            'final_human_review_required': final_review_required or full_sdlc,
+            'final_review_error': '',
             'parallel_evidence': str(parallel_evidence or ''),
-            'integrated_sdlc':bool(integration_evidence),
-            'integration_evidence':str(integration_evidence or ''),
-            'integration_cache':str(integration_cache or ''),
+            'integrated_sdlc': bool(integration_evidence or not legacy),
+            'integration_evidence': str(integration_evidence or ''),
+            'integration_cache': str(integration_cache or ''),
+            'auto_orchestration': auto_orchestration,
+            'full_sdlc': full_sdlc or (not legacy),
+            'legacy': legacy,
             "plan_lineage_required": plan_lineage_required,
             "design_required": design_required,
             "obligation_contract": obligation_contract or {},
@@ -1887,6 +2252,18 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
                 print(json.dumps(payload,indent=2))
                 decision='approve' if input('Review (1 approve / 2 reject): ').strip()=='1' else 'reject'
                 result=app.invoke(Command(resume=decision),config=config)
+                continue
+
+            if isinstance(payload,dict) and payload.get('type') == 'FINAL_HUMAN_REVIEW':
+                print('\n========== FINAL HUMAN REVIEW ==========')
+                print('Workflow ID:', payload.get('workflow_id'))
+                print('Plan version:', payload.get('plan_version'))
+                print('Bundle hash:', payload.get('bundle_hash'))
+                print('Summary:', json.dumps(payload.get('summary', {}), indent=2))
+                print('\nDISCLAIMER:', payload.get('disclaimer'))
+                choice = input('Review (1 approve / 2 reject): ').strip()
+                decision = 'approve' if choice == '1' else 'reject'
+                result = app.invoke(Command(resume=decision), config=config)
                 continue
 
             if isinstance(payload,dict) and payload.get('type')=='REQUIREMENT_CLARIFICATION':
@@ -1991,17 +2368,55 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
 
 if __name__ == "__main__":
     import argparse
+    import sys
     parser = argparse.ArgumentParser()
     parser.add_argument('--contract-file', type=Path,
                         help='Explicit machine-checkable obligations; reviewed before planning')
     parser.add_argument('--design', action='store_true', help='Require gated architecture/design and human design approval')
-    parser.add_argument('--plan-lineage',action='store_true',help='Require prospective plan/execution receipt bindings')
-    parser.add_argument('--integration-evidence',type=Path,help='New external directory for sequential SDLC evidence')
-    parser.add_argument('--maven-cache',type=Path,help='Existing offline Maven dependency cache')
-    parser.add_argument('--parallel-evidence',type=Path,help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
+    parser.add_argument('--plan-lineage', action='store_true', help='Require prospective plan/execution receipt bindings')
+    parser.add_argument('--integration-evidence', type=Path, help='New external directory for sequential SDLC evidence')
+    parser.add_argument('--maven-cache', type=Path, help='Existing offline Maven dependency cache')
+    parser.add_argument('--parallel-evidence', type=Path, help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
+    parser.add_argument('--final-review', action='store_true', help='Require interactive checkpointed final human review after validation')
+    parser.add_argument('--full-sdlc', action='store_true', help='Execute complete integrated SDLC lifecycle')
+    parser.add_argument('--verify-audit', nargs='?', const=str(audit_logger.DB_PATH),
+                        help='Verify cryptographic integrity of audit ledger (default: agent-orchestrator/audit.db)')
+    parser.add_argument('--legacy', action='store_true', help='Use legacy task scheduler execution instead of integrated SDLC')
+    parser.add_argument('--demo', choices=['greenfield', 'brownfield', 'ambiguous'], help='Run offline fixture replay demonstration')
+    parser.add_argument('--no-auto-orchestration', dest='auto_orchestration', action='store_false', help='Disable automatic parallel orchestration selection')
+    parser.set_defaults(auto_orchestration=True)
     args = parser.parse_args()
-    if args.plan_lineage and (not args.design or not args.contract_file):parser.error('--plan-lineage requires --design and --contract-file')
+
+    if args.verify_audit:
+        from governance.audit_logger import verify_audit_integrity_readonly
+        db_path = Path(args.verify_audit)
+        valid, report = verify_audit_integrity_readonly(db_path)
+        if valid:
+            print(f"AUDIT CHAIN INTEGRITY: VALID (records={report['total_records']}, head_id={report.get('head_id')})")
+            sys.exit(0)
+        else:
+            print(f"AUDIT CHAIN INTEGRITY: FAILED - {report.get('error')}: {report.get('message')}", file=sys.stderr)
+            sys.exit(1)
+
+    if args.demo:
+        if args.demo == 'greenfield':
+            from governance.offline_demos import run_greenfield_demo
+            run_greenfield_demo()
+        elif args.demo == 'brownfield':
+            from governance.offline_demos import run_brownfield_demo
+            run_brownfield_demo()
+        elif args.demo == 'ambiguous':
+            from governance.offline_demos import run_ambiguous_demo
+            run_ambiguous_demo()
+        sys.exit(0)
+
+    if args.plan_lineage and (not args.design or not args.contract_file):
+        parser.error('--plan-lineage requires --design and --contract-file')
     main(json.loads(args.contract_file.read_text()) if args.contract_file else None,
-         design_required=args.design,plan_lineage_required=args.plan_lineage,
-         integration_evidence=args.integration_evidence,integration_cache=args.maven_cache,
-         parallel_evidence=args.parallel_evidence)
+         design_required=args.design, plan_lineage_required=args.plan_lineage,
+         integration_evidence=args.integration_evidence, integration_cache=args.maven_cache,
+         parallel_evidence=args.parallel_evidence,
+         final_review_required=args.final_review,
+         auto_orchestration=args.auto_orchestration,
+         full_sdlc=args.full_sdlc,
+         legacy=args.legacy)

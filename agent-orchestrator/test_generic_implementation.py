@@ -131,7 +131,7 @@ def test_blocked_implementation_stops_graph_before_maven(tmp_path):
     ])
     app = workflow.compile(checkpointer=InMemorySaver())
     config = {'configurable': {'thread_id': 'blocked-generic'}}
-    state = {'workflow_id': 'blocked-generic', 'workspace': str(tmp_path), 'requirement': 'Increase counter limit'}
+    state = {'workflow_id': 'blocked-generic', 'workspace': str(tmp_path), 'requirement': 'Increase counter limit', 'legacy': True}
     with patch('main.model', Mock(invoke=Mock(side_effect=lambda *args, **kwargs: next(responses)))), patch(
         'main.analyze_codebase', return_value='Counter source'
     ), patch.object(implementation_agent, 'model', MockProvider('unknown')), patch(
@@ -166,7 +166,7 @@ def test_generic_graph_validates_then_reviews_or_restores(tmp_path, passed):
     analysis_model = Mock(invoke=Mock(side_effect=[requirements_response('Counter requirement'), ModelResponse(plan)]))
     edit = ModelResponse(json.dumps({'path': task['allowed_files'][0], 'old_text': 'limit = 5', 'new_text': 'limit = 10'}))
     state = {'workflow_id': 'generic-result', 'workspace': str(tmp_path), 'requirement': 'Increase counter limit',
-             'implementation_changed': False, 'repair_applied': False}
+             'implementation_changed': False, 'repair_applied': False, 'legacy': True}
     config = {'configurable': {'thread_id': 'generic-result'}}
     validation = {'passed': passed, 'exit_code': 0 if passed else 1, 'duration_seconds': 0.1, 'output': 'Maven result'}
     with patch('main.model', analysis_model), patch('main.analyze_codebase', return_value='Counter'), patch.object(

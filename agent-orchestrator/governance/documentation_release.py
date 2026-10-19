@@ -121,6 +121,18 @@ def evaluate(state):
         checks.update(static_security_compliance_controls=False,protected_inventory_and_tests=False,
                       operational_validation_evidence=False)
         policy_evidence={};errors.append(str(error))
+    try:
+        from governance.audit_logger import verify_audit_integrity_readonly
+        audit_valid, audit_report = verify_audit_integrity_readonly(
+            Path(audit_logger.DB_PATH),
+            workflow_id=state.get('run_id') or state.get('workflow_id'),
+        )
+        checks['audit_log_integrity_verified'] = audit_valid
+        if not audit_valid:
+            errors.append(f"Audit log integrity check failed: {audit_report.get('error', 'Integrity verification failure')}")
+    except Exception as error:
+        checks['audit_log_integrity_verified'] = False
+        errors.append(f"Audit log integrity check failed: {str(error)}")
     # Technical controls do not create organizational human sign-offs.
     checks['human_security_signoff']=False
     checks['human_compliance_signoff']=False
