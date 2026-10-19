@@ -45,6 +45,21 @@ class ParallelState(TypedDict, total=False):
     current_wave_index: int
     applied_changes: dict
     current_wave_proposals: dict
+    profile: str
+    scope: dict
+    approved_scope_hash: str
+    test_hash: str
+    engineering_test_link: dict
+    origin: dict
+    bundle_hash: str
+    run_id: str
+    output_dir: str
+    test_review_hash: str
+    document: dict
+    documentation_attempts: int
+    documentation_errors: list
+    readiness: dict
+    recovery: str
 
 
 def event(state, name, details):
@@ -174,7 +189,7 @@ def successful(record, expected=None):
             and (expected is None or set(record['cases']) == set(expected)))
 
 
-def build_workflow(provider, *, validator=maven):
+def build_workflow(provider, *, validator=maven, downstream=False):
     def baseline(state):
         try:
             recheck(state); assert_receipts(state)
@@ -385,7 +400,8 @@ def build_workflow(provider, *, validator=maven):
                 }
 
             event(state, 'PARALLEL_VALIDATION_PASSED', {'transactions': [t['transaction_id'] for t in state.get('transactions', [])], 'validation': record})
-            return {'applied_changes': cumulative_applied, 'validation': record, 'status': 'AWAITING_PARALLEL_RESULTS_REVIEW'}
+            return {'applied_changes': cumulative_applied, 'validation': record,
+                    'status': 'AWAITING_PARALLEL_RESULTS_REVIEW', 'profile': 'parallel-expiration-v1'}
         except Exception as error:
             return stop_all(state, error)
 
@@ -394,12 +410,33 @@ def build_workflow(provider, *, validator=maven):
             return END
         if s['status'] == 'WAVE_CONTINUE':
             return dispatch(s)
+        if downstream and s['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW':
+            return 'test_generation_review'
         return END
 
     graph = StateGraph(ParallelState)
     for name, node in [('entry', entry), ('review', review), ('baseline', baseline),
                        ('worker', worker), ('join', join), ('validation', validation)]:
         graph.add_node(name, node)
+    if downstream:
+        from governance.downstream_sdlc import test_review, tests, validation as downstream_validation
+        from governance.documentation_release import review_tests, documentation, evaluate, final_review
+        graph.add_node('test_generation_review', test_review)
+        graph.add_node('test_generation', lambda s: tests(s, provider))
+        graph.add_node('maven_validation', lambda s: downstream_validation(s, validator=validator))
+        graph.add_node('test_results_review', review_tests)
+        graph.add_node('documentation', lambda s: documentation(s, provider))
+        graph.add_node('readiness', evaluate)
+        graph.add_node('final_review', final_review)
+
+        graph.add_conditional_edges('test_generation_review', lambda s: END if s['status'].startswith('STOPPED') else 'test_generation')
+        graph.add_conditional_edges('test_generation', lambda s: END if s['status'].startswith('STOPPED') else 'maven_validation')
+        graph.add_conditional_edges('maven_validation', lambda s: END if s['status'].startswith('STOPPED') else 'test_results_review')
+        graph.add_conditional_edges('test_results_review', lambda s: 'documentation' if s['status'] == 'TEST_RESULTS_APPROVED' else END)
+        graph.add_conditional_edges('documentation', lambda s: 'readiness' if s['status'] == 'DOCUMENTATION_VALIDATED' else ('documentation' if s['status'] == 'DOCUMENTATION_RETRY' else END))
+        graph.add_edge('readiness', 'final_review')
+        graph.add_edge('final_review', END)
+
     graph.add_edge(START, 'entry')
     graph.add_conditional_edges('entry', lambda s: END if s['status'].startswith('STOPPED') else 'review')
     graph.add_conditional_edges('review', lambda s: END if s['status'].startswith('STOPPED') else 'baseline')

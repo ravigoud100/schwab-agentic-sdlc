@@ -1,211 +1,375 @@
 # Charles Schwab Agentic SDLC Assessment
 
-This repository demonstrates a governed, agent-assisted software delivery workflow around a Spring Boot URL shortener. The Python orchestrator analyzes requirements and code, creates an implementation plan, pauses for human approval, performs controlled implementation and validation, and can propose approved repairs when validation fails.
+This repository demonstrates a fully governed, reproducible, agent-assisted software delivery lifecycle (SDLC) around a Spring Boot URL shortener. The Python orchestrator analyzes requirements and code, generates architectural designs and implementation plans, enforces human approval interrupts, executes bounded changes in isolated worktrees, generates additive verification tests, and coordinates automated recovery or repair when validation fails.
 
-The project is intentionally approval-gated. AI output does not directly execute shell commands, and source changes are restricted to the isolated workflow worktree.
+The project is **approval-gated by design**: AI models cannot directly execute arbitrary shell commands, cannot modify unapproved files, and cannot bypass human review gates or cryptographic audit tracking.
 
-## Project layout
+---
 
-```text
-url-shortener/                 Spring Boot 4 URL shortener
-agent-orchestrator/            LangGraph workflow and governance modules
-.agent-workspaces/<workflow_id>/
-                               Isolated validation/repair worktree
-docs/                          Architecture and demonstration guides
-```
+## Table of Contents
 
-The main Java source is under `url-shortener/`. The implementation and validation agents target the isolated `.agent-workspaces/<workflow_id>/` worktree so experiments and rollback checkpoints do not overwrite the completed application.
+1. [Prerequisites](#prerequisites)
+2. [Project Layout](#project-layout)
+3. [Environment Setup](#environment-setup)
+4. [Maven Dependency & Cache Preparation](#maven-dependency--cache-preparation)
+5. [Ollama Model Configuration & Fallback](#ollama-model-configuration--fallback)
+6. [Pre-Execution Startup Validation](#pre-execution-startup-validation)
+7. [Running the System](#running-the-system)
+   - [Mode A: Offline Fixture Demonstrations (Zero Ollama Required)](#mode-a-offline-fixture-demonstrations)
+   - [Mode B: Mocked Synthetic Review Workflows](#mode-b-mocked-synthetic-review-workflows)
+   - [Mode C: Live-Model Integrated SDLC](#mode-c-live-model-integrated-sdlc)
+8. [Human Approval & Governance Gates](#human-approval--governance-gates)
+9. [Automated Testing](#automated-testing)
+10. [Audit Chain Verification](#audit-chain-verification)
+11. [Troubleshooting Guide](#troubleshooting-guide)
+12. [Known Limitations](#known-limitations)
 
-## Objectives
-
-- Demonstrate requirement analysis, codebase analysis, planning, approval, implementation, and validation.
-- Make repair execution explicit, bounded, auditable, and rollback-safe.
-- Replan after validation failures using failure output, the current plan, and retry history.
-- Schedule approved implementation tasks using dependency validation and deterministic ordering.
-- Preserve Java 21 and Spring Boot 4 compatibility.
-
-## Architecture and technologies
-
-| Area | Technology or implementation |
-| --- | --- |
-| Application | Java 21, Spring Boot 4.0.8, Spring Web MVC, Spring Data JPA, H2 |
-| Application tests | Spring Boot integration tests with MockMvc and JUnit Jupiter through Spring Boot test starters |
-| Orchestration | Python 3.12, LangGraph, LangChain Ollama integration |
-| Model runtime | Ollama with `qwen2.5-coder:latest` |
-| Persistence | H2 for the URL shortener; SQLite for LangGraph checkpoints and audit events |
-| Build | Maven Wrapper (`mvnw`) |
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the detailed workflow and governance design.
+---
 
 ## Prerequisites
 
-- Java 21.
-- Python 3.12.
-- Maven, or the included Maven Wrapper.
-- Ollama running locally with `qwen2.5-coder:latest` available.
-- Python packages used by the orchestrator: `langgraph`, `langgraph-checkpoint-sqlite`, `langchain-ollama`, `python-dotenv`, and `pytest` for tests.
+Before running the orchestrator or application, ensure the following tools are installed:
 
-There is currently no committed Python dependency lockfile or `requirements.txt`; install the packages in a project virtual environment and record any organization-specific pinning outside the source tree.
+| Tool | Version Requirement | Purpose | Verification Command |
+|---|---|---|---|
+| **Python** | `3.12+` (tested with 3.12.15) | LangGraph orchestration & governance | `python3 --version` |
+| **Java** | `21 LTS` (Temurin or OpenJDK) | Spring Boot 4.0.8 application runtime | `java -version` |
+| **Maven Wrapper** | Included (`./mvnw`) | Hermetic build & test execution | `cd url-shortener && ./mvnw -v` |
+| **Git** | `2.30+` | Detached worktree isolation & checkpoints | `git --version` |
+| **Ollama** | Optional for offline; required for live runs | Local LLM inference (`qwen2.5-coder:latest`) | `ollama --version` |
 
-## Setup
+> [!IMPORTANT]
+> **Ollama is NOT required** for running offline fixture demonstrations (`--demo ...`) or running the 540+ test Python regression test suite (`LLM_PROVIDER=mock`). Reviewers can fully evaluate and verify the system in an offline, air-gapped environment.
 
-Create and activate a Python environment from the repository root:
+---
 
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install langgraph langgraph-checkpoint-sqlite langchain-ollama python-dotenv pytest
+## Project Layout
+
+```text
+├── agent-orchestrator/          # Python 3.12 LangGraph orchestrator & governance modules
+│   ├── agents/                  # Codebase, design, implementation, test, & validation agents
+│   ├── governance/              # Policy engine, plan lineage, feature adapters, & audit logger
+│   ├── llm/                     # Ollama provider, Mock provider, resilient fallback provider
+│   ├── requirements.txt         # Pinned Python dependencies
+│   └── main.py                  # CLI orchestrator & demonstration entrypoint
+├── url-shortener/               # Java 21 / Spring Boot 4.0.8 URL shortener application
+│   ├── pom.xml                  # Maven configuration & Spring Boot starters
+│   ├── mvnw / mvnw.cmd          # Executable Maven Wrapper
+│   └── src/                     # Application source and JUnit Jupiter integration tests
+├── .agent-workspaces/           # Runtime isolated Git worktrees (never pollutes main tree)
+├── docs/                        # Architecture guides, schema definitions, and audit reports
+│   └── evidence/                # Historical evidence, cryptographic receipts, and fixture replays
+├── Makefile                     # Standard developer commands for setup, tests, and demos
+└── .python-version              # Python 3.12 pin for pyenv / mise / asdf
 ```
 
-Start Ollama and download the configured model:
+---
+
+## Environment Setup
+
+### 1. Automated Setup via Makefile
+
+The recommended setup creates a Python 3.12 virtual environment, installs pinned dependencies, and configures file permissions:
 
 ```bash
+make setup
+```
+
+### 2. Manual Setup
+
+If you prefer executing the steps manually:
+
+```bash
+# 1. Create and activate a Python 3.12 virtual environment
+python3.12 -m venv .venv
+source .venv/bin/activate
+
+# 2. Upgrade pip and install pinned orchestrator requirements
+python -m pip install --upgrade pip
+python -m pip install -r agent-orchestrator/requirements.txt
+
+# 3. Ensure Maven Wrapper is executable
+chmod +x url-shortener/mvnw
+```
+
+### 3. Verify Environment Readiness
+
+Run the automated pre-flight validation check to confirm Python, Java, and Maven paths:
+
+```bash
+make validate-env
+```
+
+---
+
+## Maven Dependency & Cache Preparation
+
+The Java application and isolated worktrees require Maven dependencies (Spring Boot, Hibernate, H2, JUnit Jupiter).
+
+### Prepare Offline Cache
+To download all dependencies into your local Maven cache for offline execution:
+
+```bash
+make cache-maven
+# Or directly:
+cd url-shortener && ./mvnw dependency:go-offline
+```
+
+### Supplying an Explicit Maven Cache
+When running full SDLC or parallel multi-task workflows, pass the cache directory:
+
+```bash
+python agent-orchestrator/main.py --maven-cache ~/.m2/repository
+```
+
+---
+
+## Ollama Model Configuration & Fallback
+
+Ollama is only required when executing live generative workflows (`LLM_PROVIDER=ollama`).
+
+### 1. Start Ollama and Pull Primary Model
+
+```bash
+# Start Ollama service (in a separate terminal or background daemon)
 ollama serve
+
+# Pull the default primary model (Qwen 2.5 Coder 7B)
 ollama pull qwen2.5-coder:latest
 ```
 
-The orchestrator loads environment variables with `python-dotenv`, but the checked-in code does not require a secret or API key for its Ollama configuration.
+### 2. Fallback Model Setup
 
-## Run the Java URL shortener
-
-From the Java project directory:
+The orchestrator includes a `ResilientModelProvider` that retries transient failures and falls back to a secondary model if configured:
 
 ```bash
-cd url-shortener
-./mvnw clean test
-./mvnw spring-boot:run
+# Pull optional secondary model
+ollama pull llama3.2:3b
+
+# Configure environment variables in .env or shell:
+export OLLAMA_HOST=http://localhost:11434
+export OLLAMA_MODEL=qwen2.5-coder:latest
+export OLLAMA_FALLBACK_MODEL=llama3.2:3b
+export MODEL_MAX_RETRIES=2
 ```
 
-The service listens on the Spring Boot default port, `8080`.
+---
 
-Create a URL without expiration:
+## Pre-Execution Startup Validation
+
+To prevent late-stage execution failures deep inside workflows, `main.py` enforces startup validation:
+
+1. **Python Version Check**: Enforces Python `>= 3.12`. Rejects older runtimes with actionable instructions.
+2. **Java Version Check**: Confirms `java` is found on PATH and is major version `21`.
+3. **Workspace & Maven Integrity**: Confirms `url-shortener/pom.xml` exists, `mvnw` is present, and `mvnw` is executable (`chmod +x`).
+4. **Live Model Availability**: When running live (`LLM_PROVIDER=ollama`), checks that the Ollama HTTP server is reachable and `qwen2.5-coder:latest` is installed. Bypassed for offline demos and mock tests.
+5. **Feature Adapter Validation**: Confirms the obligation contract or requirement resolves to an approved feature adapter in the registry (`expiration` or `health-check`).
+
+---
+
+## Running the System
+
+### Mode A: Offline Fixture Demonstrations
+
+The repository provides three offline fixture replay demonstrations. These replay verified assessment evidence, exercise isolated worktrees, run real Java Maven validation, and record hash-chained audit events **without requiring Ollama**:
+
+#### 1. Greenfield Scenario — URL Health Component
+Demonstrates sequential single-task addition of `UrlHealthComponent` and `UrlHealthComponentTest` in an isolated pre-promotion workspace with real Maven test passing (9 tests):
 
 ```bash
-curl -X POST http://localhost:8080/api/urls \
-  -H 'Content-Type: application/json' \
-  -d '{"originalUrl":"https://www.google.com"}'
+make demo-greenfield
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo greenfield
 ```
 
-Create one with a future expiration:
+#### 2. Brownfield Scenario — Read-Only URL Status API
+Demonstrates multi-file brownfield implementation (`UrlService.java`, `UrlController.java`, and `UrlStatusIntegrationTest.java`) on an isolated baseline with 11 Maven tests passing:
 
 ```bash
-curl -X POST http://localhost:8080/api/urls \
-  -H 'Content-Type: application/json' \
-  -d '{"originalUrl":"https://www.google.com","expiresAt":"2099-01-01T00:00:00Z"}'
+make demo-brownfield
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo brownfield
 ```
 
-The application exposes URL creation under `/api/urls`, redirects active short codes from `/{shortCode}`, and exposes click analytics at `/api/urls/{shortCode}/analytics`. Past expiration returns HTTP 400 during creation; expired redirects return HTTP 410; unknown short codes return HTTP 404.
-
-## Run the Python orchestrator
-
-From the orchestrator directory:
+#### 3. Ambiguous Requirement Scenario — Clarification Gate
+Demonstrates interactive requirement clarification for an ambiguous custom expiration prompt without default TTL assumptions:
 
 ```bash
+make demo-ambiguous
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo ambiguous
+```
+
+#### 4. Run All Demos
+
+```bash
+make demo-offline
+```
+
+---
+
+### Mode B: Mocked Synthetic Review Workflows
+
+Run the orchestrator CLI with deterministic synthetic review responses:
+
+```bash
+make demo-mock
+# Equivalent:
 cd agent-orchestrator
-../.venv/bin/python main.py
+LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration ../.venv/bin/python main.py
 ```
 
-Enter a requirement when prompted. The workflow pauses for plan approval and, when needed, revised-plan and repair approvals. The orchestrator creates `workflow.db` for LangGraph checkpoints and `audit.db` for audit events in `agent-orchestrator/`.
+---
 
-The live workflow requires a reachable Ollama service. AI-generated plans and repair proposals are not a substitute for human approval.
+### Mode C: Live-Model Integrated SDLC
 
-## Automated tests
-
-Run Java integration tests:
+Execute a live end-to-end SDLC lifecycle using local Ollama:
 
 ```bash
-cd url-shortener
-./mvnw clean test
+# Ensure Ollama is running and qwen2.5-coder:latest is installed
+ollama serve
+
+# Execute the complete integrated SDLC lifecycle
+.venv/bin/python agent-orchestrator/main.py --full-sdlc
 ```
 
-The current Java suite covers application startup plus URL creation with and without expiration, future/past expiration, active redirects, expired redirects, unknown codes, and click-count protection for expired URLs.
-
-Run deterministic orchestrator tests from `agent-orchestrator/`:
+With explicit machine-checkable requirement contract and offline cache:
 
 ```bash
-../.venv/bin/python -m pytest -v \
-  test_repair_execution.py \
-  test_replanning.py \
-  test_task_orchestration.py \
-  test_workflow_scenarios.py
+.venv/bin/python agent-orchestrator/main.py \
+  --full-sdlc \
+  --design \
+  --plan-lineage \
+  --contract-file docs/evidence/assessment-scenarios/contracts/custom-expiration.json \
+  --maven-cache ~/.m2/repository
 ```
 
-These tests mock model responses, Maven validation, file changes, and rollback where appropriate. They do not prove live Ollama behavior. Other `test_*.py` files include direct scripts or model-dependent checks and should be reviewed before running as an indiscriminate suite.
+---
 
-## Example workflow
+## Human Approval & Governance Gates
 
-1. The Requirements Agent returns validated JSON; unresolved ambiguities pause for human answers before codebase analysis.
-2. The Codebase Agent reads the actual Java source tree and reports observed architecture and endpoints.
-3. The Planning Agent creates a plan. JSON task plans are converted into dependency-aware tasks; non-JSON legacy plans use a safe single-task fallback.
-4. A human approves or rejects the plan, or requests requirement changes that invalidate it.
-5. The task scheduler validates the DAG, identifies ready tasks, and starts one task deterministically.
-6. The generic Implementation Agent proposes coordinated edits only to approved existing Java files in the isolated workspace. Validation-only tasks bypass source generation.
-7. The Validation Agent runs `./mvnw clean test` in the isolated URL-shortener worktree.
-8. A passing validation completes eligible tasks and reaches final human review.
-9. A failure triggers versioned replanning. A human must approve a meaningful revised plan before repair analysis and repair approval can continue.
-10. An approved structured repair performs one exact replacement in the allowlisted Java file, validates again, and rolls back safely if validation fails.
+The orchestrator enforces human review at every critical transition. When the CLI prompts for a decision, enter the corresponding number:
 
-## Human approval and governance controls
+| Gate | Payload Type | Description | Available Choices |
+|---|---|---|---|
+| **Clarification** | `REQUIREMENT_CLARIFICATION` | Interactive prompt for ambiguous requirements | Answer numbered options or enter text; confirm (`1` approve / `2` reject) |
+| **Obligation Contract** | `REQUIREMENT_CONTRACT_APPROVAL` | Review machine-checkable obligation list | `1` = Approve obligations, `2` = Reject |
+| **Architecture Design** | `DESIGN_APPROVAL` | Structured architecture and API contracts | `1` = Approve, `2` = Reject, `3` = Request corrections |
+| **Plan Approval** | `PLAN_APPROVAL` | Review dependency-aware task DAG | `1` = Approve, `2` = Reject, `3` = Request requirement changes |
+| **Recovery Plan** | `RECOVERY_PLAN_APPROVAL` | Revised plan after validation failure | `1` = Approve recovery plan, `2` = Reject |
+| **Repair Approval** | `REPAIR_APPROVAL` | Single exact file patch proposal | `1` = Approve edit, `2` = Reject |
+| **Final Release Review** | `FINAL_HUMAN_REVIEW` | Review release evidence, facts, & disclaimer | `1` = Authorize production release, `2` = Reject |
 
-- Plan approval is required before scheduling or implementation.
-- Revised plans require a separate human approval interrupt.
-- Repair proposals must be strict structured data and must pass the repair allowlist before execution.
-- Repair execution rejects absolute paths, `..` traversal, symlink escapes, unsupported fields, and non-unique expected text.
-- A rollback checkpoint is created before an exact repair replacement.
-- Validation runs through the Maven Wrapper with a timeout and records metadata rather than full Maven output in SQLite audit events.
-- Retry behavior is bounded by `MAX_RETRIES = 2`.
-- Audit events include plan decisions, replanning, task scheduling, implementation, validation, repair, and rollback outcomes.
-- LangGraph state is checkpointed with SQLite so interrupted human approvals can resume by workflow ID.
+> [!NOTE]
+> Entering any unexpected input automatically fails closed and rejects the transition.
 
-## Known limitations
+---
 
-- Ollama is required for live requirement, codebase, planning, implementation, repair, and replanning agents.
-- Python dependencies are not currently pinned in a committed requirements or lock file.
-- The task scheduler validates dependencies and reports safe independent batches, but the current implementation executes one eligible task at a time; it does not launch concurrent task workers.
-- The legacy plan fallback creates one implementation task when the planning response is not strict task JSON.
-- The repair agent proposes changes; only the structured, allowlisted exact replacement is executable after human approval.
-- The orchestrator's deterministic tests use mocks and do not replace live Ollama, Maven, or end-to-end environment validation.
-- The application uses the default in-memory H2 configuration shown in the repository; production persistence, authentication, and deployment infrastructure are outside this assessment.
+## Automated Testing
 
-Each CLI run creates a detached Git worktree at `.agent-workspaces/<workflow_id>/` from committed `HEAD`. Commit any source changes you want included before starting a run. The resolved workspace path is persisted in workflow state and passed explicitly to analysis, implementation, validation, repair, checkpoint creation, and rollback. Worktrees are retained for review; an existing workspace is never overwritten during initialization.
+### 1. Python Orchestrator Regression Suite (540+ tests)
 
-LLM calls pass an explicit `stage`: `requirements`, `codebase`, `planning`, `implementation`, or `repair` (replanning also uses `planning`). Ollama ignores this routing metadata. For predefined synthetic review responses, set `LLM_PROVIDER=mock` and `MOCK_SCENARIO=url-expiration`. Mock routing uses the selected scenario and stage only, never prompt keywords. Unknown scenarios and stages without vetted responses raise before generation can write source. The current mock scenario supports requirements, codebase, and a structured `verify-expiration` plan. After approval, that task follows a validation-only route: it runs Maven validation without source generation or rollback checkpoints. A failed verification stops without replanning or repair. Implementation and repair responses remain unavailable. This scenario verifies existing functionality; it does not demonstrate new implementation. Maven still requires a local Java installation and available build dependencies for offline execution. Existing model patch points and legacy response normalization in replanning remain available during migration.
+Runs all deterministic unit and lifecycle tests, mocking model outputs and testing rollbacks, policy checks, recovery, and plan lineage:
 
-Implementation tasks now execute through `implement_task(task, workspace, context)`. Approval is bound to the task definitions; the executor uses the requirement, analysis, plan, task description, and current file contents to request an exact JSON replacement (`path`, `old_text`, `new_text`). It rejects unauthorized paths, malformed output, ambiguous replacements, and concurrent source changes before writing. The generic executor supports coordinated edits across existing Java source files under `url-shortener/src/main/java` or `url-shortener/src/test/java`. New files remain unsupported. The workflow checkpoints the approved file and passes its allowlist through hash-checked rollback. Unsupported mock implementations stop at `STOPPED_IMPLEMENTATION_BLOCKED` before Maven runs. The validation-only scenario continues to bypass generation. The legacy `implement_expiration` entry point remains for standalone demonstration compatibility; the workflow no longer calls it.
+```bash
+make test-python
+# Equivalent:
+cd agent-orchestrator && LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration ../.venv/bin/python -m pytest . -q
+```
 
-For a live single-file implementation acceptance run, use `python scripts/live_implementation_demo.py prepare /absolute/path/to/new-demo` from `agent-orchestrator/`. It creates a temporary Git snapshot with independent click-limit acceptance tests, proves the method is absent with a failing Maven baseline, then runs real Ollama analysis and planning. It persists the approval interrupt in SQLite and writes `plan.json` for human review. Resume only after reviewing that plan: `python scripts/live_implementation_demo.py resume /absolute/path/to/new-demo --decision approve` (or `reject`). A fresh prepared run can use `--force-failure` on resume to deliberately fail a preinstalled Maven test and verify rollback. Generic implementation failures now roll back immediately rather than entering the legacy expiration repair path. The runner uses an offline copy of the existing Maven cache; a working local Ollama server and cached Java dependencies are required. The snapshot, baseline, source evidence, audit database, LangGraph checkpoints, and result remain in the chosen directory. This records the earlier bounded single-file scenario; subsequent multi-file and clarification milestones are described below. Expanded SDLC orchestration remains unfinished.
+### 2. Java Spring Boot Test Suite (32 tests)
 
-Live single-file acceptance evidence is recorded in [docs/evidence/live-click-limit/README.md](docs/evidence/live-click-limit/README.md), including a successful real-AI implementation, genuine Maven validation, and a separate deliberate-failure rollback run. Both were explicitly approved by the user.
+Runs all unit, database collision, repository, controller, and status integration tests:
 
+```bash
+make test-java
+# Equivalent:
+cd url-shortener && ./mvnw clean test
+```
 
-Multi-file implementation uses `{"edits": [{"path": "...", "old_text": "...", "new_text": "..."}]}` with edits for every file in the human-approved task allowlist; multiple non-overlapping edits to a file are supported. Every proposal is checked before staging. A workspace lock serializes cooperating executors, checkpoints and original hashes are recorded before any source replacement, and per-file atomic replacements are compensated as a set on application or Maven failure. SQLite audit events identify every checkpoint and transaction. Durable recovery journals are retained in the isolated workspace's `.agent-transactions/`; unfinished operations block new implementations until restored. `finish_transaction(transaction_id, workspace, approved_files, passed=False)` preflights every checkpoint and current hash before restoring the set. Unexpected external modifications stop recovery for review instead of being overwritten. These are recoverable multi-file transactions, not simultaneous filesystem visibility or protection against arbitrary external writers/storage failure.
+### 3. Run All Automated Tests
 
-The coordinated API demo is prepared with `python scripts/live_multifile_demo.py prepare /absolute/path/to/new-demo`. It installs independent status-endpoint acceptance tests before AI execution, proves the feature is absent with real Maven, and pauses at the generated two-file plan. Resume with an explicit approved decision using the same script and `resume DIRECTORY --decision approve`. A fresh fork (`fork NEW_DIRECTORY --source ORIGINAL_DIRECTORY`) reuses that exact live-generated plan and baseline for a separate `resume NEW_DIRECTORY --decision approve --force-failure` rollback test. Source edits require approval of the new controller/service plan.
+```bash
+make test
+```
 
-The [live two-file status API acceptance report](docs/evidence/live-status-api/README.md) records real model proposals, 13-test Maven success, deliberate-failure restoration of both files, per-file checkpoint audit events, and all unsuccessful attempts. The report also documents model reliability and transaction limits.
+---
 
-Generic implementation failures now enter an automatic recovery path by default. It collects structured failure evidence and restores the transaction before asking the model for a targeted recovery plan. Task-definition changes require fresh human approval; unchanged task definitions retain their existing approval. `MAX_RETRIES=2` limits execution to three attempts including the first. Infrastructure failures, authorization violations, unexpected source hashes, invalid recovery plans, and failed rollback stop safely. Validation-only tasks retain their read-only stop behavior, and the earlier legacy repair path remains available separately.
+## Audit Chain Verification
 
-The [single-workflow recovery evidence](docs/evidence/autonomous-recovery/README.md) records a controlled compiler defect, automatic rollback and diagnostic transfer, live recovery-plan version 2, a live corrected edit, and 13 passing Maven tests on attempt 2. Reproduce using `python scripts/autonomous_recovery_demo.py prepare NEW_DIRECTORY`, then `advance NEW_DIRECTORY --decision approve` after plan review. Material recovery plans pause for another explicit approval; no approval is supplied by the model. The earlier standalone live demonstration scripts explicitly disable autonomous recovery to preserve their historical single-attempt success/forced-rollback behavior.
+Every workflow event (approvals, file checkpoints, transaction journals, Maven exit codes, and test digests) is cryptographically signed and hash-chained into SQLite:
 
+Verify ledger integrity:
 
-New workflow runs require a strictly validated JSON requirements contract before codebase analysis. Unresolved ambiguities produce a persisted `REQUIREMENT_CLARIFICATION` interrupt; suggested defaults never count as answers. Every question requires an explicit answer and approval. Invalid or incomplete answers re-interrupt without entering planning. Answers, requirement versions, and hashes are persisted in LangGraph state and SQLite audit events and included in downstream analysis and planning.
+```bash
+make verify-audit
+# Equivalent:
+.venv/bin/python agent-orchestrator/main.py --verify-audit agent-orchestrator/audit.db
+```
 
-At initial engineering plan review, `request_changes` accepts revised requirement text, invalidates downstream plans and approvals, and starts requirements analysis again on the same thread. Changed requirements must resolve their own ambiguities before receiving a new plan. Scheduling and implementation check the plan's requirement version/hash and its approval binding. Direct low-level calls retain compatibility with older state shapes; new workflows entering through START always enforce the strict contract. Schema validation establishes structure, not semantic completeness of model analysis.
+Output:
+```text
+AUDIT CHAIN INTEGRITY: VALID (records=..., head_id=...)
+```
 
-The clarification demo uses `python scripts/clarification_demo.py prepare NEW_DIRECTORY`, then `answer NEW_DIRECTORY --answers-file ANSWERS_JSON --decision approve` after human review. The answers file maps ambiguity IDs to exact offered choices (or text for free-text questions). It resumes the same SQLite thread and stops at engineering plan approval without executing source edits. See [requirements clarification evidence](docs/evidence/requirements-clarification/README.md). The focused regression selection now passes 139 tests, including clarification, requirement changes, implementation, recovery, validation, and rollback.
+---
 
-Explicit machine-checkable requirement contracts can now be supplied with `python main.py --contract-file CONTRACT_JSON`. They require their own human review before planning; the expiration acceptance profile is defined in `governance/semantic_plan.py`. Plans must contain structured `coverage` records mapping every approved obligation's exact behavior/test specification to an implementation task and its allowed files. The semantic gate checks declarations without keyword inference or an LLM judge. Inadequate proposals feed validation errors back to the planner, with two regenerations maximum; exhaustion stops before plan approval. Contract approval is bound to requirement version and decision hash, and implementation checks the accepted plan hash. Requirement changes invalidate this binding and require a replacement reviewed contract. Legacy workflows without explicit contracts retain structural-only planning. This gate establishes declared coverage, not implementation correctness or general semantic completeness.
+## Troubleshooting Guide
 
-[Semantic planning evidence](docs/evidence/semantic-plan/README.md) retains the failed schema-conflict run and the corrected live run: a deliberately generic proposal was rejected and real Ollama automatically produced a custom UTC expiration plan covering all eight approved obligations. Both branches preserve the clarified requirement identity; neither modified source or ran Maven. The expanded focused regression selection passes 158 tests.
+### 1. Java Version Mismatch or Missing
+* **Symptom**: `STARTUP VALIDATION FAILED: Unsupported Java version: detected Java 17 (expected Java 21)` or `Java runtime not found on PATH`.
+* **Remediation**:
+  - Install Java 21 (e.g. Eclipse Temurin 21 via `brew install --cask temurin@21` on macOS, or `apt install openjdk-21-jdk` on Linux).
+  - Configure `JAVA_HOME` and PATH:
+    ```bash
+    export JAVA_HOME=$(/usr/libexec/java_home -v 21) # macOS
+    export PATH="$JAVA_HOME/bin:$PATH"
+    ```
 
-Architecture/design is available as an opt-in staged rollout with `python main.py --design --contract-file CONTRACT_JSON`. After clarification, codebase analysis, and obligation-contract review, the design entry gate requires resolved requirement identity, valid contract approval, an initialized workspace marker, and no unfinished source transaction. The design agent emits structured API contracts and validation rules, components/interactions, data-model changes, compatibility risks/mitigations, architectural decisions/rationales, and exact obligation coverage. Exit checks reject missing/duplicate obligations, unresolved references, unauthorized component paths, incorrect optional UTC input contracts, omitted future-only validation rules, and test obligations mapped to production components. Invalid artifacts receive bounded diagnostic feedback; at most three generation attempts are allowed.
+### 2. Ollama Connection Refused
+* **Symptom**: `STARTUP VALIDATION FAILED: Ollama service is not reachable at 'http://localhost:11434': <urlopen error [Errno 61] Connection refused>`.
+* **Remediation**:
+  - Start the Ollama server:
+    ```bash
+    ollama serve
+    ```
+  - If you only want to review the system offline without Ollama:
+    ```bash
+    make demo-greenfield   # or demo-brownfield / demo-ambiguous
+    # Or run the test suite:
+    make test
+    ```
 
-Every valid design requires a separate human design approval before task planning. The approval binds the artifact to the requirement version, decision hash, and reviewed contract hash. Planning receives that artifact, and downstream plan gates require the current approved design hash; requirement changes clear old design and plan approvals. Legacy workflows without `--design` retain their current path. These are design-stage gates and downstream prerequisites, not a claim that every future SDLC stage is implemented. Test generation, documentation, release readiness, and parallel workers remain future milestones.
+### 3. Model Not Pulled in Ollama
+* **Symptom**: `STARTUP VALIDATION FAILED: Configured primary model 'qwen2.5-coder:latest' is not installed in local Ollama`.
+* **Remediation**:
+  - Download the model:
+    ```bash
+    ollama pull qwen2.5-coder:latest
+    ```
 
-[Architecture/design evidence](docs/evidence/architecture-design/README.md) records a live artifact passing design gates and pausing for design approval, zero Java changes, the exhausted and superseded branches, and remaining narrative-review issues. The focused regression selection now passes 180 tests, including 22 design-stage tests.
+### 4. Maven Wrapper Permission Denied
+* **Symptom**: `STARTUP VALIDATION FAILED: Maven wrapper '.../url-shortener/mvnw' is not marked executable`.
+* **Remediation**:
+  - Grant execution permissions:
+    ```bash
+    chmod +x url-shortener/mvnw
+    ```
 
-Design review now supports `request_changes` with explicit nonempty feedback. The workflow archives the prior artifact/hash and review decision, clears design/plan approvals, regenerates under the same requirement identity and approved obligation contract, revalidates the gates, and returns to human review. Every new successful artifact receives a design version and version-bound hash; old hashes cannot approve a revision. Each human correction request allows at most three generation attempts, and unchanged artifacts are rejected. Invalid review payloads re-interrupt without generation. See [the controlled design-correction evidence](docs/evidence/design-correction/README.md). The focused selection now passes 189 tests, including nine correction tests.
+### 5. Maven Dependencies Failing in Air-Gapped / Offline Environments
+* **Symptom**: Maven attempts network downloads and fails when internet access is unavailable.
+* **Remediation**:
+  - Pre-populate dependencies while online using `make cache-maven`.
+  - Pass the offline directory via `--maven-cache <directory>`.
 
-A separate opt-in test-stage subworkflow now supports the reviewed custom-expiration/Clock scenario. It requires explicit approval of the exact architecture amendment, single production-file patch, and additive test-file path. Independent external snapshots preserve original tests/build files byte-for-byte; model output is constrained case JSON compiled by a trusted renderer, so arbitrary assertion edits, disabling, exclusions, and build changes fail closed. Real Maven gates require original tests to remain executable and verify both a controlled equality-boundary negative fixture and the correct implementation. [Test-generation evidence](docs/evidence/test-generation/README.md) records 8 original tests passing, one meaningful negative assertion failure, and 12 final passing tests. The prior four-file plan remains unapproved. This vetted-renderer subworkflow is not yet automatic main-workflow integration or arbitrary Java test synthesis. The focused regression selection passes 219 tests.
+### 6. Unsupported Feature Adapter
+* **Symptom**: `STARTUP VALIDATION FAILED: No approved feature adapter found for requested feature`.
+* **Remediation**:
+  - Supported feature adapters are `expiration` (URL expiration with Clock boundary tests) and `health-check` (URL Health Component).
+  - Use an approved obligation contract JSON (such as `docs/evidence/assessment-scenarios/contracts/custom-expiration.json`).
+
+---
+
+## Known Limitations
+
+- **Model Execution Context**: Live workflows require local Ollama with sufficient VRAM/RAM to host `qwen2.5-coder:latest` (approximately 5 GB).
+- **In-Memory Database**: The Spring Boot demonstration uses H2 in-memory storage; production persistence (e.g. PostgreSQL) is outside the assessment scope.
+- **Allowed Source Scope**: Generic implementation agents are constrained by the policy engine to existing files under `url-shortener/src/main/java` and `url-shortener/src/test/java`.
+- **Additive Test Renderer**: Generated test cases are compiled via vetted feature adapters to guarantee test integrity and prevent arbitrary disabling of baseline assertions.

@@ -35,8 +35,10 @@ def identity(state):
     tasks=tasks_from_plan(state['plan'],'',strict=True)
     if task_definition_hash(tasks)!=state.get('approved_task_hash') or task_definition_hash(state['tasks'])!=state['approved_task_hash']:
         raise PermissionError('Approved task definitions changed')
-    if len([t for t in tasks if t['execution_type']=='implementation'])!=1:
-        raise PermissionError('Lineage v1 supports exactly one implementation task')
+    impl_tasks = [t for t in tasks if t['execution_type']=='implementation']
+    if not (1 <= len(impl_tasks) <= 6):
+        raise PermissionError('Lineage supports 1 to 6 implementation tasks')
+
     validate_coverage(state['plan'],tasks,state['obligation_contract'])
     root=Path(state['workspace']).resolve(strict=True)
     return {'workflow_id':state['workflow_id'],'workspace':str(root),
@@ -101,7 +103,11 @@ def before_execution(state,task):
     if task.get('execution_type')!='implementation' or task not in state['tasks']:
         raise PermissionError('Task is not the authorized implementation')
     actual={p:sha(data) for p,data in inventory(root).items()}
-    if actual!=auth['body']['project_baseline']:raise PermissionError('Workspace changed after plan approval')
+    expected=dict(auth['body']['project_baseline'])
+    if state.get('applied_changes'):
+        for p, data in state['applied_changes'].items():
+            expected[p] = sha(data)
+    if actual!=expected:raise PermissionError('Workspace changed after plan approval')
     return auth
 
 
@@ -122,6 +128,9 @@ def bind_execution(state,task,transaction):
     paths={e['path'] for e in journal['files']}
     if paths!=set(task['allowed_files'])-set(auth['body']['protected_existing_test_files']):raise PermissionError('Transaction scope differs from approved task')
     expected=dict(auth['body']['project_baseline'])
+    if state.get('applied_changes'):
+        for p, data in state['applied_changes'].items():
+            expected[p] = sha(data)
     for entry in journal['files']:
         if entry['original_hash']!=expected[entry['path']]:raise PermissionError('Transaction did not start from approved baseline')
         expected[entry['path']]=entry['expected_current_hash']
@@ -135,7 +144,7 @@ def bind_execution(state,task,transaction):
     return result
 
 
-def _check_test_link(state,execution,test_path,test_hash,scope_hash,validation):
+def _check_test_link(state,execution,test_path,test_hash,scope_hash,validation,transactions=None):
     auth=approved(state);body=execution['body']
     if execution.get('execution_hash')!=digest(body) or body['authorization_hash']!=auth['authorization_hash']:
         raise PermissionError('Execution receipt identity/hash mismatch')
@@ -149,22 +158,35 @@ def _check_test_link(state,execution,test_path,test_hash,scope_hash,validation):
         raise PermissionError('Only passing, executed, unskipped validation may be linked')
     expected={**body['expected_project_hashes'],test_path:test_hash}
     if {p:sha(v) for p,v in inventory(state['workspace']).items()}!=expected:raise PermissionError('Test/source/build integrity mismatch')
-    journal=source_journal(state['workspace'],body['transaction_id'])
-    if journal['status']!='validated' or journal['workflow_id']!=state['workflow_id']:
-        raise PermissionError('Implementation transaction has not passed matching workflow validation')
-    tasks=state['tasks']
-    task=next((t for t in tasks if t['task_id']==body['task_id']),None)
-    if task is None or task.get('execution_type')!='implementation':
-        raise PermissionError('Execution task is not approved')
-    if {e['path'] for e in journal['files']}!=set(task['allowed_files'])-set(auth['body']['protected_existing_test_files']):
-        raise PermissionError('Validated transaction scope mismatch')
-    journal_expected=dict(auth['body']['project_baseline'])
-    for entry in journal['files']:
-        if entry['original_hash']!=journal_expected[entry['path']]:
-            raise PermissionError('Validated transaction baseline mismatch')
-        journal_expected[entry['path']]=entry['expected_current_hash']
-    if journal_expected!=body['expected_project_hashes']:
-        raise PermissionError('Validated transaction differs from execution receipt')
+    txs = transactions or state.get('transactions', [])
+    if txs:
+        journal_expected=dict(auth['body']['project_baseline'])
+        for tx in txs:
+            tx_id = tx['transaction_id'] if isinstance(tx, dict) else tx
+            j = source_journal(state['workspace'], tx_id)
+            if j['status']!='validated' or j['workflow_id']!=state['workflow_id']:
+                raise PermissionError('Implementation transaction has not passed matching workflow validation')
+            for entry in j['files']:
+                journal_expected[entry['path']]=entry['expected_current_hash']
+        if journal_expected!=body['expected_project_hashes']:
+            raise PermissionError('Validated transaction differs from execution receipt')
+    else:
+        journal=source_journal(state['workspace'],body['transaction_id'])
+        if journal['status']!='validated' or journal['workflow_id']!=state['workflow_id']:
+            raise PermissionError('Implementation transaction has not passed matching workflow validation')
+        tasks=state['tasks']
+        task=next((t for t in tasks if t['task_id']==body['task_id']),None)
+        if task is None or task.get('execution_type')!='implementation':
+            raise PermissionError('Execution task is not approved')
+        if {e['path'] for e in journal['files']}!=set(task['allowed_files'])-set(auth['body']['protected_existing_test_files']):
+            raise PermissionError('Validated transaction scope mismatch')
+        journal_expected=dict(auth['body']['project_baseline'])
+        for entry in journal['files']:
+            if entry['original_hash']!=journal_expected[entry['path']]:
+                raise PermissionError('Validated transaction baseline mismatch')
+            journal_expected[entry['path']]=entry['expected_current_hash']
+        if journal_expected!=body['expected_project_hashes']:
+            raise PermissionError('Validated transaction differs from execution receipt')
     rows=events(state)
     scope=[e for e in rows if e['event']=='TEST_SCOPE_APPROVED' and e['details'].get('scope_hash')==scope_hash]
     creates=[e for e in rows if e['event']=='TEST_FILE_CREATED' and e['id']>execution_id and e['details'].get('path')==test_path
@@ -180,18 +202,18 @@ def _check_test_link(state,execution,test_path,test_hash,scope_hash,validation):
     return result
 
 
-def link_tests(state,execution,test_path,test_hash,scope_hash,validation):
-    result=_check_test_link(state,execution,test_path,test_hash,scope_hash,validation)
+def link_tests(state,execution,test_path,test_hash,scope_hash,validation,transactions=None):
+    result=_check_test_link(state,execution,test_path,test_hash,scope_hash,validation,transactions=transactions)
     log_event(state['workflow_id'],'plan_lineage','ENGINEERING_TESTS_BOUND',result)
     return result
 
 
-def verify_test_link(state,execution,link,source_transaction,test_path,test_hash,scope_hash,validation):
+def verify_test_link(state,execution,link,source_transaction,test_path,test_hash,scope_hash,validation,transactions=None):
     # Re-run linkage preconditions, without minting a new approval or audit event.
     expected={k:v for k,v in link.items() if k!='lineage_hash'}
     if digest(expected)!=link.get('lineage_hash'):raise PermissionError('Test linkage hash mismatch')
     receipt(state,'ENGINEERING_TESTS_BOUND',link)
     if source_transaction!=execution['body']['transaction_id']:raise PermissionError('Validation belongs to another source transaction')
-    checked=_check_test_link(state,execution,test_path,test_hash,scope_hash,validation)
+    checked=_check_test_link(state,execution,test_path,test_hash,scope_hash,validation,transactions=transactions)
     if checked!=link:raise PermissionError('Evidence belongs to another plan/execution/test scope')
     return checked['plan_hash']

@@ -182,9 +182,12 @@ def release_controls(state,manifest):
     current=inventory(root)
     # The already independently verified manifest binds source/test changes.
     allowed=set()
-    if origin.get('profile')=='integrated-expiration-v1':
+    if origin.get('profile') in {'integrated-expiration-v1', 'parallel-expiration-v1'}:
         from governance.plan_lineage import source_journal
-        journal=source_journal(root,origin['source_transaction']);allowed.update(e['path'] for e in journal['files'])
+        tx_ids = origin.get('transactions') or ([origin['source_transaction']] if isinstance(origin.get('source_transaction'), str) else origin.get('source_transaction', []))
+        for tx_id in tx_ids:
+            journal=source_journal(root, tx_id)
+            allowed.update(e['path'] for e in journal['files'])
         allowed.add(manifest['test_path'])
     else:
         allowed.add(origin['scope']['production_file']);allowed.add(origin['scope']['new_test_file'])

@@ -55,17 +55,13 @@ def maven(workspace,evidence,label,cache):
     (output/'result.json').write_text(json.dumps(record,indent=2));return record
 
 
-def require_results(record,original,negative=False):
-    generated={'url_shortener.GeneratedExpirationBoundaryTest#'+name for name in
-               ('futureExpiration','pastExpiration','equalNowExpiration','missingExpiration')}
-    if not original or any(status!='passed' for status in original.values()):raise PermissionError('Original baseline must execute and pass without skips')
-    cases=record['cases']
-    if set(cases)!=set(original)|generated:raise PermissionError('Original or generated tests missing/unexpected')
-    failure='url_shortener.GeneratedExpirationBoundaryTest#equalNowExpiration'
-    for case,status in cases.items():
-        expected='failure' if negative and case==failure else 'passed'
-        if status!=expected:raise PermissionError(f'Unexpected test outcome {case}: {status}')
-    if (negative and record['exit_code']==0) or (not negative and record['exit_code']!=0):raise PermissionError('Maven exit status contradicts required evidence')
+def require_results(record, original, negative=False, contract=None):
+    if contract is not None:
+        from governance.feature_registry import get_feature_adapter
+        adapter = get_feature_adapter(contract)
+        return adapter.validate_results(record, original, negative=negative)
+    from governance.feature_registry import ExpirationFeatureAdapter
+    return ExpirationFeatureAdapter().validate_results(record, original, negative=negative)
 
 
 def execute(state,model):
