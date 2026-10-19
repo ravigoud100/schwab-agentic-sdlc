@@ -21,7 +21,8 @@ from governance.failure_context import collect_failure
 from governance.source_policy import authorized_java_target
 from governance.file_transaction import finish_transaction, RecoveryRequired
 from governance.workspace_manager import initialize_workspace
-from governance.audit_logger import log_event
+from governance.audit_logger import log_event, DB_PATH as AUDIT_DB_PATH
+from governance import audit_logger
 from agents.implementation_agent import implement_task
 from agents.repair_agent import parse_repair_proposal, propose_repair
 from agents.validation_agent import validate_implementation
@@ -2377,11 +2378,25 @@ if __name__ == "__main__":
     parser.add_argument('--maven-cache', type=Path, help='Existing offline Maven dependency cache')
     parser.add_argument('--parallel-evidence', type=Path, help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
     parser.add_argument('--final-review', action='store_true', help='Require interactive checkpointed final human review after validation')
+    parser.add_argument('--full-sdlc', action='store_true', help='Execute complete integrated SDLC lifecycle')
+    parser.add_argument('--verify-audit', nargs='?', const=str(audit_logger.DB_PATH),
+                        help='Verify cryptographic integrity of audit ledger (default: agent-orchestrator/audit.db)')
     parser.add_argument('--legacy', action='store_true', help='Use legacy task scheduler execution instead of integrated SDLC')
     parser.add_argument('--demo', choices=['greenfield', 'brownfield', 'ambiguous'], help='Run offline fixture replay demonstration')
     parser.add_argument('--no-auto-orchestration', dest='auto_orchestration', action='store_false', help='Disable automatic parallel orchestration selection')
     parser.set_defaults(auto_orchestration=True)
     args = parser.parse_args()
+
+    if args.verify_audit:
+        from governance.audit_logger import verify_audit_integrity_readonly
+        db_path = Path(args.verify_audit)
+        valid, report = verify_audit_integrity_readonly(db_path)
+        if valid:
+            print(f"AUDIT CHAIN INTEGRITY: VALID (records={report['total_records']}, head_id={report.get('head_id')})")
+            sys.exit(0)
+        else:
+            print(f"AUDIT CHAIN INTEGRITY: FAILED - {report.get('error')}: {report.get('message')}", file=sys.stderr)
+            sys.exit(1)
 
     if args.demo:
         if args.demo == 'greenfield':

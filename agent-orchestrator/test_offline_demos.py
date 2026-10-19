@@ -52,7 +52,7 @@ def test_greenfield_demo_replays_approved_evidence(tmp_path, monkeypatch):
     # Verify audit event
     with sqlite3.connect(db_path) as conn:
         events = conn.execute(
-            "SELECT event, details FROM audit_events WHERE workflow_id=?",
+            "SELECT event, details FROM audit_events WHERE workflow_id=? ORDER BY id",
             ("test-greenfield-demo",)
         ).fetchall()
     assert len(events) >= 1
@@ -120,7 +120,7 @@ def test_ambiguous_demo_clarification_without_default_ttl(tmp_path, monkeypatch)
     # Verify audit event
     with sqlite3.connect(db_path) as conn:
         events = conn.execute(
-            "SELECT event, details FROM audit_events WHERE workflow_id=?",
+            "SELECT event, details FROM audit_events WHERE workflow_id=? ORDER BY id",
             ("test-ambiguous-demo",)
         ).fetchall()
     assert len(events) >= 1
