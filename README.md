@@ -17,12 +17,12 @@ The project is **approval-gated by design**: AI models cannot directly execute a
 7. [Running the System](#running-the-system)
    - [Mode A: Offline Fixture Demonstrations (Zero Ollama Required)](#mode-a-offline-fixture-demonstrations)
    - [Mode B: Mocked Synthetic Review Workflows](#mode-b-mocked-synthetic-review-workflows)
-   - [Mode C: Live-Model Integrated SDLC](#mode-c-live-model-integrated-sdlc)
+    - [Mode C: Live-Model Integrated SDLC](#mode-c-live-model-integrated-sdlc)
 8. [Human Approval & Governance Gates](#human-approval--governance-gates)
-9. [Automated Testing](#automated-testing)
+9. [Automated Testing & Acceptance Suite](#automated-testing--acceptance-suite)
 10. [Audit Chain Verification](#audit-chain-verification)
 11. [Troubleshooting Guide](#troubleshooting-guide)
-12. [Known Limitations](#known-limitations)
+12. [Execution Security & Known Limitations](#execution-security--known-limitations)
 
 ---
 
@@ -39,7 +39,8 @@ Before running the orchestrator or application, ensure the following tools are i
 | **Ollama** | Optional for offline; required for live runs | Local LLM inference (`qwen2.5-coder:latest`) | `ollama --version` |
 
 > [!IMPORTANT]
-> **Ollama is NOT required** for running offline fixture demonstrations (`--demo ...`) or running the 540+ test Python regression test suite (`LLM_PROVIDER=mock`). Reviewers can fully evaluate and verify the system in an offline, air-gapped environment.
+> **Ollama is NOT required** for running offline fixture demonstrations (`--demo ...`), running the full 569-test Python regression test suite (`make test-python`), or running the 15-test acceptance suite (`make test-acceptance`). Reviewers can fully evaluate and verify the system in an offline, air-gapped environment.
+
 
 ---
 
@@ -260,11 +261,15 @@ The orchestrator enforces human review at every critical transition. When the CL
 > [!NOTE]
 > Entering any unexpected input automatically fails closed and rejects the transition.
 
+> [!IMPORTANT]
+> **Deterministic Test Decisions in Automated Testing**:
+> While live CLI executions require an interactive operator to approve transitions, automated test suites (`make test-python`, `make test-acceptance`) and CI exercise these exact gates programmatically using deterministic `Command(resume=...)` payloads to verify interrupt handling, checkpointing, and fail-closed security without claiming live human approval. In all automated runs, production release authorization evaluates strictly to `deployment_authorized = False` (`BLOCKED`).
+
 ---
 
-## Automated Testing
+## Automated Testing & Acceptance Suite
 
-### 1. Python Orchestrator Regression Suite (540+ tests)
+### 1. Python Orchestrator Regression Suite (569 tests)
 
 Runs all deterministic unit and lifecycle tests, mocking model outputs and testing rollbacks, policy checks, recovery, and plan lineage:
 
@@ -284,7 +289,26 @@ make test-java
 cd url-shortener && ./mvnw clean test
 ```
 
-### 3. Run All Automated Tests
+### 3. End-to-End Acceptance Suite (15 tests)
+
+Runs focused end-to-end acceptance tests verifying genuine Maven execution, parallel downstream SDLC stages, generic non-expiration feature execution, deterministic human approval gates, and failure rollbacks:
+
+```bash
+make test-acceptance
+# Equivalent:
+cd agent-orchestrator && \
+LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration \
+../.venv/bin/python -m pytest \
+  test_generated_expiration_regression.py \
+  test_parallel_sdlc_lifecycle.py \
+  test_generic_sdlc_lifecycle.py \
+  test_final_human_review.py \
+  test_rollback.py \
+  test_repair_approval.py \
+  -v
+```
+
+### 4. Run Both Regression Suites
 
 ```bash
 make test
@@ -332,7 +356,7 @@ AUDIT CHAIN INTEGRITY: VALID (records=..., head_id=...)
     ```
   - If you only want to review the system offline without Ollama:
     ```bash
-    make demo-greenfield   # or demo-brownfield / demo-ambiguous
+    make demo-greenfield   # or demo-brownfield / demo-ambiguous / demo-offline
     # Or run the test suite:
     make test
     ```
@@ -367,8 +391,21 @@ AUDIT CHAIN INTEGRITY: VALID (records=..., head_id=...)
 
 ---
 
-## Known Limitations
+## Execution Security & Known Limitations
 
+### Execution Security Controls
+AI-generated code and build validation execute within an enforced security boundary managed by `governance/execution_security.py` and `governance/source_policy.py`:
+- **Subprocess Environment Sanitization**: Strips inherited credentials, secrets, API tokens (`AWS_*`, `GITHUB_*`, `DATABASE_*`, `OPENAI_*`, `ANTHROPIC_*`, `OLLAMA_*`, etc.), and JVM override flags (`MAVEN_ARGS`, `MAVEN_OPTS`, `JAVA_TOOL_OPTIONS`, `JDK_JAVA_OPTIONS`) before launching child processes.
+- **Strict Workspace Containment**: Confirms all modified and executed files resolve within `.agent-workspaces/`, blocking directory traversal (`..`), host absolute path escapes (e.g. `/etc/passwd`), and directory symlink escapes.
+- **Task-Scoped File Allowlists**: Enforces that only authorized source files reviewed in the task plan can be edited.
+- **Offline Maven Execution**: Downstream stages pass `./mvnw -o` with a pinned local dependency cache (`-Dmaven.repo.local`) to prevent unverified outbound network dependency downloads.
+- **Bounded Timeouts**: Subprocess execution timeouts are strictly capped (`<= 180s`) to avoid hung processes.
+
+### Explicit Security Disclosures & Limitations
+- **OS-Level Sandboxing is Not Implemented**: The system does not employ kernel sandboxing (e.g., Linux seccomp, AppArmor, macOS sandbox-exec) or container runtimes (Docker/Podman). Rigid OS-level sandboxing was previously documented to prevent Java 21 Byte Buddy / Mockito self-attachment during Spring Boot integration tests (`Byte Buddy could not self-attach to current VM`).
+- **In-JVM Host Access Risk**: Because OS process boundaries are not virtualized, arbitrary Java test code running inside the JVM runs under the host user's process privileges. Hallucinated or malicious Java test code could read files accessible to the executing user or make network calls if host network egress is enabled. Production enterprise deployment requires running builds inside dedicated virtualized containers or isolated VMs.
+
+### Additional Known Limitations
 - **Model Execution Context**: Live workflows require local Ollama with sufficient VRAM/RAM to host `qwen2.5-coder:latest` (approximately 5 GB).
 - **In-Memory Database**: The Spring Boot demonstration uses H2 in-memory storage; production persistence (e.g. PostgreSQL) is outside the assessment scope.
 - **Allowed Source Scope**: Generic implementation agents are constrained by the policy engine to existing files under `url-shortener/src/main/java` and `url-shortener/src/test/java`.
