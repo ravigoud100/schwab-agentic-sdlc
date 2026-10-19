@@ -48,6 +48,13 @@ All human review and governance gates remain fully active and enforced.
 def setup_pre_promotion_baseline(target_dir: Path) -> Path:
     """Extract pre-promotion commit ae28e81 to ensure isolated execution without modifying primary workspace."""
     target_dir.mkdir(parents=True, exist_ok=True)
+    check = subprocess.run(["git", "rev-parse", "--verify", "ae28e81^{commit}"], cwd=REPO_ROOT, capture_output=True)
+    if check.returncode != 0:
+        subprocess.run(["git", "fetch", "--depth=1", "origin", "ae28e81"], cwd=REPO_ROOT, capture_output=True)
+        check2 = subprocess.run(["git", "rev-parse", "--verify", "ae28e81^{commit}"], cwd=REPO_ROOT, capture_output=True)
+        if check2.returncode != 0:
+            subprocess.run(["git", "fetch", "--unshallow"], cwd=REPO_ROOT, capture_output=True)
+
     proc = subprocess.Popen(["git", "archive", "ae28e81"], cwd=REPO_ROOT, stdout=subprocess.PIPE)
     subprocess.run(["tar", "-x", "-C", str(target_dir)], stdin=proc.stdout, check=True)
     subprocess.run(["git", "init"], cwd=target_dir, check=True, capture_output=True)
