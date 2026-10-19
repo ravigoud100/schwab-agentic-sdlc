@@ -240,7 +240,9 @@ def test_generic_feature_full_sdlc_lifecycle_with_genuine_maven(tmp_path, monkey
     """Executes an E2E health-check feature through standard main.workflow with multiple dependent tasks."""
     workspace = tmp_path / "workspace"
     workspace.mkdir(parents=True, exist_ok=True)
-    shutil.copytree("url-shortener", workspace / "url-shortener")
+    repo_root = Path(__file__).resolve().parents[1]
+    src_app = Path("url-shortener") if Path("url-shortener").is_dir() else repo_root / "url-shortener"
+    shutil.copytree(src_app, workspace / "url-shortener")
     (workspace / ".git").mkdir(exist_ok=True)
 
     db_path = tmp_path / "audit.db"

@@ -2168,16 +2168,16 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
          integration_evidence=None, integration_cache=None, parallel_evidence=None,
          final_review_required=False, auto_orchestration=True, full_sdlc=False, legacy=False,
          skip_startup_validation=False):
+    if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
+        raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
+    if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
+        raise ValueError('Integrated SDLC requires design, contract, lineage and Maven cache')
     if not skip_startup_validation:
         from governance.startup_validation import validate_environment
         validate_environment(
             contract=obligation_contract,
             maven_cache=integration_cache,
         )
-    if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
-        raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
-    if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
-        raise ValueError('Integrated SDLC requires design, contract, lineage and Maven cache')
     if integration_evidence:
         integration_evidence=Path(integration_evidence).resolve()
         integration_evidence.mkdir(parents=True,exist_ok=False)
