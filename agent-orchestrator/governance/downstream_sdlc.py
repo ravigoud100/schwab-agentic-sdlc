@@ -578,4 +578,3 @@ def verify_parallel(state):
 
 
 verify = verify_integrated
-

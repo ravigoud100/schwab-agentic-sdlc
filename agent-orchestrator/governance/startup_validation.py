@@ -241,7 +241,7 @@ def validate_environment(workspace_path: Path | str | None = None,
                          is_demo: bool = False,
                          is_live: bool | None = None) -> dict:
     """Comprehensive entry-gate validation before workflow execution.
-    
+
     Verifies Python, Java, workspace structure, and (when live) Ollama model availability.
     Bypasses Ollama checks for offline demonstrations and mock providers.
     """

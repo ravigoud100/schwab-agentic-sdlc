@@ -475,4 +475,3 @@ def get_feature_adapter(contract_or_context) -> FeatureAdapter:
 
     decision_id = contract.get('decision_id', 'unknown')
     raise PermissionError(f'Unsupported feature contract: {decision_id}. No vetted feature adapter registered.')
-
