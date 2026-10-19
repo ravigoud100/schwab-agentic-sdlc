@@ -85,7 +85,7 @@ def evaluate(state):
     try:
         manifest=current(state)
         checks.update({'artifact_lineage_and_source_integrity':True,'requirements_and_design_approved':True,
-                       ('test_generation_scope_approved' if manifest.get('profile')=='integrated-expiration-v1' else 'clock_and_test_scope_approved'):True,'original_and_generated_tests_verified':True,
+                       ('test_generation_scope_approved' if manifest.get('profile') in {'integrated-expiration-v1', 'parallel-expiration-v1'} else 'clock_and_test_scope_approved'):True,'original_and_generated_tests_verified':True,
                        'genuine_maven_evidence':True})
         checks['matching_implementation_plan_approved']=bool(manifest.get('approved_implementation_plan_hash'))
     except Exception as error:

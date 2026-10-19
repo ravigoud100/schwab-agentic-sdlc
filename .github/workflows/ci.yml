@@ -2,9 +2,9 @@ name: Agentic SDLC CI
 
 on:
   push:
-    branches: [main, feature/assessment-improvements]
+    branches: [main, feature/assessment-improvements, fix/agentic-sdlc-acceptance-gaps]
   pull_request:
-    branches: [main]
+    branches: [main, fix/agentic-sdlc-acceptance-gaps]
 
 jobs:
   python-tests:
@@ -29,10 +29,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
+          cache-dependency-path: url-shortener/pom.xml
+
+      - name: Make Maven wrapper executable
+        run: chmod +x url-shortener/mvnw
+
+      - name: Prepare Maven dependency cache
+        working-directory: url-shortener
+        run: ./mvnw --batch-mode dependency:go-offline test-compile
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r agent-orchestrator/requirements.txt
 
       - name: Run offline Python regression test suite
@@ -67,3 +75,54 @@ jobs:
       - name: Run Maven tests
         working-directory: url-shortener
         run: ./mvnw --batch-mode clean test
+
+  acceptance-tests:
+    name: End-to-End Acceptance Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: agent-orchestrator/requirements.txt
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: url-shortener/pom.xml
+
+      - name: Make Maven wrapper executable
+        run: chmod +x url-shortener/mvnw
+
+      - name: Prepare Maven dependency cache
+        working-directory: url-shortener
+        run: ./mvnw --batch-mode dependency:go-offline test-compile
+
+      - name: Install dependencies
+        run: |
+          pip install -r agent-orchestrator/requirements.txt
+
+      - name: Run End-to-End Acceptance Tests
+        working-directory: agent-orchestrator
+        env:
+          LLM_PROVIDER: mock
+          MOCK_SCENARIO: url-expiration
+        run: |
+          python -m pytest \
+            test_generated_expiration_regression.py \
+            test_parallel_sdlc_lifecycle.py \
+            test_generic_sdlc_lifecycle.py \
+            test_final_human_review.py \
+            test_rollback.py \
+            test_repair_approval.py \
+            -v

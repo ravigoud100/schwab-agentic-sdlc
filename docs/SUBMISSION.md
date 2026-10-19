@@ -2,8 +2,8 @@
 
 **Project:** Charles Schwab Agentic SDLC — URL Shortener
 **Repository:** https://github.com/ravigoud100/schwab-agentic-sdlc
-**Branch:** `improvement/assessment-hardening` (baseline `7dac643`)
-**Submitted:** 2026-10-18
+**Branch:** `fix/agentic-sdlc-acceptance-gaps`
+**Submitted:** 2026-10-19
 **Production Release Authorization:** ❌ **BLOCKED** — Assessment evidence and demonstration only; requires independent production release approval.
 
 ---
@@ -26,7 +26,7 @@ This repository delivers a comprehensive, hardened, production-grade **Agentic S
    - Standard RFC 7807 `ProblemDetail` error responses.
    - OpenAPI 3.0 specification (`docs/openapi.yaml`).
 5. **Real Test Coverage**:
-   - **Python Orchestrator**: **533 passed**, **89%** code coverage measured by `pytest-cov`.
+   - **Python Orchestrator**: **569 passed** (including 15 End-to-End acceptance tests), **89%** code coverage measured by `pytest-cov`.
    - **Java Service**: **32 passed**, **91.51%** instruction coverage, **95.0%** branch coverage measured by JaCoCo.
 
 ---
@@ -37,12 +37,14 @@ This repository delivers a comprehensive, hardened, production-grade **Agentic S
 
 | Test Suite | Tests Run | Passed | Failed | Errors | Skipped | Measured Coverage |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Python Orchestrator** (`pytest`) | 533 | 533 | 0 | 0 | 0 | **89%** (pytest-cov: 4064/4590 statements) |
+| **Python Orchestrator** (`pytest`) | 569 | 569 | 0 | 0 | 0 | **89%** (pytest-cov: 4064/4590 statements) |
 | **Java URL Shortener** (`mvn test`) | 32 | 32 | 0 | 0 | 0 | **91.51%** (JaCoCo: 431/471 instructions, 95% branch) |
+| **E2E Acceptance Suite** (`make test-acceptance`) | 15 | 15 | 0 | 0 | 0 | *Included in Python Orchestrator suite* |
 
 > [!IMPORTANT]
 > **Zero Artificial Estimates**:
-> All coverage percentages reported herein represent actual tool measurements (`pytest-cov` and JaCoCo `0.8.12`), not estimated or assumed figures.
+> All coverage percentages reported herein represent actual tool measurements (`pytest-cov` and JaCoCo `0.8.12`), not estimated or assumed figures. Deterministic test decisions are used in automated test suites and CI to exercise human approval gates without claiming live human intervention.
+
 
 ---
 
@@ -146,7 +148,7 @@ The default execution engine is `integrated_sdlc`. When an orchestration request
 
 ---
 
-## 6. Audit Trail Integrity & Security Architecture
+## 6. Audit Trail Integrity & Execution Security Architecture
 
 ### Tamper-Evident SHA-256 Chaining
 
@@ -158,9 +160,31 @@ The SQLite audit log (`audit.db`) provides cryptographically verifiable sequence
 - **Verification Engine**: `AuditLogger.verify_integrity(workflow_id)` traverses the entire chain from genesis, asserting link continuity, record hashes, monotonic IDs, and payload tampering.
 - **Release-Readiness Integration**: Release evaluation checks `AuditLogger.verify_integrity` before certifying any workflow.
 
-### Security Boundaries & Limitations
+### Execution Security Boundary
+
+To protect the host environment during AI-generated Java code execution and build validation, the orchestrator enforces minimum necessary execution controls via `governance/execution_security.py` and `governance/source_policy.py`:
+
+1. **Subprocess Environment Sanitization**:
+   - `sanitize_execution_env()` explicitly allowlists only safe host variables (`PATH`, `JAVA_HOME`, `HOME`, `USER`, `TMPDIR`, `LANG`, etc.).
+   - Explicitly strips all inherited secrets, cloud keys, and API tokens (`AWS_*`, `GITHUB_*`, `DATABASE_*`, `OPENAI_*`, `ANTHROPIC_*`, `OLLAMA_*`, `*_SECRET`, `*_KEY`, `*_TOKEN`, `*_AUTH`).
+   - Strips build injection parameters (`MAVEN_ARGS`, `MAVEN_OPTS`, `JAVA_TOOL_OPTIONS`, `JDK_JAVA_OPTIONS`) to prevent arbitrary JVM option injection.
+2. **Strict Workspace Containment**:
+   - `assert_workspace_containment()` resolves canonical paths and verifies `path.is_relative_to(workspace_root)`.
+   - Rejects parent directory traversal (`..`), host absolute path escapes (e.g. `/etc/passwd`), and directory symlink escapes.
+3. **Task-Scoped File-Write Allowlists**:
+   - `validate_secure_file_write()` and `source_policy.authorized_java_target()` restrict writes strictly to approved Java source files within the task scope.
+4. **Offline Maven Execution**:
+   - Downstream verification and release evidence generation invoke Maven with the offline flag (`./mvnw -o`) and pinned local cache (`-Dmaven.repo.local`), preventing unverified outbound dependency fetches during code validation.
+5. **Bounded Execution Timeouts**:
+   - Subprocess execution timeouts are strictly capped (`MAX_PERMITTED_TIMEOUT_SECONDS = 180`) to prevent hung or runaway executions.
+
+### Explicit Security Disclosures & Limitations
+
+- **OS-Level Sandboxing is Not Implemented**: The execution boundary does not employ kernel-level sandboxing (e.g. Linux seccomp, AppArmor, macOS `sandbox-exec`) or container runtimes (Docker/Podman). Rigid OS-level sandboxing was previously documented to prevent Java 21 Byte Buddy / Mockito self-attachment during Spring Boot integration tests (`Byte Buddy could not self-attach to current VM`).
+- **In-JVM Host Access Risk**: Because OS process boundaries are not virtualized, arbitrary Java test code running inside the JVM runs under the host user's process privileges. Malicious or hallucinated Java test code could read files accessible to the executing user or make network calls if host network egress is enabled. Full containment in enterprise production requires dedicated virtualized container or VM runners.
 - **Local SQLite Constraints**: Cryptographic hash chaining detects record insertion, modification, deletion, or reordering by standard processes. However, local file hashes cannot prevent an OS administrator with direct root access from truncating the database or swapping the SQLite file.
 - **Production Recommendation**: Forward audit event streams to append-only remote syslog or WORM (Write Once Read Many) cloud storage.
+
 
 ---
 
@@ -190,25 +214,47 @@ The SQLite audit log (`audit.db`) provides cryptographically verifiable sequence
 
 ---
 
-## 8. Offline Demonstration Runbook
+## 8. Command Runbook & Execution Modes
 
-The repository includes reproducible, evidence-backed offline demonstrations that run without network access, live Ollama instances, or model dependencies.
+The repository provides standard Makefile and CLI commands for automated setup, validation, testing, and offline fixture demonstrations.
 
-### Command 1: Greenfield Demonstration
-Replays the approved `UrlHealthComponent.java` evidence through sequential SDLC stages.
+### Execution Modes Overview
+
+- **Deterministic Fixture & CI Mode (`LLM_PROVIDER=mock`)**: Zero external network or Ollama daemon required. Uses deterministic response models and historical fixtures to verify the complete SDLC, rollback logic, policy engine, and genuine Maven execution. This mode powers `make test-python`, `make test-acceptance`, and GitHub Actions CI.
+- **Offline Fixture Demonstrations (`--demo ...`)**: Replays verified assessment evidence in isolated temporary worktrees with genuine Maven validation, without contacting Ollama or mutating the primary application.
+- **Live Generative Mode (`LLM_PROVIDER=ollama`)**: Connects to a local Ollama daemon hosting `qwen2.5-coder:latest` for autonomous code generation.
+
+### Primary Developer & Assessment Commands
+
+| Command | Purpose | Live Ollama Needed? |
+|---|---|---|
+| `make setup` | Create Python 3.12 virtualenv and install pinned dependencies | No |
+| `make validate-env` | Run startup validation checks for Python, Java, and Maven | No |
+| `make test-python` | Run full offline Python regression suite (**569 tests**) | No |
+| `make test-java` | Run Java Spring Boot integration test suite (**32 tests**) | No |
+| `make test-acceptance` | Run end-to-end acceptance suite (**15 tests**) | No |
+| `make demo-offline` | Run all 3 offline fixture demonstrations | No |
+| `make verify-audit` | Verify cryptographic hash chain integrity of audit log | No |
+
+### Offline Demonstrations
+
+#### Command 1: Greenfield Demonstration
+Replays the approved `UrlHealthComponent.java` evidence through sequential SDLC stages in an isolated worktree.
 ```bash
-python agent-orchestrator/main.py --demo greenfield
+make demo-greenfield
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo greenfield
 ```
 **Expected Output**:
 - Replays evidence from `docs/evidence/assessment-scenarios/greenfield-execution/`.
-- Validates 9 unit tests passing.
+- Validates 9 unit tests passing via genuine Maven.
 - Logs `OFFLINE_FIXTURE_REPLAY` audit events with explicit provenance disclaimers.
 - Terminal Status: `GREENFIELD_RESULTS_APPROVED`.
 
-### Command 2: Brownfield Demonstration
+#### Command 2: Brownfield Demonstration
 Executes the approved status API implementation in an isolated Git baseline (`ae28e81`), preserving the primary application.
 ```bash
-python agent-orchestrator/main.py --demo brownfield
+make demo-brownfield
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo brownfield
 ```
 **Expected Output**:
 - Clones baseline into isolated temporary workspace.
@@ -218,10 +264,11 @@ python agent-orchestrator/main.py --demo brownfield
 - Confirms primary workspace `url-shortener/` remains completely untouched.
 - Terminal Status: `BROWNFIELD_RESULTS_APPROVED`.
 
-### Command 3: Ambiguous Requirements Demonstration
+#### Command 3: Ambiguous Requirements Demonstration
 Replays the requirements clarification decision and verification-only evaluation.
 ```bash
-python agent-orchestrator/main.py --demo ambiguous
+make demo-ambiguous
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --demo ambiguous
 ```
 **Expected Output**:
 - Evaluates ambiguous expiration requirement.
@@ -229,10 +276,16 @@ python agent-orchestrator/main.py --demo ambiguous
 - Confirms zero code modifications and zero default 24h TTL.
 - Terminal Status: `AMBIGUOUS_RESULTS_APPROVED`.
 
-### Command 4: Audit Trail Integrity Verification
+#### Command 4: Run All Offline Demonstrations
+```bash
+make demo-offline
+```
+
+#### Command 5: Audit Trail Integrity Verification
 Verifies the cryptographic SHA-256 hash chain of the active audit database.
 ```bash
-python agent-orchestrator/main.py --verify-audit
+make verify-audit
+# Equivalent: .venv/bin/python agent-orchestrator/main.py --verify-audit agent-orchestrator/audit.db
 ```
 **Expected Output**:
 - Scans global event sequence.
@@ -266,8 +319,9 @@ python agent-orchestrator/main.py --verify-audit
 
 ## 10. Final Verification Checklist
 
-- [x] **Python Test Suite**: 533 passed (0 failed).
+- [x] **Python Test Suite**: 569 passed (0 failed).
 - [x] **Java Test Suite**: 32 passed (0 failed, 0 errors, 0 skipped).
+- [x] **E2E Acceptance Suite**: 15 passed (0 failed, verified via genuine Maven execution).
 - [x] **Real Test Coverage**: Python 89%, Java 91.51% instruction (JaCoCo).
 - [x] **OpenAPI 3.0 Contract**: Implemented and verified in `docs/openapi.yaml`.
 - [x] **Evidence Preservation**: All historical evidence in `docs/evidence/` intact and unmodified.

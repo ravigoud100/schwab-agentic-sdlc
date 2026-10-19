@@ -92,3 +92,18 @@ def custom_expiration_contract():
         obligations.append((f'test-{case}','test',{'input_expiresAt':value,'clock':'fixed_UTC','expected':expected}))
     return {'decision_id':'A1','selected_answer':'Custom expiration timestamp',
             'obligations':[{'id':oid,'kind':kind,'spec':spec} for oid,kind,spec in obligations]}
+
+
+def health_check_contract():
+    """Reviewed health-check profile for status monitoring."""
+    obligations = [
+        ('health-service-status', 'implementation', {'operation': 'service_health', 'method': 'getHealthStatus', 'returns': 'status_map'}),
+        ('health-endpoint-route', 'implementation', {'operation': 'controller_endpoint', 'path': '/health', 'method': 'GET'}),
+        ('test-health-status', 'test', {'component': 'UrlService', 'method': 'getHealthStatus', 'expected_status': 'UP'}),
+        ('test-health-endpoint', 'test', {'component': 'UrlController', 'path': '/health', 'expected_status': 200, 'expected_body_status': 'UP'}),
+    ]
+    return {
+        'decision_id': 'H1',
+        'selected_answer': 'HTTP Health Check Endpoint',
+        'obligations': [{'id': oid, 'kind': kind, 'spec': spec} for oid, kind, spec in obligations]
+    }

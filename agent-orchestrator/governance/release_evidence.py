@@ -13,9 +13,13 @@ from agents.test_generation_agent import render,CASES,validate_spec
 
 
 def verify(state):
-    if state.get('profile')=='integrated-expiration-v1':
-        from governance.integrated_sdlc import verify as verify_integrated
+    profile = state.get('profile', '')
+    if profile.startswith('integrated-'):
+        from governance.downstream_sdlc import verify_integrated
         return verify_integrated(state)
+    if profile.startswith('parallel-'):
+        from governance.downstream_sdlc import verify_parallel
+        return verify_parallel(state)
     context=state['context'];workspace=Path(context['workspace']).resolve(strict=True)
     evidence=Path(state['evidence']).resolve(strict=True)
     assert_design_current(context,approved=True)
@@ -104,17 +108,40 @@ def verify(state):
 
 
 def facts(manifest):
-    if manifest.get('profile')=='integrated-expiration-v1':
+    contract = manifest.get('approved_contract')
+    if contract:
+        from governance.feature_registry import get_feature_adapter
+        try:
+            adapter = get_feature_adapter(contract)
+            return adapter.get_facts(manifest)
+        except Exception:
+            pass
+    if manifest.get('profile') in {'integrated-expiration-v1', 'parallel-expiration-v1'}:
+        is_parallel = manifest.get('profile') == 'parallel-expiration-v1'
+
+        source_origin = (
+            'The model executed multi-task concurrent implementations under an approved DAG plan; '
+            'independent transactions and actual diff identify the applied changes.'
+            if is_parallel else
+            'The model generated structured production edits under a prospectively approved engineering plan; '
+            'the transaction and actual diff identify the applied changes.'
+        )
+        bounded_limit = (
+            'This parallel path supports concurrent implementation tasks, multi-wave validation, '
+            'one additive expiration test, and a vetted renderer.'
+            if is_parallel else
+            'This sequential path supports one implementation task, one additive expiration test, and a vetted renderer. It does not establish arbitrary test synthesis or parallel execution.'
+        )
         return {
           'api_change_summary':{'contract':'The approved requirement contract and design accompany this evidence bundle; declared coverage is not proof of arbitrary implementation semantics.'},
           'implementation_notes':{
-            'source_origin':'The model generated structured production edits under a prospectively approved engineering plan; the transaction and actual diff identify the applied changes.',
+            'source_origin': source_origin,
             'source_hash':f"Verified production-set SHA-256: {manifest['implementation_hash']}.",
             'test_origin':'The model supplied constrained expiration-case specifications; a trusted renderer produced the additive JUnit file.'},
           'testing_evidence':{
             'baseline':f"Original baseline: {len(manifest['records']['baseline']['cases'])} passing tests.",
             'positive':f"Combined implementation and generated tests: {len(manifest['records']['positive']['cases'])} passing tests, no skips; original tests/build files remain byte-identical."},
-          'limitations':{'bounded':'This sequential path supports one implementation task, one additive expiration test, and a vetted renderer. It does not establish arbitrary test synthesis or parallel execution.',
+          'limitations':{'bounded': bounded_limit,
                          'negative':'No negative-fixture sensitivity claim is made by this integrated run.'},
           'release_considerations':{'lineage':f"Prospective engineering-plan authorization is verified for plan {manifest['approved_implementation_plan_hash']}.",
                                     'release':'Human test review is required. Security, operational and release sign-offs remain separate; no deployment or merge is authorized.'}}

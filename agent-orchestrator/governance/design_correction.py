@@ -47,6 +47,10 @@ def authorize_correction(state,review,decision):
         'source_path':path,'required_correction':review['required_correction']}
     log_event(c['workflow_id'],'design_correction','DESIGN_SOURCE_CORRECTION_APPROVED',binding)
     finish_transaction(journal['transaction_id'],root,state['transaction']['paths'],passed=False)
+    rolled_id = state['transaction']['transaction_id']
+    cleaned_applied = {p: v for p, v in state.get('applied_changes', {}).items() if p not in state['transaction']['paths']}
+    cleaned_txs = [t for t in state.get('transactions', []) if (t['transaction_id'] if isinstance(t, dict) else t) != rolled_id]
+    c = {**c, 'applied_changes': cleaned_applied, 'transactions': cleaned_txs}
     before_execution(c,c['tasks'][0])
     context={**c,'implementation_transaction':{},
         'previous_implementation_proposal':state['transaction']['proposal'],
@@ -56,7 +60,7 @@ def authorize_correction(state,review,decision):
         'failure_context':{'category':'design_conformance','message':review['required_correction'],
             'review_hash':digest(review),'previous_maven_passed':True},
         'recovery_correction_strategy':'Keep the last reviewed implementation unchanged except the repository-only constructor body. Replace its two direct field assignments with exactly this(repository, java.time.Clock.systemUTC()); retain @Autowired on that overload, the explicit Clock overload, random/CHARACTERS, both injected-clock checks, imports, fields and all methods. Return the complete source. No other behavioral changes are authorized.'}
-    return {**state,'context':context,'transaction':{},'status':'SOURCE_CORRECTION_AUTHORIZED',
+    return {**state,'context':context,'transaction':{},'transactions':cleaned_txs,'applied_changes':cleaned_applied,'status':'SOURCE_CORRECTION_AUTHORIZED',
         'design_correction_receipt':binding,'required_clock_delegation':True}
 
 

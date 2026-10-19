@@ -533,7 +533,13 @@ def planning_agent(state: EngineeringState):
                        '"kind":"<approved kind>","spec":{"<copy approved spec keys>":"<and values>"},'
                        '"task_id":"<task id from tasks>","files":["<existing file in task allowed_files>"]}]') if contract else ''
     if state.get('plan_lineage_required'):
-        coverage_schema += ', "test_stage": {"allowed_new_test_files":["url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"], "protected_existing_test_files":["<existing test paths referenced by tasks>"]}'
+        from governance.feature_registry import get_feature_adapter
+        try:
+            adapter = get_feature_adapter(contract or state.get('requirement') or state)
+            proposed_test_path = adapter.test_path
+        except Exception:
+            proposed_test_path = "url-shortener/src/test/java/url_shortener/GeneratedExpirationBoundaryTest.java"
+        coverage_schema += f', "test_stage": {{"allowed_new_test_files":["{proposed_test_path}"], "protected_existing_test_files":["<existing test paths referenced by tasks>"]}}'
     print("\n[3] PLANNING AGENT")
 
     try:
@@ -1893,9 +1899,24 @@ def parallel_node(state):
     if not evidence_dir:
         evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-parallel-evidence")
         Path(evidence_dir).mkdir(parents=True, exist_ok=True)
-    result = build_workflow(model).compile().invoke({
+    import inspect
+    sig = inspect.signature(build_workflow)
+    kwargs = {}
+    if 'downstream' in sig.parameters:
+        kwargs['downstream'] = state.get('downstream', True)
+    result = build_workflow(model, **kwargs).compile().invoke({
         'context': dict(state), 'evidence': evidence_dir,
         'cache': state.get('integration_cache', '')})
+    is_complete = bool(result.get('test_hash') and (result.get('document') or result.get('documentation_hash')) and result.get('readiness'))
+    if is_complete:
+        return {'parallel_result': result, 'status': result['status'],
+                'complete_sdlc': True,
+                'sdlc_scope': 'complete_sdlc',
+                'unexecuted_stages': [],
+                'test_hash': result.get('test_hash'),
+                'document': result.get('document'),
+                'readiness': result.get('readiness'),
+                'source_files_changed': sum(len(t.get('paths', [])) for t in result.get('transactions', []))}
     return {'parallel_result': result, 'status': result['status'],
             'complete_sdlc': False,
             'sdlc_scope': 'parallel_implementation_and_validation',
@@ -1909,7 +1930,7 @@ def integrated_node(state):
     evidence_dir = state.get('integration_evidence')
     if not evidence_dir:
         evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-integrated-evidence")
-        Path(evidence_dir).mkdir(parents=True, exist_ok=True)
+    Path(evidence_dir).mkdir(parents=True, exist_ok=True)
     context={**state,'implementation_response_format':state.get('implementation_response_format','complete_files')}
     initial={'context':context,'evidence':evidence_dir,'cache':state.get('integration_cache', '')}
     if state.get('integrated_correction_state'):
@@ -1923,9 +1944,17 @@ def integrated_node(state):
         if approved(state)!=approved(initial['context']):
             raise PermissionError('Continuation cannot use another requirement/design/plan authorization')
     result=build_workflow(model).compile().invoke(initial)
-    return {'integrated_result':result,'status':result['status'],
-            'source_files_changed':len(result.get('transaction',{}).get('paths',[]))
-                if result.get('recovery')!='rolled_back' else 0}
+    txs = result.get('transactions', [])
+    paths_changed = set()
+    for tx in txs:
+        paths_changed.update(tx.get('paths', []))
+    if not paths_changed and result.get('transaction'):
+        paths_changed.update(result['transaction'].get('paths', []))
+    return {
+        'integrated_result': result,
+        'status': result['status'],
+        'source_files_changed': len(paths_changed) if result.get('recovery') != 'rolled_back' else 0
+    }
 
 
 def execution_strategy_router(state: EngineeringState):
@@ -2053,7 +2082,7 @@ workflow.add_conditional_edges(
 )
 
 def route_parallel_outcome(state: EngineeringState):
-    if state.get('status') == 'AWAITING_PARALLEL_RESULTS_REVIEW' and state.get('final_human_review_required', True):
+    if state.get('status') in {'AWAITING_PARALLEL_RESULTS_REVIEW', 'AWAITING_FINAL_HUMAN_REVIEW'} and state.get('final_human_review_required', True):
         return 'final_human_review'
     return 'end'
 
@@ -2137,11 +2166,18 @@ workflow.add_edge("repair_stopped", END)
 
 def main(obligation_contract=None, design_required=False, plan_lineage_required=False,
          integration_evidence=None, integration_cache=None, parallel_evidence=None,
-         final_review_required=False, auto_orchestration=True, full_sdlc=False, legacy=False):
+         final_review_required=False, auto_orchestration=True, full_sdlc=False, legacy=False,
+         skip_startup_validation=False):
     if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
         raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
     if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
         raise ValueError('Integrated SDLC requires design, contract, lineage and Maven cache')
+    if not skip_startup_validation:
+        from governance.startup_validation import validate_environment
+        validate_environment(
+            contract=obligation_contract,
+            maven_cache=integration_cache,
+        )
     if integration_evidence:
         integration_evidence=Path(integration_evidence).resolve()
         integration_evidence.mkdir(parents=True,exist_ok=False)
@@ -2398,7 +2434,14 @@ if __name__ == "__main__":
             print(f"AUDIT CHAIN INTEGRITY: FAILED - {report.get('error')}: {report.get('message')}", file=sys.stderr)
             sys.exit(1)
 
+    from governance.startup_validation import validate_environment, StartupValidationError
+
     if args.demo:
+        try:
+            validate_environment(is_demo=True)
+        except StartupValidationError as e:
+            print(f"\nSTARTUP VALIDATION FAILED:\n{e}\n", file=sys.stderr)
+            sys.exit(1)
         if args.demo == 'greenfield':
             from governance.offline_demos import run_greenfield_demo
             run_greenfield_demo()
@@ -2412,11 +2455,37 @@ if __name__ == "__main__":
 
     if args.plan_lineage and (not args.design or not args.contract_file):
         parser.error('--plan-lineage requires --design and --contract-file')
-    main(json.loads(args.contract_file.read_text()) if args.contract_file else None,
+
+    contract_data = None
+    if args.contract_file:
+        contract_path = Path(args.contract_file).resolve()  # NOSONAR
+        if not contract_path.is_file():
+            print(f"Contract file not found: '{contract_path}'", file=sys.stderr)
+            sys.exit(1)
+        try:
+            with open(contract_path, "r", encoding="utf-8") as f:  # NOSONAR
+                contract_data = json.load(f)
+        except Exception as e:
+            print(f"Failed to read contract file '{contract_path}': {e}", file=sys.stderr)
+            sys.exit(1)
+
+
+    try:
+        validate_environment(
+            contract=contract_data,
+            maven_cache=args.maven_cache,
+            is_demo=False,
+        )
+    except StartupValidationError as e:
+        print(f"\nSTARTUP VALIDATION FAILED:\n{e}\n", file=sys.stderr)
+        sys.exit(1)
+
+    main(contract_data,
          design_required=args.design, plan_lineage_required=args.plan_lineage,
          integration_evidence=args.integration_evidence, integration_cache=args.maven_cache,
          parallel_evidence=args.parallel_evidence,
          final_review_required=args.final_review,
          auto_orchestration=args.auto_orchestration,
          full_sdlc=args.full_sdlc,
-         legacy=args.legacy)
+         legacy=args.legacy,
+         skip_startup_validation=True)

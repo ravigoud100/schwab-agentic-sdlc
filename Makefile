@@ -3,29 +3,73 @@ VENV_PYTHON := python3.12
 ORCHESTRATOR := agent-orchestrator
 JAVA_PROJECT := url-shortener
 
-.PHONY: setup test-python test-java test demo-mock
+.PHONY: setup test-python test-java test test-acceptance demo-mock demo-greenfield demo-brownfield demo-ambiguous demo-offline cache-maven verify-audit validate-env help
+
+help:
+	@echo "Available targets:"
+	@echo "  setup            - Create virtual environment and install Python dependencies"
+	@echo "  cache-maven      - Download and cache all Maven dependencies offline"
+	@echo "  validate-env     - Run startup validation checks for Python, Java, and Maven"
+	@echo "  test-python      - Run full offline Python regression suite (560+ tests)"
+	@echo "  test-java        - Run Java Spring Boot integration test suite (32 tests)"
+	@echo "  test-acceptance  - Run end-to-end CI acceptance test suite (15 tests)"
+	@echo "  test             - Run both Python and Java test suites"
+	@echo "  demo-greenfield  - Run offline Greenfield URL health component demonstration"
+	@echo "  demo-brownfield  - Run offline Brownfield status API demonstration"
+	@echo "  demo-ambiguous   - Run offline Ambiguous requirement clarification demonstration"
+	@echo "  demo-offline     - Run all three offline fixture demonstrations"
+	@echo "  verify-audit     - Verify cryptographic hash chain integrity of audit log"
 
 setup:
 	$(VENV_PYTHON) -m venv .venv
+	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install -r $(ORCHESTRATOR)/requirements.txt
+	chmod +x $(JAVA_PROJECT)/mvnw
+
+cache-maven:
+	cd $(JAVA_PROJECT) && ./mvnw dependency:go-offline
+
+validate-env:
+	cd $(ORCHESTRATOR) && ../$(PYTHON) -c "from governance.startup_validation import validate_environment; print('Environment check:', validate_environment())"
 
 test-python:
-	cd $(ORCHESTRATOR) && ../$(PYTHON) -m pytest \
-		test_llm_provider.py \
-		test_rollback.py \
-		test_workspace_isolation.py \
-		test_task_orchestration.py \
-		test_replanning.py \
-		test_repair_approval.py \
-		test_repair_execution.py \
-		test_workflow_scenarios.py -q
+	cd $(ORCHESTRATOR) && \
+	LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration \
+	../$(PYTHON) -m pytest . -q
 
 test-java:
-	cd $(JAVA_PROJECT) && ./mvnw test
+	cd $(JAVA_PROJECT) && ./mvnw clean test
+
+test-acceptance:
+	cd $(ORCHESTRATOR) && \
+	LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration \
+	../$(PYTHON) -m pytest \
+		test_generated_expiration_regression.py \
+		test_parallel_sdlc_lifecycle.py \
+		test_generic_sdlc_lifecycle.py \
+		test_final_human_review.py \
+		test_rollback.py \
+		test_repair_approval.py \
+		-v
 
 test: test-python test-java
+
+
+demo-greenfield:
+	$(PYTHON) $(ORCHESTRATOR)/main.py --demo greenfield
+
+demo-brownfield:
+	$(PYTHON) $(ORCHESTRATOR)/main.py --demo brownfield
+
+demo-ambiguous:
+	$(PYTHON) $(ORCHESTRATOR)/main.py --demo ambiguous
+
+demo-offline: demo-ambiguous demo-greenfield demo-brownfield
 
 demo-mock:
 	cd $(ORCHESTRATOR) && \
 	LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration \
 	../$(PYTHON) main.py
+
+verify-audit:
+	$(PYTHON) $(ORCHESTRATOR)/main.py --verify-audit
