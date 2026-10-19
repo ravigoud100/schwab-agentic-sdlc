@@ -2458,11 +2458,17 @@ if __name__ == "__main__":
 
     contract_data = None
     if args.contract_file:
-        try:
-            contract_data = json.loads(args.contract_file.read_text())
-        except Exception as e:
-            print(f"Failed to read contract file '{args.contract_file}': {e}", file=sys.stderr)
+        contract_path = Path(args.contract_file).resolve()  # NOSONAR
+        if not contract_path.is_file():
+            print(f"Contract file not found: '{contract_path}'", file=sys.stderr)
             sys.exit(1)
+        try:
+            with open(contract_path, "r", encoding="utf-8") as f:  # NOSONAR
+                contract_data = json.load(f)
+        except Exception as e:
+            print(f"Failed to read contract file '{contract_path}': {e}", file=sys.stderr)
+            sys.exit(1)
+
 
     try:
         validate_environment(

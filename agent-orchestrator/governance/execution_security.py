@@ -106,7 +106,7 @@ def validate_secure_file_write(target_path: Path | str, workspace_root: Path | s
         norm_allowed = {str(Path(f)) for f in allowed_files}
         if rel_str not in norm_allowed:
             raise PermissionError(
-                f"Security violation: target file '{rel_str}' is not in approved task allowlist: {sorted(list(norm_allowed))}."
+                f"Security violation: target file '{rel_str}' is not in approved task allowlist: {sorted(norm_allowed)}."
             )
 
     return resolved

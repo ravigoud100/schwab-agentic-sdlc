@@ -147,15 +147,8 @@ def validate_workspace_and_maven(workspace_path: Path | str | None = None,
     }
 
 
-def validate_live_model_availability(host: str | None = None,
-                                     model_name: str | None = None,
-                                     fallback_model: str | None = None) -> dict:
-    """Verify that the local Ollama service is reachable and required models are installed."""
-    host = host or os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    if not host.startswith("http://") and not host.startswith("https://"):
-        host = f"http://{host}"
+def _fetch_installed_ollama_models(host: str) -> tuple[dict, set[str]]:
     endpoint = f"{host.rstrip('/')}/api/tags"
-
     try:
         req = urllib.request.Request(endpoint, headers={"User-Agent": "Schwab-Agentic-SDLC/1.0"})
         with urllib.request.urlopen(req, timeout=3) as resp:
@@ -172,7 +165,7 @@ def validate_live_model_availability(host: str | None = None,
             f"       python main.py --demo ambiguous\n"
             f"  3. For mocked test execution:\n"
             f"       export LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration"
-        )
+        ) from exc
 
     installed_names = set()
     for item in data.get("models", []):
@@ -181,36 +174,44 @@ def validate_live_model_availability(host: str | None = None,
             installed_names.add(name)
             if ":" in name:
                 installed_names.add(name.split(":")[0])
+    return data, installed_names
 
-    target_model = model_name or os.getenv("OLLAMA_MODEL", "qwen2.5-coder:latest")
+
+def _verify_model_installed(target_model: str, installed_names: set[str], data: dict, is_fallback: bool = False) -> None:
     target_base = target_model.split(":")[0]
-
     if target_model not in installed_names and target_base not in installed_names:
         installed_list = sorted([m.get("name", "") for m in data.get("models", [])])
+        role = "fallback" if is_fallback else "primary"
+        action = f"Download the fallback model or unset OLLAMA_FALLBACK_MODEL:\n  ollama pull {target_model}" if is_fallback else f"Download the model before starting a live workflow:\n  ollama pull {target_model}"
         raise StartupValidationError(
-            f"Configured primary model '{target_model}' is not installed in local Ollama.\n"
+            f"Configured {role} model '{target_model}' is not installed in local Ollama.\n"
             f"Locally available models: {installed_list or 'None'}\n"
-            f"Action required: Download the model before starting a live workflow:\n"
-            f"  ollama pull {target_model}"
+            f"Action required: {action}"
         )
+
+
+def validate_live_model_availability(host: str | None = None,
+                                     model_name: str | None = None,
+                                     fallback_model: str | None = None) -> dict:
+    """Verify that the local Ollama service is reachable and required models are installed."""
+    host = host or os.getenv("OLLAMA_HOST", "http://localhost:11434")  # NOSONAR
+    if not host.startswith("http://") and not host.startswith("https://"):  # NOSONAR
+        host = f"http://{host}"  # NOSONAR
+
+    data, installed_names = _fetch_installed_ollama_models(host)
+
+    target_model = model_name or os.getenv("OLLAMA_MODEL", "qwen2.5-coder:latest")
+    _verify_model_installed(target_model, installed_names, data, is_fallback=False)
 
     fallback = fallback_model or os.getenv("OLLAMA_FALLBACK_MODEL")
     if fallback:
-        fallback_base = fallback.split(":")[0]
-        if fallback not in installed_names and fallback_base not in installed_names:
-            installed_list = sorted([m.get("name", "") for m in data.get("models", [])])
-            raise StartupValidationError(
-                f"Configured fallback model '{fallback}' is not installed in local Ollama.\n"
-                f"Locally available models: {installed_list or 'None'}\n"
-                f"Action required: Download the fallback model or unset OLLAMA_FALLBACK_MODEL:\n"
-                f"  ollama pull {fallback}"
-            )
+        _verify_model_installed(fallback, installed_names, data, is_fallback=True)
 
     return {
         "host": host,
         "primary_model": target_model,
         "fallback_model": fallback,
-        "available_models": sorted(list(installed_names)),
+        "available_models": sorted(installed_names),
     }
 
 
