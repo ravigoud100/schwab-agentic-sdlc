@@ -126,11 +126,13 @@ def test_workspace_containment_rejects_symlink_escape(tmp_path):
     link = ws / "link-to-secret"
     try:
         link.symlink_to(secret_file)
-        with pytest.raises(PermissionError) as exc:
-            assert_workspace_containment(link.resolve(), ws)
-        assert "escapes approved workspace" in str(exc.value)
     except OSError:
         pytest.skip("Symlinks not supported on this filesystem")
+
+    resolved_link = link.resolve()
+    with pytest.raises(PermissionError) as exc:
+        assert_workspace_containment(resolved_link, ws)
+    assert "escapes approved workspace" in str(exc.value)
 
 
 def test_execution_resource_limits_enforced():
