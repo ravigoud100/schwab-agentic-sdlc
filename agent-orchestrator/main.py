@@ -187,6 +187,7 @@ class EngineeringState(TypedDict):
     task_parallel_batches: list
     auto_orchestration: bool
     full_sdlc: bool
+    legacy: bool
 
 
 # Agent 1: Analyze requirements
@@ -1034,7 +1035,13 @@ def verification_node(state: EngineeringState):
         workflow_id=state["workflow_id"],
         agent="task_scheduler",
         event="VERIFICATION_STARTED",
-        details={"task_ids": state["active_task_ids"], "source_changes": False, "source_files_changed": 0},
+        details={
+            "task_ids": state["active_task_ids"],
+            "source_changes": False,
+            "source_files_changed": 0,
+            "skipped_stages": ["source_generation", "test_generation", "repair", "documentation", "readiness"],
+            "skip_reason": "Validation-only plan asserts existing implementation satisfies requirements without modification",
+        },
     )
     return {
         "tasks": running_tasks,
@@ -1628,6 +1635,43 @@ def final_human_review_node(state: EngineeringState):
 
     plan_version = state.get("plan_version", 1)
 
+    is_parallel = bool(state.get("parallel_result"))
+    has_test_gen = bool(state.get("test_hash") or state.get("integrated_result", {}).get("test_hash"))
+    has_docs = bool(state.get("integrated_result", {}).get("documentation_hash"))
+    has_readiness = bool(state.get("integrated_result", {}).get("readiness_report"))
+    complete_sdlc = has_test_gen and has_docs and has_readiness
+    is_val_only = state.get("validation_only") or any(t.get("execution_type") == "validate_only" for t in state.get("tasks", []))
+
+    summary = {
+        "requirement": state.get("requirement", ""),
+        "validation_passed": state.get("validation_result", {}).get("passed", True),
+        "maven_exit_code": state.get("validation_result", {}).get("exit_code", 0),
+        "source_files_changed": state.get("source_files_changed", 0),
+    }
+    details_extra = {}
+    if is_parallel and not complete_sdlc:
+        summary["complete_sdlc"] = False
+        summary["sdlc_scope"] = "parallel_implementation_and_validation"
+        summary["unexecuted_stages"] = ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"]
+        details_extra = {
+            "complete_sdlc": False,
+            "sdlc_scope": "parallel_implementation_and_validation",
+            "unexecuted_stages": ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"],
+            "parallel_reporting_notice": (
+                "Parallel execution covers concurrent task implementation and joined Maven validation. "
+                "It is NOT a complete SDLC workflow: additive test generation, documentation, and readiness were not executed."
+            ),
+        }
+    elif is_val_only:
+        summary["validation_only"] = True
+        summary["skipped_stages"] = ["source_generation", "test_generation", "repair", "documentation", "readiness"]
+        summary["skip_reason"] = "Validation-only plan asserts existing implementation satisfies requirements without modification"
+        details_extra = {
+            "validation_only": True,
+            "skipped_stages": ["source_generation", "test_generation", "repair", "documentation", "readiness"],
+            "skip_reason": "Validation-only plan asserts existing implementation satisfies requirements without modification",
+        }
+
     log_event(
         workflow_id=state["workflow_id"],
         agent="final_human_review",
@@ -1642,25 +1686,30 @@ def final_human_review_node(state: EngineeringState):
                 "Engineering approval records acceptance that the implementation satisfies requirements "
                 "and passes all validation gates. It does NOT authorize production release or deployment."
             ),
+            **details_extra,
         }
     )
-    decision = interrupt({
+    interrupt_payload = {
         "type": "FINAL_HUMAN_REVIEW",
         "workflow_id": state["workflow_id"],
         "plan_version": plan_version,
         "bundle_hash": initial_bundle_hash,
         "source_hashes": initial_artifact_hashes,
-        "summary": {
-            "requirement": state.get("requirement", ""),
-            "validation_passed": state.get("validation_result", {}).get("passed", True),
-            "maven_exit_code": state.get("validation_result", {}).get("exit_code", 0),
-            "source_files_changed": state.get("source_files_changed", 0),
-        },
+        "summary": summary,
         "disclaimer": (
             "Engineering approval records acceptance that the implementation satisfies requirements "
             "and passes all validation gates. It does NOT authorize production release or deployment."
         ),
-    })
+    }
+    if is_parallel and not complete_sdlc:
+        interrupt_payload["complete_sdlc"] = False
+        interrupt_payload["sdlc_scope"] = "parallel_implementation_and_validation"
+        interrupt_payload["unexecuted_stages"] = ["additive_test_generation", "documentation_generation", "release_readiness_evaluation"]
+    elif is_val_only:
+        interrupt_payload["validation_only"] = True
+        interrupt_payload["skipped_stages"] = ["source_generation", "test_generation", "repair", "documentation", "readiness"]
+
+    decision = interrupt(interrupt_payload)
 
     current_bundle = compute_final_review_bundle(state)
     if current_bundle["source_hashes"] != initial_artifact_hashes or current_bundle["bundle_hash"] != initial_bundle_hash:
@@ -1702,6 +1751,7 @@ def final_human_review_node(state: EngineeringState):
                 "source_hashes": initial_artifact_hashes,
                 "engineering_accepted": True,
                 "production_release_authorized": False,
+                **details_extra,
             }
         )
         return {
@@ -1846,6 +1896,9 @@ def parallel_node(state):
         'context': dict(state), 'evidence': evidence_dir,
         'cache': state.get('integration_cache', '')})
     return {'parallel_result': result, 'status': result['status'],
+            'complete_sdlc': False,
+            'sdlc_scope': 'parallel_implementation_and_validation',
+            'unexecuted_stages': ['additive_test_generation', 'documentation_generation', 'release_readiness_evaluation'],
             'source_files_changed': len(result.get('transaction', {}).get('paths', []))
                 if result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW' else 0}
 
@@ -1875,20 +1928,50 @@ def integrated_node(state):
 
 
 def execution_strategy_router(state: EngineeringState):
+    tasks = state.get('tasks', [])
+    is_val_only = state.get('validation_only') or any(t.get('execution_type') == 'validate_only' for t in tasks)
+
+    # 1. Validation-only plans bypass source modification and route to verification/validation
+    if is_val_only:
+        print("\n[ORCHESTRATION] Validation-only task plan detected -> Verification & Validation Selected (Source & Test Generation Skipped)")
+        log_event(
+            workflow_id=state.get('workflow_id', ''),
+            agent='orchestrator',
+            event='VALIDATION_ONLY_STAGES_SKIPPED',
+            details={
+                'strategy': 'validation_only',
+                'skipped_stages': ['source_generation', 'test_generation', 'repair', 'documentation', 'readiness'],
+                'reason': 'Validation-only plan asserts existing implementation satisfies requirements without modification',
+            }
+        )
+        return 'legacy'
+
+    # 2. Explicit legacy option keeps legacy task scheduler accessible
+    if state.get('legacy'):
+        print("\n[ORCHESTRATION] Explicit --legacy execution requested -> Legacy Task Scheduler Selected")
+        return 'legacy'
+
+    # 3. Explicit flags take precedence if supplied
     if state.get('parallel_evidence'):
         return 'parallel'
     if state.get('integrated_sdlc'):
         return 'integrated'
+
+    # 4. Auto orchestration:
+    # If parallel eligible -> parallel execution
+    # Otherwise, for ordinary sequential source-changing workflows -> integrated_sdlc is default!
     if state.get('auto_orchestration', True):
-        eligible, reason = is_parallel_eligible(state.get('tasks', []))
+        eligible, reason = is_parallel_eligible(tasks)
         if eligible:
             print(f"\n[ORCHESTRATION] {reason} -> Multi-Wave Parallel Execution Selected")
             return 'parallel'
         else:
-            print(f"\n[ORCHESTRATION] {reason} -> Sequential Execution Preserved")
-            if state.get('full_sdlc'):
-                return 'integrated'
-    return 'legacy'
+            print(f"\n[ORCHESTRATION] {reason} -> Defaulting to Integrated SDLC (Sequential Full Lifecycle)")
+            return 'integrated'
+
+    # 5. If auto_orchestration is disabled and no explicit legacy option given:
+    # Ordinary sequential source-changing workflows still default to integrated_sdlc
+    return 'integrated'
 
 
 # Build LangGraph workflow
@@ -2053,7 +2136,7 @@ workflow.add_edge("repair_stopped", END)
 
 def main(obligation_contract=None, design_required=False, plan_lineage_required=False,
          integration_evidence=None, integration_cache=None, parallel_evidence=None,
-         final_review_required=False, auto_orchestration=True, full_sdlc=False):
+         final_review_required=False, auto_orchestration=True, full_sdlc=False, legacy=False):
     if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
         raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
     if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
@@ -2098,11 +2181,12 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
             'final_human_review_required': final_review_required or full_sdlc,
             'final_review_error': '',
             'parallel_evidence': str(parallel_evidence or ''),
-            'integrated_sdlc': bool(integration_evidence or full_sdlc),
+            'integrated_sdlc': bool(integration_evidence or not legacy),
             'integration_evidence': str(integration_evidence or ''),
             'integration_cache': str(integration_cache or ''),
             'auto_orchestration': auto_orchestration,
-            'full_sdlc': full_sdlc,
+            'full_sdlc': full_sdlc or (not legacy),
+            'legacy': legacy,
             "plan_lineage_required": plan_lineage_required,
             "design_required": design_required,
             "obligation_contract": obligation_contract or {},
@@ -2293,7 +2377,7 @@ if __name__ == "__main__":
     parser.add_argument('--maven-cache', type=Path, help='Existing offline Maven dependency cache')
     parser.add_argument('--parallel-evidence', type=Path, help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
     parser.add_argument('--final-review', action='store_true', help='Require interactive checkpointed final human review after validation')
-    parser.add_argument('--full-sdlc', action='store_true', help='Execute complete integrated SDLC lifecycle through standard path')
+    parser.add_argument('--legacy', action='store_true', help='Use legacy task scheduler execution instead of integrated SDLC')
     parser.add_argument('--demo', choices=['greenfield', 'brownfield', 'ambiguous'], help='Run offline fixture replay demonstration')
     parser.add_argument('--no-auto-orchestration', dest='auto_orchestration', action='store_false', help='Disable automatic parallel orchestration selection')
     parser.set_defaults(auto_orchestration=True)
@@ -2319,4 +2403,5 @@ if __name__ == "__main__":
          parallel_evidence=args.parallel_evidence,
          final_review_required=args.final_review,
          auto_orchestration=args.auto_orchestration,
-         full_sdlc=args.full_sdlc)
+         full_sdlc=args.full_sdlc,
+         legacy=args.legacy)
