@@ -3,15 +3,16 @@ VENV_PYTHON := python3.12
 ORCHESTRATOR := agent-orchestrator
 JAVA_PROJECT := url-shortener
 
-.PHONY: setup test-python test-java test demo-mock demo-greenfield demo-brownfield demo-ambiguous demo-offline cache-maven verify-audit validate-env help
+.PHONY: setup test-python test-java test test-acceptance demo-mock demo-greenfield demo-brownfield demo-ambiguous demo-offline cache-maven verify-audit validate-env help
 
 help:
 	@echo "Available targets:"
 	@echo "  setup            - Create virtual environment and install Python dependencies"
 	@echo "  cache-maven      - Download and cache all Maven dependencies offline"
 	@echo "  validate-env     - Run startup validation checks for Python, Java, and Maven"
-	@echo "  test-python      - Run full offline Python regression suite (540+ tests)"
+	@echo "  test-python      - Run full offline Python regression suite (560+ tests)"
 	@echo "  test-java        - Run Java Spring Boot integration test suite (32 tests)"
+	@echo "  test-acceptance  - Run end-to-end CI acceptance test suite (15 tests)"
 	@echo "  test             - Run both Python and Java test suites"
 	@echo "  demo-greenfield  - Run offline Greenfield URL health component demonstration"
 	@echo "  demo-brownfield  - Run offline Brownfield status API demonstration"
@@ -39,7 +40,20 @@ test-python:
 test-java:
 	cd $(JAVA_PROJECT) && ./mvnw clean test
 
+test-acceptance:
+	cd $(ORCHESTRATOR) && \
+	LLM_PROVIDER=mock MOCK_SCENARIO=url-expiration \
+	../$(PYTHON) -m pytest \
+		test_generated_expiration_regression.py \
+		test_parallel_sdlc_lifecycle.py \
+		test_generic_sdlc_lifecycle.py \
+		test_final_human_review.py \
+		test_rollback.py \
+		test_repair_approval.py \
+		-v
+
 test: test-python test-java
+
 
 demo-greenfield:
 	$(PYTHON) $(ORCHESTRATOR)/main.py --demo greenfield
