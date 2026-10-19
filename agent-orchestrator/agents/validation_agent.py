@@ -1,6 +1,7 @@
 import subprocess
 import time
 from pathlib import Path
+from governance.execution_security import sanitize_execution_env
 
 def validate_implementation(workspace: Path):
     print("\n[VALIDATION AGENT] Running Maven tests...")
@@ -16,11 +17,13 @@ def validate_implementation(workspace: Path):
         )
 
     start_time = time.monotonic()
+    clean_env = sanitize_execution_env()
 
     try:
         result = subprocess.run(
             ["./mvnw", "clean", "test"],
             cwd=project,
+            env=clean_env,
             capture_output=True,
             text=True,
             timeout=120,

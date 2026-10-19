@@ -38,11 +38,15 @@ def approval(state):
 
 
 def maven(workspace,evidence,label,cache):
+    ws_root = Path(workspace).resolve(strict=True)
+    project = (ws_root / 'url-shortener').resolve(strict=True)
+    if not project.is_relative_to(ws_root):
+        raise PermissionError("Validation path escapes isolated workspace")
     output=Path(evidence)/label;output.mkdir()
-    env=os.environ.copy()
-    for key in ('MAVEN_ARGS','MAVEN_OPTS','JAVA_TOOL_OPTIONS','JDK_JAVA_OPTIONS'):env.pop(key,None)
+    from governance.execution_security import sanitize_execution_env
+    env=sanitize_execution_env()
     command=['./mvnw','-o',f'-Dmaven.repo.local={Path(cache).resolve()}','clean','test']
-    result=subprocess.run(command,cwd=Path(workspace)/'url-shortener',env=env,capture_output=True,text=True,timeout=180)
+    result=subprocess.run(command,cwd=project,env=env,capture_output=True,text=True,timeout=180)
     (output/'maven.log').write_text(result.stdout+'\n'+result.stderr)
     cases={}
     for report in (Path(workspace)/'url-shortener/target/surefire-reports').glob('TEST-*.xml'):

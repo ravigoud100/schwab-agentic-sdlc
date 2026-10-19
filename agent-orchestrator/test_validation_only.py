@@ -1,7 +1,7 @@
 """Regression coverage through the graph and real validation-agent boundary."""
 from pathlib import Path
 import subprocess
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import pytest
 from langgraph.checkpoint.memory import InMemorySaver
@@ -55,6 +55,7 @@ def test_validation_only_graph_executes_maven_only_after_approval(
         if decision == "approve":
             run.assert_called_once_with(
                 ["./mvnw", "clean", "test"], cwd=tmp_path / "url-shortener",
+                env=ANY,
                 capture_output=True, text=True, timeout=120, check=False,
             )
             assert result["validation_result"]["passed"] is (exit_code == 0)

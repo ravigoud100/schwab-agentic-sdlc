@@ -15,6 +15,7 @@ import tempfile
 
 from governance.audit_logger import log_event
 from governance.workspace_manager import initialize_workspace
+from governance.execution_security import sanitize_execution_env
 from llm.provider import MockProvider
 
 
@@ -134,8 +135,10 @@ def run_greenfield_demo(workflow_id: str | None = None, worktree_dir: Path | Non
         mvn_res = subprocess.run(
             ["./mvnw", "test"],
             cwd=isolated_repo / "url-shortener",
+            env=sanitize_execution_env(),
             capture_output=True,
-            text=True
+            text=True,
+            timeout=180
         )
         assert mvn_res.returncode == 0, f"Maven tests failed in isolated greenfield workspace: {mvn_res.stdout}"
         assert "BUILD SUCCESS" in mvn_res.stdout
@@ -218,8 +221,10 @@ def run_brownfield_demo(workflow_id: str | None = None, worktree_dir: Path | Non
         mvn_res = subprocess.run(
             ["./mvnw", "test"],
             cwd=isolated_repo / "url-shortener",
+            env=sanitize_execution_env(),
             capture_output=True,
-            text=True
+            text=True,
+            timeout=180
         )
 
         assert mvn_res.returncode == 0, f"Maven tests failed in isolated workspace: {mvn_res.stdout}"
