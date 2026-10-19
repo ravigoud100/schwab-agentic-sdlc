@@ -265,3 +265,40 @@ def task_definition_hash(tasks: list[dict], *, validate: bool = True) -> str:
         for task in tasks
     ]
     return hashlib.sha256(json.dumps(definitions, sort_keys=True).encode()).hexdigest()
+
+
+def is_parallel_eligible(tasks: list[dict]) -> tuple[bool, str]:
+    """Validate whether an approved task plan is eligible for multi-wave parallel execution.
+
+    Eligibility rules:
+    1. Tasks must be a list of 2 to 6 tasks.
+    2. All tasks must have execution_type == 'implementation' (no validate_only).
+    3. Each task must declare non-empty allowed_files.
+    4. Tasks must form a valid acyclic dependency graph.
+    5. Within each topological wave, tasks must have strictly disjoint allowed_files.
+    """
+    if not isinstance(tasks, list):
+        return False, "Tasks must be a list"
+    if not (2 <= len(tasks) <= 6):
+        return False, f"Parallel execution requires 2 to 6 tasks (found {len(tasks)})"
+    for t in tasks:
+        if not isinstance(t, dict):
+            return False, "Each task must be a dictionary"
+        if t.get("execution_type", "implementation") != "implementation":
+            return False, f"Task {t.get('task_id', '?')} has non-implementation execution_type: {t.get('execution_type')}"
+        if not t.get("allowed_files"):
+            return False, f"Task {t.get('task_id', '?')} has no allowed_files specified"
+
+    try:
+        validate_task_plan(tasks)
+        all_files = set()
+        for t in tasks:
+            files = set(t.get("allowed_files", []))
+            if not all_files.isdisjoint(files):
+                overlap = all_files & files
+                return False, f"File overlap detected across tasks: {sorted(overlap)}"
+            all_files.update(files)
+        topological_execution_waves(tasks)
+        return True, "Eligible for dependency-aware parallel execution"
+    except Exception as e:
+        return False, str(e)

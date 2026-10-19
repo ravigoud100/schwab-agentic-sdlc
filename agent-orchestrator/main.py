@@ -39,6 +39,7 @@ from governance.task_orchestrator import (
     start_tasks,
     tasks_from_plan,
     validate_task_plan,
+    is_parallel_eligible,
 )
 
 from dotenv import load_dotenv
@@ -184,6 +185,8 @@ class EngineeringState(TypedDict):
     active_task_ids: list
     task_plan_valid: bool
     task_parallel_batches: list
+    auto_orchestration: bool
+    full_sdlc: bool
 
 
 # Agent 1: Analyze requirements
@@ -1591,6 +1594,12 @@ def success_node(state: EngineeringState):
 def compute_final_review_bundle(state: EngineeringState) -> dict:
     workspace = Path(state['workspace'])
     source_hashes = _java_source_hashes(workspace) if (workspace / "url-shortener/src").exists() else {}
+    for doc_candidate in [workspace / "engineering-notes.md", workspace / "docs"]:
+        if doc_candidate.is_file():
+            source_hashes[doc_candidate.relative_to(workspace).as_posix()] = file_hash(doc_candidate.read_bytes())
+        elif doc_candidate.is_dir():
+            for doc_file in sorted(doc_candidate.rglob("*.md")):
+                source_hashes[doc_file.relative_to(workspace).as_posix()] = file_hash(doc_file.read_bytes())
     plan_version = state.get('plan_version', 1)
     approved_task_hash = state.get('approved_task_hash', '')
     validation_exit_code = state.get('validation_result', {}).get('exit_code', 0)
@@ -1829,9 +1838,13 @@ def rejected_node(state: EngineeringState):
 
 def parallel_node(state):
     from governance.parallel_execution import build_workflow
+    evidence_dir = state.get('parallel_evidence')
+    if not evidence_dir:
+        evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-parallel-evidence")
+        Path(evidence_dir).mkdir(parents=True, exist_ok=True)
     result = build_workflow(model).compile().invoke({
-        'context': dict(state), 'evidence': state['parallel_evidence'],
-        'cache': state['integration_cache']})
+        'context': dict(state), 'evidence': evidence_dir,
+        'cache': state.get('integration_cache', '')})
     return {'parallel_result': result, 'status': result['status'],
             'source_files_changed': len(result.get('transaction', {}).get('paths', []))
                 if result['status'] == 'AWAITING_PARALLEL_RESULTS_REVIEW' else 0}
@@ -1839,8 +1852,12 @@ def parallel_node(state):
 
 def integrated_node(state):
     from governance.integrated_sdlc import build_workflow
+    evidence_dir = state.get('integration_evidence')
+    if not evidence_dir:
+        evidence_dir = str(Path(state['workspace']).parent / f"{state['workflow_id']}-integrated-evidence")
+        Path(evidence_dir).mkdir(parents=True, exist_ok=True)
     context={**state,'implementation_response_format':state.get('implementation_response_format','complete_files')}
-    initial={'context':context,'evidence':state['integration_evidence'],'cache':state['integration_cache']}
+    initial={'context':context,'evidence':evidence_dir,'cache':state.get('integration_cache', '')}
     if state.get('integrated_correction_state'):
         # Validate inside the checkpointed correction_entry node, once. This
         # wrapper replays when nested human interrupts resume, after source writes.
@@ -1855,6 +1872,23 @@ def integrated_node(state):
     return {'integrated_result':result,'status':result['status'],
             'source_files_changed':len(result.get('transaction',{}).get('paths',[]))
                 if result.get('recovery')!='rolled_back' else 0}
+
+
+def execution_strategy_router(state: EngineeringState):
+    if state.get('parallel_evidence'):
+        return 'parallel'
+    if state.get('integrated_sdlc'):
+        return 'integrated'
+    if state.get('auto_orchestration', True):
+        eligible, reason = is_parallel_eligible(state.get('tasks', []))
+        if eligible:
+            print(f"\n[ORCHESTRATION] {reason} -> Multi-Wave Parallel Execution Selected")
+            return 'parallel'
+        else:
+            print(f"\n[ORCHESTRATION] {reason} -> Sequential Execution Preserved")
+            if state.get('full_sdlc'):
+                return 'integrated'
+    return 'legacy'
 
 
 # Build LangGraph workflow
@@ -1934,10 +1968,22 @@ workflow.add_conditional_edges(
     }
 )
 
-workflow.add_conditional_edges('approved',lambda s:'parallel' if s.get('parallel_evidence') else 'integrated' if s.get('integrated_sdlc') else 'legacy',
-                               {'parallel':'parallel_execution','integrated':'integrated_sdlc','legacy':'task_scheduler'})
-workflow.add_edge('parallel_execution', END)
-workflow.add_edge('integrated_sdlc',END)
+def route_parallel_outcome(state: EngineeringState):
+    if state.get('status') == 'AWAITING_PARALLEL_RESULTS_REVIEW' and state.get('final_human_review_required', True):
+        return 'final_human_review'
+    return 'end'
+
+def route_integrated_outcome(state: EngineeringState):
+    if state.get('status') == 'AWAITING_FINAL_HUMAN_REVIEW' and state.get('final_human_review_required', True):
+        return 'final_human_review'
+    return 'end'
+
+workflow.add_conditional_edges('approved', execution_strategy_router,
+                               {'parallel': 'parallel_execution', 'integrated': 'integrated_sdlc', 'legacy': 'task_scheduler'})
+workflow.add_conditional_edges('parallel_execution', route_parallel_outcome,
+                               {'final_human_review': 'final_human_review', 'end': END})
+workflow.add_conditional_edges('integrated_sdlc', route_integrated_outcome,
+                               {'final_human_review': 'final_human_review', 'end': END})
 workflow.add_conditional_edges(
     "task_scheduler",
     task_scheduler_router,
@@ -2007,7 +2053,7 @@ workflow.add_edge("repair_stopped", END)
 
 def main(obligation_contract=None, design_required=False, plan_lineage_required=False,
          integration_evidence=None, integration_cache=None, parallel_evidence=None,
-         final_review_required=False):
+         final_review_required=False, auto_orchestration=True, full_sdlc=False):
     if parallel_evidence and (integration_evidence or plan_lineage_required or not (design_required and obligation_contract and integration_cache)):
         raise ValueError('Parallel execution requires design, contract and Maven cache; sequential lineage/integration cannot be reused')
     if integration_evidence and not (plan_lineage_required and design_required and obligation_contract and integration_cache):
@@ -2049,12 +2095,14 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
             'final_review_decision': '',
             'final_review_bundle_hash': '',
             'final_review_artifact_hashes': {},
-            'final_human_review_required': final_review_required,
+            'final_human_review_required': final_review_required or full_sdlc,
             'final_review_error': '',
             'parallel_evidence': str(parallel_evidence or ''),
-            'integrated_sdlc':bool(integration_evidence),
-            'integration_evidence':str(integration_evidence or ''),
-            'integration_cache':str(integration_cache or ''),
+            'integrated_sdlc': bool(integration_evidence or full_sdlc),
+            'integration_evidence': str(integration_evidence or ''),
+            'integration_cache': str(integration_cache or ''),
+            'auto_orchestration': auto_orchestration,
+            'full_sdlc': full_sdlc,
             "plan_lineage_required": plan_lineage_required,
             "design_required": design_required,
             "obligation_contract": obligation_contract or {},
@@ -2235,18 +2283,40 @@ def main(obligation_contract=None, design_required=False, plan_lineage_required=
 
 if __name__ == "__main__":
     import argparse
+    import sys
     parser = argparse.ArgumentParser()
     parser.add_argument('--contract-file', type=Path,
                         help='Explicit machine-checkable obligations; reviewed before planning')
     parser.add_argument('--design', action='store_true', help='Require gated architecture/design and human design approval')
-    parser.add_argument('--plan-lineage',action='store_true',help='Require prospective plan/execution receipt bindings')
-    parser.add_argument('--integration-evidence',type=Path,help='New external directory for sequential SDLC evidence')
-    parser.add_argument('--maven-cache',type=Path,help='Existing offline Maven dependency cache')
-    parser.add_argument('--parallel-evidence',type=Path,help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
+    parser.add_argument('--plan-lineage', action='store_true', help='Require prospective plan/execution receipt bindings')
+    parser.add_argument('--integration-evidence', type=Path, help='New external directory for sequential SDLC evidence')
+    parser.add_argument('--maven-cache', type=Path, help='Existing offline Maven dependency cache')
+    parser.add_argument('--parallel-evidence', type=Path, help='Opt-in independent-task parallel proposal execution; requires design, contract and Maven cache')
     parser.add_argument('--final-review', action='store_true', help='Require interactive checkpointed final human review after validation')
+    parser.add_argument('--full-sdlc', action='store_true', help='Execute complete integrated SDLC lifecycle through standard path')
+    parser.add_argument('--demo', choices=['greenfield', 'brownfield', 'ambiguous'], help='Run offline fixture replay demonstration')
+    parser.add_argument('--no-auto-orchestration', dest='auto_orchestration', action='store_false', help='Disable automatic parallel orchestration selection')
+    parser.set_defaults(auto_orchestration=True)
     args = parser.parse_args()
-    if args.plan_lineage and (not args.design or not args.contract_file):parser.error('--plan-lineage requires --design and --contract-file')
+
+    if args.demo:
+        if args.demo == 'greenfield':
+            from governance.offline_demos import run_greenfield_demo
+            run_greenfield_demo()
+        elif args.demo == 'brownfield':
+            from governance.offline_demos import run_brownfield_demo
+            run_brownfield_demo()
+        elif args.demo == 'ambiguous':
+            from governance.offline_demos import run_ambiguous_demo
+            run_ambiguous_demo()
+        sys.exit(0)
+
+    if args.plan_lineage and (not args.design or not args.contract_file):
+        parser.error('--plan-lineage requires --design and --contract-file')
     main(json.loads(args.contract_file.read_text()) if args.contract_file else None,
-         design_required=args.design,plan_lineage_required=args.plan_lineage,
-         integration_evidence=args.integration_evidence,integration_cache=args.maven_cache,
-         parallel_evidence=args.parallel_evidence, final_review_required=args.final_review)
+         design_required=args.design, plan_lineage_required=args.plan_lineage,
+         integration_evidence=args.integration_evidence, integration_cache=args.maven_cache,
+         parallel_evidence=args.parallel_evidence,
+         final_review_required=args.final_review,
+         auto_orchestration=args.auto_orchestration,
+         full_sdlc=args.full_sdlc)

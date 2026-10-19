@@ -47,6 +47,13 @@ SUPPORTED_STAGES = frozenset({
     "requirements", "codebase", "design", "planning", "implementation", "repair", "test_generation", "documentation",
 })
 
+def _read_evidence_file(rel_path: str) -> str:
+    root = Path(__file__).resolve().parents[2] / "docs" / "evidence" / "assessment-scenarios" / rel_path
+    if root.exists():
+        return root.read_text().strip()
+    return ""
+
+
 # These are synthetic review responses, not claims about the supplied source.
 # Source-changing stages require vetted scenario fixtures before being enabled.
 MOCK_SCENARIOS = {
@@ -80,6 +87,101 @@ MOCK_SCENARIOS = {
             }],
         }),
     },
+    "greenfield-health": {
+        "requirements": json.dumps({
+            "normalized_problem": "Add a new URL health component that reports a stable ready status.",
+            "functional_requirements": ["Add a new URL health component that reports a stable ready status."],
+            "non_functional_requirements": ["A Spring component with no external I/O; no controller, dependency, configuration or existing test change."],
+            "acceptance_criteria": ["Spring context starts", "existing tests remain executable"],
+            "ambiguities": [],
+            "risks": ["Component must be isolated"],
+            "classification": "greenfield",
+        }),
+        "codebase": "Greenfield component analysis: url-shortener has standard Spring Boot structure.",
+        "design": json.dumps({
+            "component": "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java",
+            "contract": "UrlHealthComponent.status() returns the literal ready status.",
+            "compatibility": "A Spring component with no external I/O; no controller, dependency, configuration or existing test change.",
+        }),
+        "planning": json.dumps({
+            "tasks": [{
+                "task_id": "add-url-health-component",
+                "execution_type": "implementation",
+                "description": "Create only UrlHealthComponent as an injectable Spring component with a deterministic ready status.",
+                "dependencies": [],
+                "allowed_files": [
+                    "url-shortener/src/main/java/url_shortener/UrlHealthComponent.java"
+                ],
+            }],
+        }),
+        "implementation": _read_evidence_file("greenfield-execution/component-response.txt"),
+        "test_generation": _read_evidence_file("greenfield-execution/workspace/url-shortener/src/test/java/url_shortener/UrlHealthComponentTest.java"),
+        "documentation": "# UrlHealthComponent\n\nProvides a deterministic ready status check for the service.",
+    },
+    "brownfield-status": {
+        "requirements": json.dumps({
+            "normalized_problem": "Add a read-only URL status response without changing redirect click counting.",
+            "functional_requirements": [
+                "Add a read-only status method with no click increment.",
+                "Expose GET /api/urls/{shortCode}/status"
+            ],
+            "non_functional_requirements": [
+                "Unknown codes remain 404; redirect and analytics behavior remain unchanged."
+            ],
+            "acceptance_criteria": [
+                "404 preserved",
+                "status is read-only",
+                "redirect clicks unchanged"
+            ],
+            "ambiguities": [],
+            "risks": ["Redirect click count must remain untouched on status check"],
+            "classification": "brownfield",
+        }),
+        "codebase": "Inspecting UrlService and UrlController for read-only status endpoint.",
+        "design": json.dumps({
+            "components": [
+                "url-shortener/src/main/java/url_shortener/UrlService.java",
+                "url-shortener/src/main/java/url_shortener/UrlController.java"
+            ],
+            "contract": "GET status reads a URL and reports short code and expiration state without incrementing clicks.",
+            "compatibility": "Unknown codes remain 404; redirect and analytics behavior remain unchanged."
+        }),
+        "planning": json.dumps({
+            "tasks": [
+                {
+                    "task_id": "status-service",
+                    "execution_type": "implementation",
+                    "dependencies": [],
+                    "description": "Add a read-only status method with no click increment.",
+                    "allowed_files": [
+                        "url-shortener/src/main/java/url_shortener/UrlService.java"
+                    ]
+                },
+                {
+                    "task_id": "status-controller",
+                    "execution_type": "implementation",
+                    "dependencies": ["status-service"],
+                    "description": "Expose the approved status response and preserve 404 behavior.",
+                    "allowed_files": [
+                        "url-shortener/src/main/java/url_shortener/UrlController.java"
+                    ]
+                }
+            ]
+        }),
+        "implementation": _read_evidence_file("brownfield-autonomous-run/attempt-1-response.txt"),
+        "test_generation": _read_evidence_file("brownfield-autonomous-run/workspace/url-shortener/src/test/java/url_shortener/UrlStatusIntegrationTest.java"),
+        "documentation": "# URL Status API\n\nGET /api/urls/{shortCode}/status reports URL expiration and code without incrementing clicks.",
+    },
+    "ambiguous-expiration": {
+        "requirements": _read_evidence_file("ambiguous-run/requirements-response.txt"),
+        "codebase": "Inspecting ShortUrl.java for URL expiration mechanisms.",
+        "design": json.dumps({
+            "component": "url-shortener/src/main/java/url_shortener/ShortUrl.java",
+            "contract": "Caller-provided future UTC timestamp for expiration.",
+            "compatibility": "Existing links without expiration remain active."
+        }),
+        "planning": _read_evidence_file("ambiguous-run/planning-response.txt"),
+    },
 }
 
 
@@ -97,7 +199,13 @@ class MockProvider:
             raise NotImplementedError(
                 f"No vetted mock response for scenario {self.scenario!r}, stage {stage!r}"
             )
-        return ModelResponse(text=responses[stage])
+        metadata = {
+            "execution_mode": "offline_fixture_replay",
+            "provenance": "OFFLINE_FIXTURE_REPLAY",
+            "scenario": self.scenario,
+            "stage": stage,
+        }
+        return ModelResponse(text=responses[stage], metadata=metadata)
 
 
 class ResilientModelProvider(OllamaProvider):
